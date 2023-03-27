@@ -12,24 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70c53fdf09515d64d9c0162b6d69219c, type: 3}
   m_Name: Quad_Data
   m_EditorClassIdentifier: 
-  TypeId: 2
-  Caption: Quad
-  Cost: 3
-  BuildDuration: 3
-  MaxHP: 100
-  DPS: 20
-  AttackFrequency: 1
-  AttackDistanceMax: 15
-  CaptureDistanceMax: 12
-  CanRepair: 0
-  RPS: 10
-  RepairFrequency: 1
-  RepairDistanceMax: 10
-  Speed: 7
-  AngularSpeed: 150
-  Acceleration: 12
-  IsFlying: 0
-  BulletPrefab: {fileID: 6953520636668906323, guid: 8cfda45e4c481a747a65e832f34b152e,
+  typeId: 2
+  caption: Quad
+  cost: 3
+  buildDuration: 3
+  maxHP: 100
+  dps: 20
+  attackFrequency: 1
+  attackDistanceMax: 15
+  captureDistanceMax: 12
+  canRepair: 0
+  rps: 10
+  repairFrequency: 1
+  repairDistanceMax: 10
+  speed: 7
+  angularSpeed: 150
+  acceleration: 12
+  isFlying: 0
+  bulletPrefab: {fileID: 6953520636668906323, guid: 8cfda45e4c481a747a65e832f34b152e,
     type: 3}
-  DeathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
+  deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
     type: 3}

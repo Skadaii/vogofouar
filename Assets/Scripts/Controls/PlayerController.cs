@@ -15,189 +15,192 @@ public sealed class PlayerController : UnitController
     }
 
     [SerializeField]
-    GameObject TargetCursorPrefab = null;
+    private GameObject m_targetCursorPrefab = null;
     [SerializeField]
-    float TargetCursorFloorOffset = 0.2f;
+    private float m_targetCursorFloorOffset = 0.2f;
     [SerializeField]
-    EventSystem SceneEventSystem = null;
+    private EventSystem m_sceneEventSystem = null;
 
     [SerializeField, Range(0f, 1f)]
-    float FactoryPreviewTransparency = 0.3f;
+    private float m_factoryPreviewTransparency = 0.3f;
 
-    PointerEventData MenuPointerEventData = null;
+    private PointerEventData m_menuPointerEventData = null;
 
     // Build Menu UI
-    MenuController PlayerMenuController;
+    private MenuController m_playerMenuController;
 
     // Camera
-    TopCamera TopCameraRef = null;
-    bool CanMoveCamera = false;
-    Vector2 CameraInputPos = Vector2.zero;
-    Vector2 CameraPrevInputPos = Vector2.zero;
-    Vector2 CameraFrameMove = Vector2.zero;
+    private TopCamera m_popCameraRef = null;
+    private bool m_canMoveCamera = false;
+    private Vector2 m_cameraInputPos = Vector2.zero;
+    private Vector2 m_cameraPrevInputPos = Vector2.zero;
+    private Vector2 m_cameraFrameMove = Vector2.zero;
 
     // Selection
-    Vector3 SelectionStart = Vector3.zero;
-    Vector3 SelectionEnd = Vector3.zero;
-    bool SelectionStarted = false;
-    float SelectionBoxHeight = 50f;
-    LineRenderer SelectionLineRenderer;
-    GameObject TargetCursor = null;
+    private Vector3 m_selectionStart = Vector3.zero;
+    private Vector3 m_selectionEnd = Vector3.zero;
+    private bool m_selectionStarted = false;
+    private float m_selectionBoxHeight = 50f;
+    private LineRenderer m_selectionLineRenderer;
+    private GameObject m_targetCursor = null;
 
     // Factory build
-    InputMode CurrentInputMode = InputMode.Orders;
-    int WantedFactoryId = 0;
-    GameObject WantedFactoryPreview = null;
-    Shader PreviewShader = null;
+    private InputMode m_currentInputMode = InputMode.Orders;
+    private int m_wantedFactoryId = 0;
+    private GameObject m_wantedFactoryPreview = null;
+    private Shader m_previewShader = null;
 
     // Mouse events
-    Action OnMouseLeftPressed = null;
-    Action OnMouseLeft = null;
-    Action OnMouseLeftReleased = null;
-    Action OnUnitActionStart = null;
-    Action OnUnitActionEnd = null;
-    Action OnCameraDragMoveStart = null;
-    Action OnCameraDragMoveEnd = null;
+    private Action m_onMouseLeftPressed = null;
+    private Action m_onMouseLeft = null;
+    private Action m_onMouseLeftReleased = null;
+    private Action m_onUnitActionStart = null;
+    private Action m_onUnitActionEnd = null;
+    private Action m_onCameraDragMoveStart = null;
+    private Action m_onCameraDragMoveEnd = null;
 
-    Action<Vector3> OnFactoryPositioned = null;
-    Action<float> OnCameraZoom = null;
-    Action<float> OnCameraMoveHorizontal = null;
-    Action<float> OnCameraMoveVertical = null;
+    private Action<Vector3> m_onFactoryPositioned = null;
+    private Action<float> m_onCameraZoom = null;
+    private Action<float> m_onCameraMoveHorizontal = null;
+    private Action<float> m_onCameraMoveVertical = null;
 
     // Keyboard events
-    Action OnFocusBasePressed = null;
-    Action OnCancelBuildPressed = null;
-    Action OnDestroyEntityPressed = null;
-    Action OnCancelFactoryPositioning = null;
-    Action OnSelectAllPressed = null;
-    Action [] OnCategoryPressed = new Action[9];
+    private Action m_onFocusBasePressed = null;
+    private Action m_onCancelBuildPressed = null;
+    private Action m_onDestroyEntityPressed = null;
+    private Action m_onCancelFactoryPositioning = null;
+    private Action m_onSelectAllPressed = null;
+    private Action[] m_onCategoryPressed = new Action[9];
 
-    GameObject GetTargetCursor()
+    private GameObject GetTargetCursor()
     {
-        if (TargetCursor == null)
+        if (m_targetCursor == null)
         {
-            TargetCursor = Instantiate(TargetCursorPrefab);
-            TargetCursor.name = TargetCursor.name.Replace("(Clone)", "");
+            m_targetCursor = Instantiate(m_targetCursorPrefab);
+            m_targetCursor.name = m_targetCursor.name.Replace("(Clone)", "");
         }
-        return TargetCursor;
+        return m_targetCursor;
     }
-    void SetTargetCursorPosition(Vector3 pos)
+    private void SetTargetCursorPosition(Vector3 pos)
     {
         SetTargetCursorVisible(true);
-        pos.y += TargetCursorFloorOffset;
+        pos.y += m_targetCursorFloorOffset;
         GetTargetCursor().transform.position = pos;
     }
-    void SetTargetCursorVisible(bool isVisible)
+    private void SetTargetCursorVisible(bool isVisible)
     {
         GetTargetCursor().SetActive(isVisible);
     }
-    void SetCameraFocusOnMainFactory()
+    private void SetCameraFocusOnMainFactory()
     {
-        if (FactoryList.Count > 0)
-            TopCameraRef.FocusEntity(FactoryList[0]);
+        if (m_factoryList.Count > 0)
+            m_popCameraRef.FocusEntity(m_factoryList[0]);
     }
-    void CancelCurrentBuild()
+    private void CancelCurrentBuild()
     {
-        SelectedFactory?.CancelCurrentBuild();
-        PlayerMenuController.HideAllFactoryBuildQueue();
+        m_selectedFactory?.CancelCurrentBuild();
+        m_playerMenuController.HideAllFactoryBuildQueue();
     }
 
+
     #region MonoBehaviour methods
+    
     protected override void Awake()
     {
         base.Awake();
 
-        PlayerMenuController = GetComponent<MenuController>();
-        if (PlayerMenuController == null)
+        m_playerMenuController = GetComponent<MenuController>();
+        if (m_playerMenuController == null)
             Debug.LogWarning("could not find MenuController component !");
 
-        OnBuildPointsUpdated += PlayerMenuController.UpdateBuildPointsUI;
-        OnCaptureTarget += PlayerMenuController.UpdateCapturedTargetsUI;
+        m_onBuildPointsUpdated += m_playerMenuController.UpdateBuildPointsUI;
+        m_onCaptureTarget += m_playerMenuController.UpdateCapturedTargetsUI;
 
-        TopCameraRef = Camera.main.GetComponent<TopCamera>();
-        SelectionLineRenderer = GetComponent<LineRenderer>();
+        m_popCameraRef = Camera.main.GetComponent<TopCamera>();
+        m_selectionLineRenderer = GetComponent<LineRenderer>();
 
-        PlayerMenuController = GetComponent<MenuController>();
+        m_playerMenuController = GetComponent<MenuController>();
        
-        if (SceneEventSystem == null)
+        if (m_sceneEventSystem == null)
         {
             Debug.LogWarning("EventSystem not assigned in PlayerController, searching in current scene...");
-            SceneEventSystem = FindObjectOfType<EventSystem>();
+            m_sceneEventSystem = FindObjectOfType<EventSystem>();
         }
         // Set up the new Pointer Event
-        MenuPointerEventData = new PointerEventData(SceneEventSystem);
+        m_menuPointerEventData = new PointerEventData(m_sceneEventSystem);
     }
 
-    override protected void Start()
+    protected override void Start()
     {
         base.Start();
 
-        PreviewShader = Shader.Find("Legacy Shaders/Transparent/Diffuse");
+        m_previewShader = Shader.Find("Legacy Shaders/Transparent/Diffuse");
 
         // left click : selection
-        OnMouseLeftPressed += StartSelection;
-        OnMouseLeft += UpdateSelection;
-        OnMouseLeftReleased += EndSelection;
+        m_onMouseLeftPressed += StartSelection;
+        m_onMouseLeft += UpdateSelection;
+        m_onMouseLeftReleased += EndSelection;
 
         // right click : Unit actions (move / attack / capture ...)
-        OnUnitActionEnd += ComputeUnitsAction;
+        m_onUnitActionEnd += ComputeUnitsAction;
 
         // Camera movement
         // middle click : camera movement
-        OnCameraDragMoveStart += StartMoveCamera;
-        OnCameraDragMoveEnd += StopMoveCamera;
+        m_onCameraDragMoveStart += StartMoveCamera;
+        m_onCameraDragMoveEnd += StopMoveCamera;
 
-        OnCameraZoom += TopCameraRef.Zoom;
-        OnCameraMoveHorizontal += TopCameraRef.KeyboardMoveHorizontal;
-        OnCameraMoveVertical += TopCameraRef.KeyboardMoveVertical;
+        m_onCameraZoom += m_popCameraRef.Zoom;
+        m_onCameraMoveHorizontal += m_popCameraRef.KeyboardMoveHorizontal;
+        m_onCameraMoveVertical += m_popCameraRef.KeyboardMoveVertical;
 
         // Gameplay shortcuts
-        OnFocusBasePressed += SetCameraFocusOnMainFactory;
-        OnCancelBuildPressed += CancelCurrentBuild;
+        m_onFocusBasePressed += SetCameraFocusOnMainFactory;
+        m_onCancelBuildPressed += CancelCurrentBuild;
 
-        OnCancelFactoryPositioning += ExitFactoryBuildMode;
+        m_onCancelFactoryPositioning += ExitFactoryBuildMode;
 
-        OnFactoryPositioned += (floorPos) =>
+        m_onFactoryPositioned += (floorPos) =>
         {
-            if (RequestFactoryBuild(WantedFactoryId, floorPos))
+            if (RequestFactoryBuild(m_wantedFactoryId, floorPos))
             {
                 ExitFactoryBuildMode();
             }
         };
 
         // Destroy selected unit command
-        OnDestroyEntityPressed += () =>
+        m_onDestroyEntityPressed += () =>
         {
-            Unit[] unitsToBeDestroyed = SelectedUnitList.ToArray();
+            Unit[] unitsToBeDestroyed = m_selectedUnitList.ToArray();
             foreach (Unit unit in unitsToBeDestroyed)
             {
                 (unit as IDamageable).Destroy();
             }
 
-            if (SelectedFactory)
+            if (m_selectedFactory)
             {
-                Factory factoryRef = SelectedFactory;
+                Factory factoryRef = m_selectedFactory;
                 UnselectCurrentFactory();
                 factoryRef.Destroy();
             }
         };
 
         // Selection shortcuts
-        OnSelectAllPressed += SelectAllUnits;
+        m_onSelectAllPressed += SelectAllUnits;
 
-        for(int i = 0; i < OnCategoryPressed.Length; i++)
+        for(int i = 0; i < m_onCategoryPressed.Length; i++)
         {
             // store typeId value for event closure
             int typeId = i;
-            OnCategoryPressed[i] += () =>
+            m_onCategoryPressed[i] += () =>
             {
                 SelectAllUnitsByTypeId(typeId);
             };
         }
     }
-    override protected void Update()
+
+    protected override void Update()
     {
-        switch (CurrentInputMode)
+        switch (m_currentInputMode)
         {
             case InputMode.FactoryPositioning:
                 UpdateFactoryPositioningInput();
@@ -213,34 +216,36 @@ public sealed class PlayerController : UnitController
         // Apply camera movement
         UpdateMoveCamera();
     }
+    
     #endregion
 
+
     #region Update methods
-    void UpdateFactoryPositioningInput()
+    private void UpdateFactoryPositioningInput()
     {
         Vector3 floorPos = ProjectFactoryPreviewOnFloor();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            OnCancelFactoryPositioning?.Invoke();
+            m_onCancelFactoryPositioning?.Invoke();
         }
         if (Input.GetMouseButtonDown(0))
         {
-            OnFactoryPositioned?.Invoke(floorPos);
+            m_onFactoryPositioned?.Invoke(floorPos);
         }
     }
-    void UpdateSelectionInput()
+    private void UpdateSelectionInput()
     {
         // Update keyboard inputs
 
         if (Input.GetKeyDown(KeyCode.A))
-            OnSelectAllPressed?.Invoke();
+            m_onSelectAllPressed?.Invoke();
 
-        for (int i = 0; i < OnCategoryPressed.Length; i++)
+        for (int i = 0; i < m_onCategoryPressed.Length; i++)
         {
             if (Input.GetKeyDown(KeyCode.Keypad1 + i) || Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
-                OnCategoryPressed[i]?.Invoke();
+                m_onCategoryPressed[i]?.Invoke();
                 break;
             }
         }
@@ -251,60 +256,61 @@ public sealed class PlayerController : UnitController
             return;
 #endif
         if (Input.GetMouseButtonDown(0))
-            OnMouseLeftPressed?.Invoke();
+            m_onMouseLeftPressed?.Invoke();
         if (Input.GetMouseButton(0))
-            OnMouseLeft?.Invoke();
+            m_onMouseLeft?.Invoke();
         if (Input.GetMouseButtonUp(0))
-            OnMouseLeftReleased?.Invoke();
+            m_onMouseLeftReleased?.Invoke();
 
     }
-    void UpdateActionInput()
+    private void UpdateActionInput()
     {
         if (Input.GetKeyDown(KeyCode.Delete))
-            OnDestroyEntityPressed?.Invoke();
+            m_onDestroyEntityPressed?.Invoke();
 
         // cancel build
         if (Input.GetKeyDown(KeyCode.C))
-            OnCancelBuildPressed?.Invoke();
+            m_onCancelBuildPressed?.Invoke();
 
         // Contextual unit actions (attack / capture ...)
         if (Input.GetMouseButtonDown(1))
-            OnUnitActionStart?.Invoke();
+            m_onUnitActionStart?.Invoke();
         if (Input.GetMouseButtonUp(1))
-            OnUnitActionEnd?.Invoke();
+            m_onUnitActionEnd?.Invoke();
     }
-    void UpdateCameraInput()
+    private void UpdateCameraInput()
     {
         // Camera focus
 
         if (Input.GetKeyDown(KeyCode.F))
-            OnFocusBasePressed?.Invoke();
+            m_onFocusBasePressed?.Invoke();
 
         // Camera movement inputs
 
         // keyboard move (arrows)
         float hValue = Input.GetAxis("Horizontal");
         if (hValue != 0)
-            OnCameraMoveHorizontal?.Invoke(hValue);
+            m_onCameraMoveHorizontal?.Invoke(hValue);
         float vValue = Input.GetAxis("Vertical");
         if (vValue != 0)
-            OnCameraMoveVertical?.Invoke(vValue);
+            m_onCameraMoveVertical?.Invoke(vValue);
 
         // zoom in / out (ScrollWheel)
         float scrollValue = Input.GetAxis("Mouse ScrollWheel");
         if (scrollValue != 0)
-            OnCameraZoom?.Invoke(scrollValue);
+            m_onCameraZoom?.Invoke(scrollValue);
 
         // drag move (mouse button)
         if (Input.GetMouseButtonDown(2))
-            OnCameraDragMoveStart?.Invoke();
+            m_onCameraDragMoveStart?.Invoke();
         if (Input.GetMouseButtonUp(2))
-            OnCameraDragMoveEnd?.Invoke();
+            m_onCameraDragMoveEnd?.Invoke();
     }
     #endregion
 
+
     #region Unit selection methods
-    void StartSelection()
+    private void StartSelection()
     {
         // Hide target cursor
         SetTargetCursorVisible(false);
@@ -317,11 +323,11 @@ public sealed class PlayerController : UnitController
 
         // *** Ignore Unit selection when clicking on UI ***
         // Set the Pointer Event Position to that of the mouse position
-        MenuPointerEventData.position = Input.mousePosition;
+        m_menuPointerEventData.position = Input.mousePosition;
 
         //Create a list of Raycast Results
         List<RaycastResult> results = new List<RaycastResult>();
-        PlayerMenuController.BuildMenuRaycaster.Raycast(MenuPointerEventData, results);
+        m_playerMenuController.BuildMenuRaycaster.Raycast(m_menuPointerEventData, results);
         if (results.Count > 0)
             return;
 
@@ -332,7 +338,7 @@ public sealed class PlayerController : UnitController
             Factory factory = raycastInfo.transform.GetComponent<Factory>();
             if (factory != null)
             {
-                if (factory.GetTeam() == Team && SelectedFactory != factory)
+                if (factory.Team == m_team && m_selectedFactory != factory)
                 {
                     UnselectCurrentFactory();
                     SelectFactory(factory);
@@ -348,7 +354,7 @@ public sealed class PlayerController : UnitController
             UnselectCurrentFactory();
 
             Unit selectedUnit = raycastInfo.transform.GetComponent<Unit>();
-            if (selectedUnit != null && selectedUnit.GetTeam() == Team)
+            if (selectedUnit != null && selectedUnit.Team == m_team)
             {
                 if (isShiftBtPressed)
                 {
@@ -368,22 +374,22 @@ public sealed class PlayerController : UnitController
         else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
         {
             UnselectCurrentFactory();
-            SelectionLineRenderer.enabled = true;
+            m_selectionLineRenderer.enabled = true;
 
-            SelectionStarted = true;
+            m_selectionStarted = true;
 
-            SelectionStart.x = raycastInfo.point.x;
-            SelectionStart.y = 0.0f;//raycastInfo.point.y + 1f;
-            SelectionStart.z = raycastInfo.point.z;
+            m_selectionStart.x = raycastInfo.point.x;
+            m_selectionStart.y = 0.0f;//raycastInfo.point.y + 1f;
+            m_selectionStart.z = raycastInfo.point.z;
         }
     }
 
     /*
      * Multi selection methods
      */
-    void UpdateSelection()
+    private void UpdateSelection()
     {
-        if (SelectionStarted == false)
+        if (m_selectionStarted == false)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -392,23 +398,23 @@ public sealed class PlayerController : UnitController
         RaycastHit raycastInfo;
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
         {
-            SelectionEnd = raycastInfo.point;
+            m_selectionEnd = raycastInfo.point;
         }
 
-        SelectionLineRenderer.SetPosition(0, new Vector3(SelectionStart.x, SelectionStart.y, SelectionStart.z));
-        SelectionLineRenderer.SetPosition(1, new Vector3(SelectionStart.x, SelectionStart.y, SelectionEnd.z));
-        SelectionLineRenderer.SetPosition(2, new Vector3(SelectionEnd.x, SelectionStart.y, SelectionEnd.z));
-        SelectionLineRenderer.SetPosition(3, new Vector3(SelectionEnd.x, SelectionStart.y, SelectionStart.z));
+        m_selectionLineRenderer.SetPosition(0, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionStart.z));
+        m_selectionLineRenderer.SetPosition(1, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionEnd.z));
+        m_selectionLineRenderer.SetPosition(2, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionEnd.z));
+        m_selectionLineRenderer.SetPosition(3, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionStart.z));
     }
-    void EndSelection()
+    private void EndSelection()
     {
-        if (SelectionStarted == false)
+        if (m_selectionStarted == false)
             return;
 
         UpdateSelection();
-        SelectionLineRenderer.enabled = false;
-        Vector3 center = (SelectionStart + SelectionEnd) / 2f;
-        Vector3 size = Vector3.up * SelectionBoxHeight + SelectionEnd - SelectionStart;
+        m_selectionLineRenderer.enabled = false;
+        Vector3 center = (m_selectionStart + m_selectionEnd) / 2f;
+        Vector3 size = Vector3.up * m_selectionBoxHeight + m_selectionEnd - m_selectionStart;
         size.x = Mathf.Abs(size.x);
         size.y = Mathf.Abs(size.y);
         size.z = Mathf.Abs(size.z);
@@ -423,7 +429,7 @@ public sealed class PlayerController : UnitController
         {
             //Debug.Log("collider name = " + col.gameObject.name);
             ISelectable selectedEntity = col.transform.GetComponent<ISelectable>();
-            if (selectedEntity.GetTeam() == GetTeam())
+            if (selectedEntity.Team == Team)
             {
                 if (selectedEntity is Unit)
                 {
@@ -432,22 +438,24 @@ public sealed class PlayerController : UnitController
                 else if (selectedEntity is Factory)
                 {
                     // Select only one factory at a time
-                    if (SelectedFactory == null)
+                    if (m_selectedFactory == null)
                         SelectFactory(selectedEntity as Factory);
                 }
             }
         }
 
-        SelectionStarted = false;
-        SelectionStart = Vector3.zero;
-        SelectionEnd = Vector3.zero;
+        m_selectionStarted = false;
+        m_selectionStart = Vector3.zero;
+        m_selectionEnd = Vector3.zero;
     }
+
     #endregion
+
 
     #region Factory / build methods
     public void UpdateFactoryBuildQueueUI(int entityIndex)
     {
-        PlayerMenuController.UpdateFactoryBuildQueueUI(entityIndex, SelectedFactory);
+        m_playerMenuController.UpdateFactoryBuildQueueUI(entityIndex, m_selectedFactory);
     }
     protected override void SelectFactory(Factory factory)
     {
@@ -456,65 +464,67 @@ public sealed class PlayerController : UnitController
 
         base.SelectFactory(factory);
 
-        PlayerMenuController.UpdateFactoryMenu(SelectedFactory, RequestUnitBuild, EnterFactoryBuildMode);
+        m_playerMenuController.UpdateFactoryMenu(m_selectedFactory, RequestUnitBuild, EnterFactoryBuildMode);
     }
     protected override void UnselectCurrentFactory()
     {
         //Debug.Log("UnselectCurrentFactory");
 
-        if (SelectedFactory)
+        if (m_selectedFactory)
         {
-            PlayerMenuController.UnregisterBuildButtons(SelectedFactory.AvailableUnitsCount, SelectedFactory.AvailableFactoriesCount);
+            m_playerMenuController.UnregisterBuildButtons(m_selectedFactory.AvailableUnitsCount, m_selectedFactory.AvailableFactoriesCount);
         }
 
-        PlayerMenuController.HideFactoryMenu();
+        m_playerMenuController.HideFactoryMenu();
 
         base.UnselectCurrentFactory();
     }
-    void EnterFactoryBuildMode(int factoryId)
+    private void EnterFactoryBuildMode(int factoryId)
     {
-        if (SelectedFactory.GetFactoryCost(factoryId) > TotalBuildPoints)
+        if (m_selectedFactory.GetFactoryCost(factoryId) > TotalBuildPoints)
             return;
 
         //Debug.Log("EnterFactoryBuildMode");
 
-        CurrentInputMode = InputMode.FactoryPositioning;
+        m_currentInputMode = InputMode.FactoryPositioning;
 
-        WantedFactoryId = factoryId;
+        m_wantedFactoryId = factoryId;
 
         // Create factory preview
 
         // Load factory prefab for preview
-        GameObject factoryPrefab = SelectedFactory.GetFactoryPrefab(factoryId);
+        GameObject factoryPrefab = m_selectedFactory.GetFactoryPrefab(factoryId);
         if (factoryPrefab == null)
         {
             Debug.LogWarning("Invalid factory prefab for factoryId " + factoryId);
         }
-        WantedFactoryPreview = Instantiate(factoryPrefab.transform.GetChild(0).gameObject); // Quick and dirty access to mesh GameObject
-        WantedFactoryPreview.name = WantedFactoryPreview.name.Replace("(Clone)", "_Preview");
+        m_wantedFactoryPreview = Instantiate(factoryPrefab.transform.GetChild(0).gameObject); // Quick and dirty access to mesh GameObject
+        m_wantedFactoryPreview.name = m_wantedFactoryPreview.name.Replace("(Clone)", "_Preview");
         // Set transparency on materials
-        foreach(Renderer rend in WantedFactoryPreview.GetComponentsInChildren<MeshRenderer>())
+        foreach(Renderer rend in m_wantedFactoryPreview.GetComponentsInChildren<MeshRenderer>())
         {
             Material mat = rend.material;
-            mat.shader = PreviewShader;
+            mat.shader = m_previewShader;
             Color col = mat.color;
-            col.a = FactoryPreviewTransparency;
+            col.a = m_factoryPreviewTransparency;
             mat.color = col;
         }
 
         // Project mouse position on ground to position factory preview
         ProjectFactoryPreviewOnFloor();
     }
-    void ExitFactoryBuildMode()
+
+    private void ExitFactoryBuildMode()
     {
-        CurrentInputMode = InputMode.Orders;
-        Destroy(WantedFactoryPreview);
+        m_currentInputMode = InputMode.Orders;
+        Destroy(m_wantedFactoryPreview);
     }
-    Vector3 ProjectFactoryPreviewOnFloor()
+
+    private Vector3 ProjectFactoryPreviewOnFloor()
     {
-        if (CurrentInputMode == InputMode.Orders)
+        if (m_currentInputMode == InputMode.Orders)
         {
-            Debug.LogWarning("Wrong call to ProjectFactoryPreviewOnFloor : CurrentInputMode = " + CurrentInputMode.ToString());
+            Debug.LogWarning("Wrong call to ProjectFactoryPreviewOnFloor : CurrentInputMode = " + m_currentInputMode.ToString());
             return Vector3.zero;
         }
 
@@ -525,16 +535,18 @@ public sealed class PlayerController : UnitController
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
         {
             floorPos = raycastInfo.point;
-            WantedFactoryPreview.transform.position = floorPos;
+            m_wantedFactoryPreview.transform.position = floorPos;
         }
         return floorPos;
     }
+
     #endregion
 
+
     #region Entity targetting (attack / capture) and movement methods
-    void ComputeUnitsAction()
+    private void ComputeUnitsAction()
     {
-        if (SelectedUnitList.Count == 0)
+        if (m_selectedUnitList.Count == 0)
             return;
 
         int damageableMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Factory"));
@@ -549,16 +561,16 @@ public sealed class PlayerController : UnitController
             BaseEntity other = raycastInfo.transform.GetComponent<BaseEntity>();
             if (other != null)
             {
-                if (other.GetTeam() != GetTeam())
+                if (other.Team != Team)
                 {
                     // Direct call to attacking task $$$ to be improved by AI behaviour
-                    foreach (Unit unit in SelectedUnitList)
+                    foreach (Unit unit in m_selectedUnitList)
                         unit.SetAttackTarget(other);
                 }
                 else if (other.NeedsRepairing())
                 {
                     // Direct call to reparing task $$$ to be improved by AI behaviour
-                    foreach (Unit unit in SelectedUnitList)
+                    foreach (Unit unit in m_selectedUnitList)
                         unit.SetRepairTarget(other);
                 }
             }
@@ -567,10 +579,10 @@ public sealed class PlayerController : UnitController
         else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, targetMask))
         {
             TargetBuilding target = raycastInfo.transform.GetComponent<TargetBuilding>();
-            if (target != null && target.GetTeam() != GetTeam())
+            if (target != null && target.Team != Team)
             {
                 // Direct call to capturing task $$$ to be improved by AI behaviour
-                foreach (Unit unit in SelectedUnitList)
+                foreach (Unit unit in m_selectedUnitList)
                     unit.SetCaptureTarget(target);
             }
         }
@@ -582,32 +594,36 @@ public sealed class PlayerController : UnitController
             SetTargetCursorPosition(newPos);
 
             // Direct call to moving task $$$ to be improved by AI behaviour
-            foreach (Unit unit in SelectedUnitList)
+            foreach (Unit unit in m_selectedUnitList)
                 unit.SetTargetPos(newPos);
         }
     }
+
     #endregion
 
+
     #region Camera methods
-    void StartMoveCamera()
+
+    private void StartMoveCamera()
     {
-        CanMoveCamera = true;
-        CameraInputPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        CameraPrevInputPos = CameraInputPos;
+        m_canMoveCamera = true;
+        m_cameraInputPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        m_cameraPrevInputPos = m_cameraInputPos;
     }
-    void StopMoveCamera()
+    private void StopMoveCamera()
     {
-        CanMoveCamera = false;
+        m_canMoveCamera = false;
     }
-    void UpdateMoveCamera()
+    private void UpdateMoveCamera()
     {
-        if (CanMoveCamera)
+        if (m_canMoveCamera)
         {
-            CameraInputPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            CameraFrameMove = CameraPrevInputPos - CameraInputPos;
-            TopCameraRef.MouseMove(CameraFrameMove);
-            CameraPrevInputPos = CameraInputPos;
+            m_cameraInputPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            m_cameraFrameMove = m_cameraPrevInputPos - m_cameraInputPos;
+            m_popCameraRef.MouseMove(m_cameraFrameMove);
+            m_cameraPrevInputPos = m_cameraInputPos;
         }
     }
+
     #endregion
 }

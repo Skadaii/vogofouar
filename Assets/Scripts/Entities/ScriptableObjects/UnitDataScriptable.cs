@@ -4,25 +4,25 @@
 public class UnitDataScriptable : EntityDataScriptable
 {
     [Header("Combat")]
-    public int DPS = 10;
-    public float AttackFrequency = 1f;
-    public float AttackDistanceMax = 10f;
-    public float CaptureDistanceMax = 10f;
+    public int dps = 10;
+    public float attackFrequency = 1f;
+    public float attackDistanceMax = 10f;
+    public float captureDistanceMax = 10f;
 
     [Header("Repairing")]
-    public bool CanRepair = false;
-    public int RPS = 10;
-    public float RepairFrequency = 1f;
-    public float RepairDistanceMax = 10f;
+    public bool canRepair = false;
+    public int rps = 10;
+    public float repairFrequency = 1f;
+    public float repairDistanceMax = 10f;
 
     [Header("Movement")]
     [Tooltip("Overrides NavMeshAgent steering settings")]
-    public float Speed = 10f;
-    public float AngularSpeed = 200f;
-    public float Acceleration = 20f;
-    public bool IsFlying = false;
+    public float speed = 10f;
+    public float angularSpeed = 200f;
+    public float acceleration = 20f;
+    public bool isFlying = false;
 
     [Header("FX")]
-    public GameObject BulletPrefab = null;
-    public GameObject DeathFXPrefab = null;
+    public GameObject bulletPrefab = null;
+    public GameObject deathFXPrefab = null;
 }

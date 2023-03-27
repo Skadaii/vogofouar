@@ -49,9 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 101dc19099992714fb538027f7f3c827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerController: {fileID: 0}
-  FOWSystem: {fileID: 7323399335524938800}
-  UpdateFrequency: 0.05
+  m_FOWSystem: {fileID: 7323399335524938800}
+  m_updateFrequency: 0.05
 --- !u!114 &7323399335524938800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,11 +63,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b275e88ffb677b0419dc57506855bd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridWidth: 250
-  GridHeight: 250
-  FogTexture: {fileID: 7323399336463703305}
-  FogCamera: {fileID: 7323399337158486192}
-  FogQuadParent: {fileID: 7323399337508891159}
+  gridWidth: 250
+  gridHeight: 250
+  m_fogTexture: {fileID: 7323399336463703305}
+  m_fogCamera: {fileID: 7323399337158486192}
+  m_fogQuadParent: {fileID: 7323399337508891159}
 --- !u!1 &7323399335577898339
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,12 +297,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ffe30610abb114eac3e10c0abc582e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Texture: {fileID: 0}
-  GreyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  WhiteColor: {r: 1, g: 1, b: 1, a: 1}
-  StartColor: {r: 0, g: 0, b: 0, a: 1}
-  SpriteRenderer: {fileID: 0}
-  InterpolateSpeed: 50
+  texture: {fileID: 0}
+  m_greyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_whiteColor: {r: 1, g: 1, b: 1, a: 1}
+  m_startColor: {r: 0, g: 0, b: 0, a: 1}
+  m_spriteRenderer: {fileID: 0}
+  m_interpolateSpeed: 50
 --- !u!1 &7323399337158486197
 GameObject:
   m_ObjectHideFlags: 0

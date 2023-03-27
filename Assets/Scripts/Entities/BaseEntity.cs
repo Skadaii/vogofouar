@@ -5,70 +5,80 @@ using UnityEngine.UIElements;
 
 public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRepairable
 {
-    [SerializeField]
-    protected ETeam Team;
+    //  Variables
+    //  ---------
 
-    protected EntityVisibility _Visibility;
+    [SerializeField]
+    protected ETeam m_team;
+
+    protected EntityVisibility m_visibility;
+
+    protected int m_HP = 0;
+    protected Action m_onHpUpdated;
+    protected GameObject m_selectedSprite = null;
+    protected Text m_HPText = null;
+    protected bool m_isInitialized = false;
+    protected UnityEngine.UI.Image m_minimapImage;
+
+    public Action onDeadEvent;
+
+    //  Properties
+    //  ----------
+
+    public bool IsSelected { get; protected set; }
+    public bool IsAlive { get; protected set; }
+
     public EntityVisibility Visibility
     {
         get
         {
-            if (_Visibility == null)
+            if (m_visibility == null)
             {
-                _Visibility = GetComponent<EntityVisibility>();
+                m_visibility = GetComponent<EntityVisibility>();
             }
-            return _Visibility;
+            return m_visibility;
         }
     }
 
-    protected int HP = 0;
-    protected Action OnHpUpdated;
-    protected GameObject SelectedSprite = null;
-    protected Text HPText = null;
-    protected bool IsInitialized = false;
-    protected UnityEngine.UI.Image MinimapImage;
+    //  Functions
+    //  ---------
 
-    public Action OnDeadEvent;
-    public bool IsSelected { get; protected set; }
-    public bool IsAlive { get; protected set; }
     virtual public void Init(ETeam _team)
     {
-        if (IsInitialized)
+        if (m_isInitialized)
             return;
 
-        Team = _team;
+        m_team = _team;
 
-        if (Visibility) { Visibility.Team = _team; }
+        if (Visibility) { Visibility.team = _team; }
 
         Transform minimapTransform = transform.Find("MinimapCanvas");
         if (minimapTransform != null)
         {
-            MinimapImage = minimapTransform.GetComponentInChildren<UnityEngine.UI.Image>();
-            MinimapImage.color = GameServices.GetTeamColor(Team);
+            m_minimapImage = minimapTransform.GetComponentInChildren<UnityEngine.UI.Image>();
+            m_minimapImage.color = GameServices.GetTeamColor(m_team);
         }
 
-        IsInitialized = true;
+        m_isInitialized = true;
     }
     public Color GetColor()
     {
-        return GameServices.GetTeamColor(GetTeam());
+        return GameServices.GetTeamColor(Team);
     }
     void UpdateHpUI()
     {
-        if (HPText != null)
-            HPText.text = "HP : " + HP.ToString();
+        if (m_HPText != null)
+            m_HPText.text = "HP : " + m_HP.ToString();
     }
 
     #region ISelectable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
-        SelectedSprite?.SetActive(IsSelected);
+        m_selectedSprite?.SetActive(IsSelected);
     }
-    public ETeam GetTeam()
-    {
-        return Team;
-    }
+    public ETeam Team => m_team;
+    
     #endregion
 
     #region IDamageable
@@ -77,20 +87,20 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
         if (IsAlive == false)
             return;
 
-        HP -= damageAmount;
+        m_HP -= damageAmount;
 
-        OnHpUpdated?.Invoke();
+        m_onHpUpdated?.Invoke();
 
-        if (HP <= 0)
+        if (m_HP <= 0)
         {
             IsAlive = false;
-            OnDeadEvent?.Invoke();
+            onDeadEvent?.Invoke();
             Debug.Log("Entity " + gameObject.name + " died");
         }
     }
     public void Destroy()
     {
-        AddDamage(HP);
+        AddDamage(m_HP);
     }
     #endregion
 
@@ -101,7 +111,7 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
     }
     virtual public void Repair(int amount)
     {
-        OnHpUpdated?.Invoke();
+        m_onHpUpdated?.Invoke();
     }
     virtual public void FullRepair()
     {
@@ -113,18 +123,18 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
     {
         IsAlive = true;
 
-        SelectedSprite = transform.Find("SelectedSprite")?.gameObject;
-        SelectedSprite?.SetActive(false);
+        m_selectedSprite = transform.Find("SelectedSprite")?.gameObject;
+        m_selectedSprite?.SetActive(false);
 
         Transform hpTransform = transform.Find("Canvas/HPText");
         if (hpTransform)
-            HPText = hpTransform.GetComponent<Text>();
+            m_HPText = hpTransform.GetComponent<Text>();
 
-        OnHpUpdated += UpdateHpUI;
+        m_onHpUpdated += UpdateHpUI;
     }
     virtual protected void Start()
     {
-        Init(GetTeam());
+        Init(Team);
         UpdateHpUI();
     }
     virtual protected void Update()

@@ -2,45 +2,54 @@ using System;
 
 public class Grid
 {
-	public int Width;
-	public int Height;
-	public int[] Values;
+    //  Variables
+    //  ---------
 
-	public int Size => Width * Height;
+	public int width;
+	public int height;
+	public int[] values;
+
+    //  Properties
+    //  ----------
+
+	public int Size => width * height;
+
+    //  Functions
+    //  ---------
 
 	public Grid(int width, int height, int value)
 	{
-		Width = width;
-		Height = height;
+		this.width = width;
+		this.height = height;
 
-		Values = new int[Size];
+		values = new int[Size];
 		for (int i = 0; i < Size; ++i)
-			Values[i] = value;
+			values[i] = value;
 	}
 
 	public bool Contains(int i, int j)
 	{
-		return i >= 0 && i < Width && j >= 0 && j < Height;
+		return i >= 0 && i < width && j >= 0 && j < height;
 	}
 
     public void Set(int value, int i, int j)
     {
-        Values[i + j * Width] = value;
+        values[i + j * width] = value;
     }
 
     public int Get(int i)
     {
-        return Values[i];
+        return values[i];
     }
 
     public bool IsValue(int value, int i, int j)
     {
-        int index = i + j * Width;
-        return (index < Values.Length) && (Values[index] & value) > 0;
+        int index = i + j * width;
+        return (index < values.Length) && (values[index] & value) > 0;
     }
 
     public void Clear()
     {
-        Array.Clear(Values, 0, Values.Length);
+        Array.Clear(values, 0, values.Length);
     }
 }

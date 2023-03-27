@@ -7,77 +7,83 @@ using UnityEngine;
 public class UnitController : MonoBehaviour
 {
     [SerializeField]
-    protected ETeam Team;
-    public ETeam GetTeam() { return Team; }
+    protected ETeam m_team;
 
     [SerializeField]
-    protected int StartingBuildPoints = 15;
+    protected int m_startingBuildPoints = 15;
 
-    protected int _TotalBuildPoints = 0;
+    protected int m_totalBuildPoints = 0;
+
+    protected int m_capturedTargets = 0;
+    protected Transform m_teamRoot = null;
+
+    protected List<Unit> m_selectedUnitList = new List<Unit>();
+    protected List<Factory> m_factoryList = new List<Factory>();
+    protected Factory m_selectedFactory = null;
+
+    // events
+    protected Action m_onBuildPointsUpdated;
+    protected Action m_onCaptureTarget;
+
+
+    //  Properties
+
     public int TotalBuildPoints
     {
-        get { return _TotalBuildPoints; }
+        get { return m_totalBuildPoints; }
         set
         {
             Debug.Log("TotalBuildPoints updated");
-            _TotalBuildPoints = value;
-            OnBuildPointsUpdated?.Invoke();
+            m_totalBuildPoints = value;
+            m_onBuildPointsUpdated?.Invoke();
         }
     }
 
-    protected int _CapturedTargets = 0;
+    public ETeam Team => m_team;
+    public Transform TeamRoot => m_teamRoot;
+
     public int CapturedTargets
     {
-        get { return _CapturedTargets; }
+        get { return m_capturedTargets; }
         set
         {
-            _CapturedTargets = value;
-            OnCaptureTarget?.Invoke();
+            m_capturedTargets = value;
+            m_onCaptureTarget?.Invoke();
         }
     }
 
-    protected Transform TeamRoot = null;
-    public Transform GetTeamRoot() { return TeamRoot; }
-
+    public List<Factory> GetFactoryList { get { return m_factoryList; } }
     public List<Unit> UnitList
     {
         get;
         protected set;
     }
-    protected List<Unit> SelectedUnitList = new List<Unit>();
-    protected List<Factory> FactoryList = new List<Factory>();
-    public List<Factory> GetFactoryList { get { return FactoryList; } }
-    protected Factory SelectedFactory = null;
-
-    // events
-    protected Action OnBuildPointsUpdated;
-    protected Action OnCaptureTarget;
 
     #region Unit methods
     protected void UnselectAllUnits()
     {
-        foreach (Unit unit in SelectedUnitList)
+        foreach (Unit unit in m_selectedUnitList)
             unit.SetSelected(false);
-        SelectedUnitList.Clear();
+        m_selectedUnitList.Clear();
     }
     protected void SelectAllUnits()
     {
         foreach (Unit unit in UnitList)
             unit.SetSelected(true);
 
-        SelectedUnitList.Clear();
-        SelectedUnitList.AddRange(UnitList);
+        m_selectedUnitList.Clear();
+        m_selectedUnitList.AddRange(UnitList);
     }
     protected void SelectAllUnitsByTypeId(int typeId)
     {
         UnselectCurrentFactory();
         UnselectAllUnits();
-        SelectedUnitList = UnitList.FindAll(delegate (Unit unit)
+        m_selectedUnitList = UnitList.FindAll(delegate (Unit unit)
             {
-                return unit.GetTypeId == typeId;
+                return unit.TypeId == typeId;
             }
         );
-        foreach (Unit unit in SelectedUnitList)
+        foreach (Unit unit in m_selectedUnitList)
         {
             unit.SetSelected(true);
         }
@@ -86,31 +92,31 @@ public class UnitController : MonoBehaviour
     {
         foreach (Unit unit in units)
             unit.SetSelected(true);
-        SelectedUnitList.AddRange(units);
+        m_selectedUnitList.AddRange(units);
     }
     protected void SelectUnitList(Unit [] units)
     {
         foreach (Unit unit in units)
             unit.SetSelected(true);
-        SelectedUnitList.AddRange(units);
+        m_selectedUnitList.AddRange(units);
     }
     protected void SelectUnit(Unit unit)
     {
         unit.SetSelected(true);
-        SelectedUnitList.Add(unit);
+        m_selectedUnitList.Add(unit);
     }
     protected void UnselectUnit(Unit unit)
     {
         unit.SetSelected(false);
-        SelectedUnitList.Remove(unit);
+        m_selectedUnitList.Remove(unit);
     }
     virtual public void AddUnit(Unit unit)
     {
-        unit.OnDeadEvent += () =>
+        unit.onDeadEvent += () =>
         {
             TotalBuildPoints += unit.Cost;
             if (unit.IsSelected)
-                SelectedUnitList.Remove(unit);
+                m_selectedUnitList.Remove(unit);
             UnitList.Remove(unit);
         };
         UnitList.Add(unit);
@@ -137,51 +143,51 @@ public class UnitController : MonoBehaviour
             return;
         }
 
-        factory.OnDeadEvent += () =>
+        factory.onDeadEvent += () =>
         {
             TotalBuildPoints += factory.Cost;
             if (factory.IsSelected)
-                SelectedFactory = null;
-            FactoryList.Remove(factory);
+                m_selectedFactory = null;
+            m_factoryList.Remove(factory);
         };
-        FactoryList.Add(factory);
+        m_factoryList.Add(factory);
     }
     virtual protected void SelectFactory(Factory factory)
     {
         if (factory == null || factory.IsUnderConstruction)
             return;
 
-        SelectedFactory = factory;
-        SelectedFactory.SetSelected(true);
+        m_selectedFactory = factory;
+        m_selectedFactory.SetSelected(true);
         UnselectAllUnits();
     }
     virtual protected void UnselectCurrentFactory()
     {
-        if (SelectedFactory != null)
-            SelectedFactory.SetSelected(false);
-        SelectedFactory = null;
+        if (m_selectedFactory != null)
+            m_selectedFactory.SetSelected(false);
+        m_selectedFactory = null;
     }
     protected bool RequestUnitBuild(int unitMenuIndex)
     {
-        if (SelectedFactory == null)
+        if (m_selectedFactory == null)
             return false;
 
-        return SelectedFactory.RequestUnitBuild(unitMenuIndex);
+        return m_selectedFactory.RequestUnitBuild(unitMenuIndex);
     }
     protected bool RequestFactoryBuild(int factoryIndex, Vector3 buildPos)
     {
-        if (SelectedFactory == null)
+        if (m_selectedFactory == null)
             return false;
 
-        int cost = SelectedFactory.GetFactoryCost(factoryIndex);
+        int cost = m_selectedFactory.GetFactoryCost(factoryIndex);
         if (TotalBuildPoints < cost)
             return false;
 
         // Check if positon is valid
-        if (SelectedFactory.CanPositionFactory(factoryIndex, buildPos) == false)
+        if (m_selectedFactory.CanPositionFactory(factoryIndex, buildPos) == false)
             return false;
 
-        Factory newFactory = SelectedFactory.StartBuildFactory(factoryIndex, buildPos);
+        Factory newFactory = m_selectedFactory.StartBuildFactory(factoryIndex, buildPos);
         if (newFactory != null)
         {
             AddFactory(newFactory);
@@ -197,27 +203,27 @@ public class UnitController : MonoBehaviour
     virtual protected void Awake()
     {
         UnitList = new List<Unit>();
-        string rootName = Team.ToString() + "Team";
-        TeamRoot = GameObject.Find(rootName)?.transform;
-        if (TeamRoot)
+        string rootName = m_team.ToString() + "Team";
+        m_teamRoot = GameObject.Find(rootName)?.transform;
+        if (m_teamRoot)
             Debug.LogFormat("TeamRoot {0} found !", rootName);
     }
     virtual protected void Start ()
     {
         CapturedTargets = 0;
-        TotalBuildPoints = StartingBuildPoints;
+        TotalBuildPoints = m_startingBuildPoints;
 
         // get all team factory already in scene
         Factory [] allFactories = FindObjectsOfType<Factory>();
         foreach(Factory factory in allFactories)
         {
-            if (factory.GetTeam() == GetTeam())
+            if (factory.Team == Team)
             {
                 AddFactory(factory);
             }
         }
 
-        Debug.Log("found " + FactoryList.Count + " factory for team " + GetTeam().ToString());
+        Debug.Log("found " + m_factoryList.Count + " factory for team " + Team.ToString());
     }
     virtual protected void Update ()
     {

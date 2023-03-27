@@ -2,19 +2,29 @@ using UnityEngine;
 
 public class EntityVisibility : MonoBehaviour
 {
-    public ETeam Team;
-    public float Range;
+    //  Variables
+    //  ---------
+
+    public ETeam team;
+    public float range;
+
+    private bool m_isVisibleDefault = true;
+    private bool m_isVisibleUI = true;
+
+    [SerializeField]
+    private GameObject[] m_gameObjectDefaultLayer;
+    [SerializeField]
+    private GameObject[] m_gameObjectUILayer;
+    [SerializeField]
+    private GameObject[] m_gameObjectMinimapLayer;
+
+    //  Properties
+    //  ----------
+
     public Vector2 Position => new Vector2(transform.position.x, transform.position.z);
 
-    private bool IsVisibleDefault = true;
-    private bool IsVisibleUI = true;
-
-    [SerializeField]
-    private GameObject[] GameObjectDefaultLayer;
-    [SerializeField]
-    private GameObject[] GameObjectUILayer;
-    [SerializeField]
-    private GameObject[] GameObjectMinimapLayer;
+    //  Functions
+    //  ---------
 
     public void SetVisible(bool visible)
 	{
@@ -24,54 +34,54 @@ public class EntityVisibility : MonoBehaviour
 
     public void SetVisibleUI(bool visible)
 	{
-        if (IsVisibleUI == visible)
+        if (m_isVisibleUI == visible)
             return;
 
         if (visible)
 		{
-            IsVisibleUI = true;
-            if (GameObjectUILayer.Length > 0)
+            m_isVisibleUI = true;
+            if (m_gameObjectUILayer.Length > 0)
             {
-                SetLayer(GameObjectUILayer[0], LayerMask.NameToLayer("UI"));
+                SetLayer(m_gameObjectUILayer[0], LayerMask.NameToLayer("UI"));
             }
         }
         else
         {
-            IsVisibleUI = false;
-            if (GameObjectUILayer.Length > 0)
+            m_isVisibleUI = false;
+            if (m_gameObjectUILayer.Length > 0)
             {
-                SetLayer(GameObjectUILayer[0], LayerMask.NameToLayer("Hidden"));
+                SetLayer(m_gameObjectUILayer[0], LayerMask.NameToLayer("Hidden"));
             }
         }
     }
 
     public void SetVisibleDefault(bool visible)
     {
-        if (IsVisibleDefault == visible)
+        if (m_isVisibleDefault == visible)
             return;
 
         if (visible)
         {
-            IsVisibleDefault = true;
-            if (GameObjectDefaultLayer.Length > 0)
+            m_isVisibleDefault = true;
+            if (m_gameObjectDefaultLayer.Length > 0)
             {
-                SetLayer(GameObjectDefaultLayer[0], LayerMask.NameToLayer("Default"));
+                SetLayer(m_gameObjectDefaultLayer[0], LayerMask.NameToLayer("Default"));
             }
-            if (GameObjectMinimapLayer.Length > 0)
+            if (m_gameObjectMinimapLayer.Length > 0)
             {
-                SetLayer(GameObjectMinimapLayer[0], LayerMask.NameToLayer("Minimap"));
+                SetLayer(m_gameObjectMinimapLayer[0], LayerMask.NameToLayer("Minimap"));
             }
         }
         else
         {
-            IsVisibleDefault = false;
-            if (GameObjectDefaultLayer.Length > 0)
+            m_isVisibleDefault = false;
+            if (m_gameObjectDefaultLayer.Length > 0)
             {
-                SetLayer(GameObjectDefaultLayer[0], LayerMask.NameToLayer("Hidden"));
+                SetLayer(m_gameObjectDefaultLayer[0], LayerMask.NameToLayer("Hidden"));
             }
-            if (GameObjectMinimapLayer.Length > 0)
+            if (m_gameObjectMinimapLayer.Length > 0)
             {
-                SetLayer(GameObjectMinimapLayer[0], LayerMask.NameToLayer("Hidden"));
+                SetLayer(m_gameObjectMinimapLayer[0], LayerMask.NameToLayer("Hidden"));
             }
         }
     }

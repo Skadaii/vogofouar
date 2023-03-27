@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -105,23 +106,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b615e27b0eef6468e4a05ea42ae0c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 20
-  KeyboardSpeedModifier: 10
-  ZoomSpeed: 400
-  MinHeight: 50
-  MaxHeight: 200
-  MoveSpeedFromZoomCurve:
+  m_moveSpeed: 20
+  m_keyboardSpeedModifier: 10
+  m_zoomSpeed: 400
+  m_minHeight: 5
+  m_maxHeight: 200
+  m_moveSpeedFromZoomCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.18902588
+      value: 0.025
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
@@ -129,9 +130,10 @@ MonoBehaviour:
       outSlope: 2
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  TerrainBorder: 90
+  m_terrainBorder: 0
+  m_enableMoveLimits: 1

@@ -297,8 +297,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b442eaf4b252a428bd689056b74b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  UnitData: {fileID: 11400000, guid: 02bf545fde7d7f64d86e63f93a59ee9b, type: 2}
+  m_team: 0
+  m_unitData: {fileID: 11400000, guid: 02bf545fde7d7f64d86e63f93a59ee9b, type: 2}
 --- !u!65 &6593571166977932406
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -346,11 +346,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  Range: 30
-  GameObjectDefaultLayer: []
-  GameObjectUILayer: []
-  GameObjectMinimapLayer: []
+  team: 0
+  range: 0
+  m_gameObjectDefaultLayer: []
+  m_gameObjectUILayer: []
+  m_gameObjectMinimapLayer: []
 --- !u!1 &5495304591573610463
 GameObject:
   m_ObjectHideFlags: 0

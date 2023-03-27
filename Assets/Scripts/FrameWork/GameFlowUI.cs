@@ -3,24 +3,32 @@ using UnityEngine.UI;
 
 public class GameFlowUI : MonoBehaviour
 {
-    Text GameOverText = null;
-    Text WinnerText = null;
-    void Start()
+    //  Variables
+    //  ---------
+
+    private Text m_gameOverText = null;
+    private Text m_winnerText = null;
+
+    //  Functions
+    //  ---------
+
+    private void Start()
     {
-        GameOverText = transform.Find("GameOverText").GetComponent<Text>();
-        GameOverText.gameObject.SetActive(false);
+        m_gameOverText = transform.Find("GameOverText").GetComponent<Text>();
+        m_gameOverText.gameObject.SetActive(false);
 
-        WinnerText = transform.Find("WinnerText").GetComponent<Text>();
-        WinnerText.gameObject.SetActive(false);
+        m_winnerText = transform.Find("WinnerText").GetComponent<Text>();
+        m_winnerText.gameObject.SetActive(false);
 
-        GameServices.GetGameState().OnGameOver += ShowGameResults;
+        GameServices.GameState.onGameOver += ShowGameResults;
     }
-    void ShowGameResults(ETeam winner)
-    {
-        WinnerText.color = GameServices.GetTeamColor(winner);
-        WinnerText.text = "Winner is " + winner.ToString() + " team";
 
-        GameOverText.gameObject.SetActive(true);
-        WinnerText.gameObject.SetActive(true);
+    private void ShowGameResults(ETeam winner)
+    {
+        m_winnerText.color = GameServices.GetTeamColor(winner);
+        m_winnerText.text = "Winner is " + winner.ToString() + " team";
+
+        m_gameOverText.gameObject.SetActive(true);
+        m_winnerText.gameObject.SetActive(true);
     }
 }

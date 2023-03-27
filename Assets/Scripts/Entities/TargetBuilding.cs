@@ -2,148 +2,168 @@
 using UnityEngine.UI;
 public class TargetBuilding : MonoBehaviour
 {
-    [SerializeField]
-    float CaptureGaugeStart = 100f;
-    [SerializeField]
-    float CaptureGaugeSpeed = 1f;
-    [SerializeField]
-    int BuildPoints = 5;
-    [SerializeField]
-    Material BlueTeamMaterial = null;
-    [SerializeField]
-    Material RedTeamMaterial = null;
 
-    Material NeutralMaterial = null;
-    MeshRenderer BuildingMeshRenderer = null;
-    Image GaugeImage;
-    Image MinimapImage;
+    //  Variables
+    //  ---------
 
-    int[] TeamScore;
-    float CaptureGaugeValue;
-    ETeam OwningTeam = ETeam.Neutral;
-    ETeam CapturingTeam = ETeam.Neutral;
-    public ETeam GetTeam() { return OwningTeam; }
+    [SerializeField]
+    private float m_captureGaugeStart = 100f;
+    [SerializeField]
+    private float m_captureGaugeSpeed = 1f;
+    [SerializeField]
+    private int m_buildPoints = 5;
+    [SerializeField]
+    private Material m_blueTeamMaterial = null;
+    [SerializeField]
+    private Material m_redTeamMaterial = null;
 
-    private EntityVisibility _Visibility;
+    private Material m_neutralMaterial = null;
+    private MeshRenderer m_buildingMeshRenderer = null;
+    private Image m_gaugeImage;
+    private Image m_minimapImage;
+
+    private int[] m_teamScore;
+    private float m_captureGaugeValue;
+    private ETeam m_owningTeam = ETeam.Neutral;
+    private ETeam m_capturingTeam = ETeam.Neutral;
+
+    private EntityVisibility m_visibility;
+
+    //  Properties
+    //  ----------
+
+    public ETeam Team => m_owningTeam;
+
     public EntityVisibility Visibility
     {
         get
         {
-            if (_Visibility == null)
+            if (m_visibility == null)
             {
-                _Visibility = GetComponent<EntityVisibility>();
+                m_visibility = GetComponent<EntityVisibility>();
             }
-            return _Visibility;
+            return m_visibility;
         }
     }
 
+    //  Functions
+    //  ---------
 
     #region MonoBehaviour methods
+
     void Start()
     {
-        BuildingMeshRenderer = GetComponentInChildren<MeshRenderer>();
-        NeutralMaterial = BuildingMeshRenderer.material;
+        m_buildingMeshRenderer = GetComponentInChildren<MeshRenderer>();
+        m_neutralMaterial = m_buildingMeshRenderer.material;
 
-        GaugeImage = GetComponentInChildren<Image>();
-        if (GaugeImage)
-            GaugeImage.fillAmount = 0f;
-        CaptureGaugeValue = CaptureGaugeStart;
-        TeamScore = new int[2];
-        TeamScore[0] = 0;
-        TeamScore[1] = 0;
+        m_gaugeImage = GetComponentInChildren<Image>();
+        if (m_gaugeImage)
+            m_gaugeImage.fillAmount = 0f;
+        m_captureGaugeValue = m_captureGaugeStart;
+        m_teamScore = new int[2];
+        m_teamScore[0] = 0;
+        m_teamScore[1] = 0;
 
         Transform minimapTransform = transform.Find("MinimapCanvas");
         if (minimapTransform != null)
-            MinimapImage = minimapTransform.GetComponentInChildren<Image>();
+            m_minimapImage = minimapTransform.GetComponentInChildren<Image>();
     }
+
     void Update()
     {
-        if (CapturingTeam == OwningTeam || CapturingTeam == ETeam.Neutral)
+        if (m_capturingTeam == m_owningTeam || m_capturingTeam == ETeam.Neutral)
             return;
 
-        CaptureGaugeValue -= TeamScore[(int)CapturingTeam] * CaptureGaugeSpeed * Time.deltaTime;
+        m_captureGaugeValue -= m_teamScore[(int)m_capturingTeam] * m_captureGaugeSpeed * Time.deltaTime;
 
-        GaugeImage.fillAmount = 1f - CaptureGaugeValue / CaptureGaugeStart;
+        m_gaugeImage.fillAmount = 1f - m_captureGaugeValue / m_captureGaugeStart;
 
-        if (CaptureGaugeValue <= 0f)
+        if (m_captureGaugeValue <= 0f)
         {
-            CaptureGaugeValue = 0f;
-            OnCaptured(CapturingTeam);
+            m_captureGaugeValue = 0f;
+            OnCaptured(m_capturingTeam);
         }
     }
+
     #endregion
 
+
     #region Capture methods
+    
     public void StartCapture(Unit unit)
     {
         if (unit == null)
             return;
 
-        TeamScore[(int)unit.GetTeam()] += unit.Cost;
+        m_teamScore[(int)unit.Team] += unit.Cost;
 
-        if (CapturingTeam == ETeam.Neutral)
+        if (m_capturingTeam == ETeam.Neutral)
         {
-            if (TeamScore[(int)GameServices.GetOpponent(unit.GetTeam())] == 0)
+            if (m_teamScore[(int)GameServices.GetOpponent(unit.Team)] == 0)
             {
-                CapturingTeam = unit.GetTeam();
-                GaugeImage.color = GameServices.GetTeamColor(CapturingTeam);
+                m_capturingTeam = unit.Team;
+                m_gaugeImage.color = GameServices.GetTeamColor(m_capturingTeam);
             }
         }
         else
         {
-            if (TeamScore[(int)GameServices.GetOpponent(unit.GetTeam())] > 0)
+            if (m_teamScore[(int)GameServices.GetOpponent(unit.Team)] > 0)
                 ResetCapture();
         }
     }
+
     public void StopCapture(Unit unit)
     {
         if (unit == null)
             return;
 
-        TeamScore[(int)unit.GetTeam()] -= unit.Cost;
-        if (TeamScore[(int)unit.GetTeam()] == 0)
+        m_teamScore[(int)unit.Team] -= unit.Cost;
+        if (m_teamScore[(int)unit.Team] == 0)
         {
-            ETeam opponentTeam = GameServices.GetOpponent(unit.GetTeam());
-            if (TeamScore[(int)opponentTeam] == 0)
+            ETeam opponentTeam = GameServices.GetOpponent(unit.Team);
+            if (m_teamScore[(int)opponentTeam] == 0)
             {
                 ResetCapture();
             }
             else
             {
-                CapturingTeam = opponentTeam;
-                GaugeImage.color = GameServices.GetTeamColor(CapturingTeam);
+                m_capturingTeam = opponentTeam;
+                m_gaugeImage.color = GameServices.GetTeamColor(m_capturingTeam);
             }
         }
     }
+
     void ResetCapture()
     {
-        CaptureGaugeValue = CaptureGaugeStart;
-        CapturingTeam = ETeam.Neutral;
-        GaugeImage.fillAmount = 0f;
+        m_captureGaugeValue = m_captureGaugeStart;
+        m_capturingTeam = ETeam.Neutral;
+        m_gaugeImage.fillAmount = 0f;
     }
+
     void OnCaptured(ETeam newTeam)
     {
         Debug.Log("target captured by " + newTeam.ToString());
-        if (OwningTeam != newTeam)
+        if (m_owningTeam != newTeam)
         {
             UnitController teamController = GameServices.GetControllerByTeam(newTeam);
             if (teamController != null)
-                teamController.CaptureTarget(BuildPoints);
+                teamController.CaptureTarget(m_buildPoints);
 
-            if (OwningTeam != ETeam.Neutral)
+            if (m_owningTeam != ETeam.Neutral)
             {
                 // remove points to previously owning team
-                teamController = GameServices.GetControllerByTeam(OwningTeam);
+                teamController = GameServices.GetControllerByTeam(m_owningTeam);
                 if (teamController != null)
-                    teamController.LoseTarget(BuildPoints);
+                    teamController.LoseTarget(m_buildPoints);
             }
         }
 
         ResetCapture();
-        OwningTeam = newTeam;
-        if (Visibility) { Visibility.Team = OwningTeam; }
-        if (MinimapImage) { MinimapImage.color = GameServices.GetTeamColor(OwningTeam); }
-        BuildingMeshRenderer.material = newTeam == ETeam.Blue ? BlueTeamMaterial : RedTeamMaterial;
+        m_owningTeam = newTeam;
+        if (Visibility) { Visibility.team = m_owningTeam; }
+        if (m_minimapImage) { m_minimapImage.color = GameServices.GetTeamColor(m_owningTeam); }
+        m_buildingMeshRenderer.material = newTeam == ETeam.Blue ? m_blueTeamMaterial : m_redTeamMaterial;
     }
+
     #endregion
 }

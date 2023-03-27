@@ -12,54 +12,66 @@ public enum ETeam
 [RequireComponent(typeof(GameState))]
 public class GameServices : MonoBehaviour
 {
+    //  Variables
+    //  ---------
+
     [SerializeField, Tooltip("Generic material used for 3D models, in the following order : blue, red and green")]
-    Material[] TeamMaterials = new Material[3];
+    private Material[] m_teamMaterials = new Material[3];
 
     [SerializeField, Tooltip("Unplayable terrain border size")]
-    float NonPlayableBorder = 100f;
+    private float m_nonPlayableBorder = 100f;
 
     [SerializeField, Tooltip("Playable bounds size if no terrain is found")]
-    float DefaultPlayableBoundsSize = 100f;
+    private float m_defaultPlayableBoundsSize = 100f;
 
-    static GameServices Instance = null;
+    private static GameServices m_instance = null;
 
-    UnitController[] ControllersArray;
-    TargetBuilding[] TargetBuildingArray;
-    GameState CurrentGameState = null;
+    private UnitController[] m_controllersArray;
+    private TargetBuilding[] m_targetBuildingArray;
+    private GameState m_currentGameState = null;
+ 
+    private Terrain m_currentTerrain = null;
+    private Bounds m_playableBounds;
 
-    Terrain CurrentTerrain = null;
-    Bounds PlayableBounds;
+    //  Properties
+    //  ----------
+
+    public static float NonPlayableBorder => m_instance.m_nonPlayableBorder;
+    public static Terrain Terrain => m_instance.m_currentTerrain;
+    public static Bounds PlayableBounds => m_instance.m_playableBounds;
+
+    public static Vector3 TerrainSize
+    {
+        get
+        {
+            if (m_instance.m_currentTerrain)
+                return m_instance.m_currentTerrain.terrainData.bounds.size;
+
+            return new Vector3(m_instance.m_defaultPlayableBoundsSize, 10.0f, m_instance.m_defaultPlayableBoundsSize);
+        }
+    }
+    public static GameState GameState => m_instance.m_currentGameState;
+
+    //  Functions
+    //  ---------
 
     #region Static methods
-    public static GameServices GetGameServices()
-    {
-        return Instance;
-    }
-    public static GameState GetGameState()
-    {
-        return Instance.CurrentGameState;
-    }
+    //public static GameServices GetGameServices() => m_instance;
     public static UnitController GetControllerByTeam(ETeam team)
     {
-        if (Instance.ControllersArray.Length < (int)team)
+        if (m_instance.m_controllersArray.Length < (int)team)
             return null;
-        return Instance.ControllersArray[(int)team];
+        return m_instance.m_controllersArray[(int)team];
     }
-    public static Material GetTeamMaterial(ETeam team)
-    {
-        return Instance.TeamMaterials[(int)team];
-    }
-    public static ETeam GetOpponent(ETeam team)
-    {
-        return Instance.CurrentGameState.GetOpponent(team);
-    }
+    public static Material GetTeamMaterial(ETeam team) => m_instance.m_teamMaterials[(int)team];
+    public static ETeam GetOpponent(ETeam team) => m_instance.m_currentGameState.GetOpponent(team);
 
-    public static TargetBuilding[] GetTargetBuildings() { return Instance.TargetBuildingArray; }
+    public static TargetBuilding[] GetTargetBuildings() => m_instance.m_targetBuildingArray;
 
     // return RGB color struct for each team
     public static Color GetTeamColor(ETeam team)
     {
-        switch(team)
+        switch (team)
         {
             case ETeam.Blue:
                 return Color.blue;
@@ -71,81 +83,65 @@ public class GameServices : MonoBehaviour
                 return Color.grey;
         }
     }
-    public static float GetNonPlayableBorder { get { return Instance.NonPlayableBorder; } }
-    public static Terrain GetTerrain { get { return Instance.CurrentTerrain; } }
-    public static Bounds GetPlayableBounds()
-    {
-        return Instance.PlayableBounds;
-    }
-    public static Vector3 GetTerrainSize()
-    {
-        return Instance.TerrainSize;
-    }
-    public static bool IsPosInPlayableBounds(Vector3 pos)
-    {
-        if (GetPlayableBounds().Contains(pos))
-            return true;
-
-        return false;
-    }
-    public Vector3 TerrainSize
-    {
-        get
-        {
-            if (CurrentTerrain)
-                return CurrentTerrain.terrainData.bounds.size;
-            return new Vector3(DefaultPlayableBoundsSize, 10.0f, DefaultPlayableBoundsSize);
-        }
-    }
+    
+    public static bool IsPosInPlayableBounds(Vector3 pos) => PlayableBounds.Contains(pos);
 
     #endregion
 
     #region MonoBehaviour methods
-    void Awake()
+
+    private void Awake()
     {
-        Instance = this;
+        if(m_instance != null)
+        {
+            Destroy(this);
+            return;
+        }
+
+        m_instance = this;
 
         // Retrieve controllers from scene for each team
-        ControllersArray = new UnitController[2];
+        m_controllersArray = new UnitController[2];
         foreach (UnitController controller in FindObjectsOfType<UnitController>())
         {
-            ControllersArray[(int)controller.GetTeam()] = controller;
+            m_controllersArray[(int)controller.Team] = controller;
         }
 
         // Store TargetBuildings
-        TargetBuildingArray = FindObjectsOfType<TargetBuilding>();
+        m_targetBuildingArray = FindObjectsOfType<TargetBuilding>();
 
         // Store GameState ref
-        if (CurrentGameState == null)
-            CurrentGameState = GetComponent<GameState>();
+        if (m_currentGameState == null)
+            m_currentGameState = GetComponent<GameState>();
 
         // Assign first found terrain
         foreach (Terrain terrain in FindObjectsOfType<Terrain>())
         {
-            CurrentTerrain = terrain;
+            m_currentTerrain = terrain;
             //Debug.Log("terrainData " + CurrentTerrain.terrainData.bounds.ToString());
             break;
         }
 
-        if (CurrentTerrain)
+        if (m_currentTerrain)
         {
-            PlayableBounds = CurrentTerrain.terrainData.bounds;
+            m_playableBounds = m_currentTerrain.terrainData.bounds;
             Vector3 clampedOne = new Vector3(1f, 0f, 1f);
             Vector3 heightReduction = Vector3.up * 0.1f; // $$ hack : this is to prevent selectioning / building in high areas
-            PlayableBounds.SetMinMax(PlayableBounds.min + clampedOne * NonPlayableBorder / 2f, PlayableBounds.max - clampedOne * NonPlayableBorder / 2f - heightReduction);
+            m_playableBounds.SetMinMax(m_playableBounds.min + clampedOne * m_nonPlayableBorder / 2f, m_playableBounds.max - clampedOne * m_nonPlayableBorder / 2f - heightReduction);
         }
         else
         {
             Debug.LogWarning("could not find terrain asset in scene, setting default PlayableBounds");
             Vector3 clampedOne = new Vector3(1f, 0f, 1f);
-            PlayableBounds.SetMinMax(   new Vector3(-DefaultPlayableBoundsSize, -10.0f, -DefaultPlayableBoundsSize) + clampedOne * NonPlayableBorder / 2f,
-                                        new Vector3(DefaultPlayableBoundsSize, 10.0f, DefaultPlayableBoundsSize) - clampedOne * NonPlayableBorder / 2f);
+            m_playableBounds.SetMinMax(   new Vector3(-m_defaultPlayableBoundsSize, -10.0f, -m_defaultPlayableBoundsSize) + clampedOne * m_nonPlayableBorder / 2f,
+                                        new Vector3(m_defaultPlayableBoundsSize, 10.0f, m_defaultPlayableBoundsSize) - clampedOne * m_nonPlayableBorder / 2f);
         }
     }
-    void OnDrawGizmos()
+
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(PlayableBounds.center, PlayableBounds.size);
+        Gizmos.DrawWireCube(m_playableBounds.center, m_playableBounds.size);
     }
     #endregion
 }

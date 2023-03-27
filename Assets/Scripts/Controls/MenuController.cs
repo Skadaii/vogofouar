@@ -8,37 +8,37 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     [SerializeField]
-    Transform FactoryMenuCanvas = null;
-    public GraphicRaycaster BuildMenuRaycaster { get; private set; }
+    private Transform m_factoryMenuCanvas = null;
 
-    UnitController Controller = null;
-    GameObject FactoryMenuPanel = null;
-    Text BuildPointsText = null;
-    Text CapturedTargetsText = null;
-    Button[] BuildUnitButtons = null;
-    Button[] BuildFactoryButtons = null;
-    Button CancelBuildButton = null;
-    Text[] BuildQueueTexts = null;
+    private UnitController m_controller = null;
+    private GameObject m_factoryMenuPanel = null;
+    private Text m_buildPointsText = null;
+    private Text m_capturedTargetsText = null;
+    private Button[] m_buildUnitButtons = null;
+    private Button[] m_buildFactoryButtons = null;
+    private Button m_cancelBuildButton = null;
+    private Text[] m_buildQueueTexts = null;
+    public GraphicRaycaster BuildMenuRaycaster { get; private set; }
 
     public void HideFactoryMenu()
     {
-        if (FactoryMenuPanel)
-            FactoryMenuPanel.SetActive(false);
+        if (m_factoryMenuPanel)
+            m_factoryMenuPanel.SetActive(false);
     }
     public void ShowFactoryMenu()
     {
-        if (FactoryMenuPanel)
-            FactoryMenuPanel.SetActive(true);
+        if (m_factoryMenuPanel)
+            m_factoryMenuPanel.SetActive(true);
     }
     public void UpdateBuildPointsUI()
     {
-        if (BuildPointsText != null)
-            BuildPointsText.text = "Build Points : " + Controller.TotalBuildPoints;
+        if (m_buildPointsText != null)
+            m_buildPointsText.text = "Build Points : " + m_controller.TotalBuildPoints;
     }
     public void UpdateCapturedTargetsUI()
     {
-        if (CapturedTargetsText != null)
-            CapturedTargetsText.text = "Captured Targets : " + Controller.CapturedTargets;
+        if (m_capturedTargetsText != null)
+            m_capturedTargetsText.text = "Captured Targets : " + m_controller.CapturedTargets;
     }
     public void UpdateFactoryBuildQueueUI(int i, Factory selectedFactory)
     {
@@ -47,17 +47,17 @@ public class MenuController : MonoBehaviour
         int queueCount = selectedFactory.GetQueuedCount(i);
         if (queueCount > 0)
         {
-            BuildQueueTexts[i].text = "+" + queueCount;
-            BuildQueueTexts[i].enabled = true;
+            m_buildQueueTexts[i].text = "+" + queueCount;
+            m_buildQueueTexts[i].enabled = true;
         }
         else
         {
-            BuildQueueTexts[i].enabled = false;
+            m_buildQueueTexts[i].enabled = false;
         }
     }
     public void HideAllFactoryBuildQueue()
     {
-        foreach (Text text in BuildQueueTexts)
+        foreach (Text text in m_buildQueueTexts)
         {
             if (text)
                 text.enabled = false;
@@ -68,11 +68,11 @@ public class MenuController : MonoBehaviour
         // unregister build buttons
         for (int i = 0; i < availableUnitsCount; i++)
         {
-            BuildUnitButtons[i].onClick.RemoveAllListeners();
+            m_buildUnitButtons[i].onClick.RemoveAllListeners();
         }
         for (int i = 0; i < availableFactoriesCount; i++)
         {
-            BuildFactoryButtons[i].onClick.RemoveAllListeners();
+            m_buildFactoryButtons[i].onClick.RemoveAllListeners();
         }
     }
 
@@ -85,32 +85,32 @@ public class MenuController : MonoBehaviour
         int i = 0;
         for (; i < selectedFactory.AvailableUnitsCount; i++)
         {
-            BuildUnitButtons[i].gameObject.SetActive(true);
+            m_buildUnitButtons[i].gameObject.SetActive(true);
 
             int index = i; // capture index value for event closure
-            BuildUnitButtons[i].onClick.AddListener(() =>
+            m_buildUnitButtons[i].onClick.AddListener(() =>
             {
                 if (requestUnitBuildMethod(index))
                     UpdateFactoryBuildQueueUI(index, selectedFactory);
             });
 
-            Text[] buttonTextArray = BuildUnitButtons[i].GetComponentsInChildren<Text>();
+            Text[] buttonTextArray = m_buildUnitButtons[i].GetComponentsInChildren<Text>();
             Text buttonText = buttonTextArray[0];//BuildUnitButtons[i].GetComponentInChildren<Text>();
             UnitDataScriptable data = selectedFactory.GetBuildableUnitData(i);
-            buttonText.text = data.Caption + "(" + data.Cost + ")";
+            buttonText.text = data.caption + "(" + data.cost + ")";
 
             // Update queue count UI
-            BuildQueueTexts[i] = buttonTextArray[1];
+            m_buildQueueTexts[i] = buttonTextArray[1];
             UpdateFactoryBuildQueueUI(i, selectedFactory);
         }
         // hide remaining buttons
-        for (; i < BuildUnitButtons.Length; i++)
+        for (; i < m_buildUnitButtons.Length; i++)
         {
-            BuildUnitButtons[i].gameObject.SetActive(false);
+            m_buildUnitButtons[i].gameObject.SetActive(false);
         }
 
         // activate Cancel button
-        CancelBuildButton.onClick.AddListener(  () =>
+        m_cancelBuildButton.onClick.AddListener(  () =>
                                                 {
                                                     selectedFactory?.CancelCurrentBuild();
                                                     HideAllFactoryBuildQueue();
@@ -121,59 +121,59 @@ public class MenuController : MonoBehaviour
         i = 0;
         for (; i < selectedFactory.AvailableFactoriesCount; i++)
         {
-            BuildFactoryButtons[i].gameObject.SetActive(true);
+            m_buildFactoryButtons[i].gameObject.SetActive(true);
 
             int index = i; // capture index value for event closure
-            BuildFactoryButtons[i].onClick.AddListener(() =>
+            m_buildFactoryButtons[i].onClick.AddListener(() =>
             {
                 enterFactoryBuildModeMethod(index);
             });
 
-            Text buttonText = BuildFactoryButtons[i].GetComponentInChildren<Text>();
+            Text buttonText = m_buildFactoryButtons[i].GetComponentInChildren<Text>();
             FactoryDataScriptable data = selectedFactory.GetBuildableFactoryData(i);
-            buttonText.text = data.Caption + "(" + data.Cost + ")";
+            buttonText.text = data.caption + "(" + data.cost + ")";
         }
         // hide remaining buttons
-        for (; i < BuildFactoryButtons.Length; i++)
+        for (; i < m_buildFactoryButtons.Length; i++)
         {
-            BuildFactoryButtons[i].gameObject.SetActive(false);
+            m_buildFactoryButtons[i].gameObject.SetActive(false);
         }
     }
     void Awake()
     {
-        if (FactoryMenuCanvas == null)
+        if (m_factoryMenuCanvas == null)
         {
             Debug.LogWarning("FactoryMenuCanvas not assigned in inspector");
         }
         else
         {
-            Transform FactoryMenuPanelTransform = FactoryMenuCanvas.Find("FactoryMenu_Panel");
+            Transform FactoryMenuPanelTransform = m_factoryMenuCanvas.Find("FactoryMenu_Panel");
             if (FactoryMenuPanelTransform)
             {
-                FactoryMenuPanel = FactoryMenuPanelTransform.gameObject;
-                FactoryMenuPanel.SetActive(false);
+                m_factoryMenuPanel = FactoryMenuPanelTransform.gameObject;
+                m_factoryMenuPanel.SetActive(false);
             }
-            BuildMenuRaycaster = FactoryMenuCanvas.GetComponent<GraphicRaycaster>();
-            Transform BuildPointsTextTransform = FactoryMenuCanvas.Find("BuildPointsText");
+            BuildMenuRaycaster = m_factoryMenuCanvas.GetComponent<GraphicRaycaster>();
+            Transform BuildPointsTextTransform = m_factoryMenuCanvas.Find("BuildPointsText");
             if (BuildPointsTextTransform)
             {
-                BuildPointsText = BuildPointsTextTransform.GetComponent<Text>();
+                m_buildPointsText = BuildPointsTextTransform.GetComponent<Text>();
             }
-            Transform CapturedTargetsTextTransform = FactoryMenuCanvas.Find("CapturedTargetsText");
+            Transform CapturedTargetsTextTransform = m_factoryMenuCanvas.Find("CapturedTargetsText");
             if (CapturedTargetsTextTransform)
             {
-                CapturedTargetsText = CapturedTargetsTextTransform.GetComponent<Text>();
+                m_capturedTargetsText = CapturedTargetsTextTransform.GetComponent<Text>();
             }
         }
 
-        Controller = GetComponent<UnitController>();
+        m_controller = GetComponent<UnitController>();
     }
     void Start()
     {
-        BuildUnitButtons = FactoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
-        BuildFactoryButtons = FactoryMenuPanel.transform.Find("BuildFactoryMenu_Panel").GetComponentsInChildren<Button>();
-        CancelBuildButton = FactoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
-        BuildQueueTexts = new Text[BuildUnitButtons.Length];
+        m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
+        m_buildFactoryButtons = m_factoryMenuPanel.transform.Find("BuildFactoryMenu_Panel").GetComponentsInChildren<Button>();
+        m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
+        m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
     }
 }
 

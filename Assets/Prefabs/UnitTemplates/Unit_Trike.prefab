@@ -53,8 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b442eaf4b252a428bd689056b74b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  UnitData: {fileID: 11400000, guid: b4a2cf66d48b98043b5a7e8bfb7b27a4, type: 2}
+  m_team: 0
+  m_unitData: {fileID: 11400000, guid: b4a2cf66d48b98043b5a7e8bfb7b27a4, type: 2}
 --- !u!65 &3563715967324713862
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -118,13 +118,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  Range: 30
-  GameObjectDefaultLayer:
-  - {fileID: 331520789459095020}
-  GameObjectUILayer:
-  - {fileID: 5237823902566746043}
-  GameObjectMinimapLayer: []
+  team: 0
+  range: 0
+  m_gameObjectDefaultLayer: []
+  m_gameObjectUILayer: []
+  m_gameObjectMinimapLayer: []
 --- !u!1 &4612296022152547433
 GameObject:
   m_ObjectHideFlags: 0
@@ -656,12 +654,6 @@ PrefabInstance:
 --- !u!4 &331520789458754164 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 464244, guid: 14159c7587524e34c83af878c6b0cc70,
-    type: 3}
-  m_PrefabInstance: {fileID: 331520789459209984}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &331520789459095020 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 148204, guid: 14159c7587524e34c83af878c6b0cc70,
     type: 3}
   m_PrefabInstance: {fileID: 331520789459209984}
   m_PrefabAsset: {fileID: 0}

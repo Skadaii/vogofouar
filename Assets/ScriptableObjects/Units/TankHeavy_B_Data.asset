@@ -12,24 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70c53fdf09515d64d9c0162b6d69219c, type: 3}
   m_Name: TankHeavy_B_Data
   m_EditorClassIdentifier: 
-  TypeId: 5
-  Caption: Heavy Tank B
-  Cost: 5
-  BuildDuration: 15
-  MaxHP: 200
-  DPS: 60
-  AttackFrequency: 2
-  AttackDistanceMax: 40
-  CaptureDistanceMax: 20
-  CanRepair: 0
-  RPS: 10
-  RepairFrequency: 1
-  RepairDistanceMax: 10
-  Speed: 3.5
-  AngularSpeed: 100
-  Acceleration: 8
-  IsFlying: 0
-  BulletPrefab: {fileID: 6953520636668906323, guid: 1061d596cce45944a8ae97b48af1ac15,
+  typeId: 5
+  caption: Heavy Tank B
+  cost: 5
+  buildDuration: 15
+  maxHP: 200
+  dps: 60
+  attackFrequency: 2
+  attackDistanceMax: 40
+  captureDistanceMax: 20
+  canRepair: 0
+  rps: 10
+  repairFrequency: 1
+  repairDistanceMax: 10
+  speed: 3.5
+  angularSpeed: 100
+  acceleration: 8
+  isFlying: 0
+  bulletPrefab: {fileID: 6953520636668906323, guid: 1061d596cce45944a8ae97b48af1ac15,
     type: 3}
-  DeathFXPrefab: {fileID: 1685874166552172, guid: 2dc5347a44240ea4597cafb2d1d7c160,
+  deathFXPrefab: {fileID: 1685874166552172, guid: 2dc5347a44240ea4597cafb2d1d7c160,
     type: 3}

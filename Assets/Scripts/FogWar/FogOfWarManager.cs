@@ -4,34 +4,43 @@ using UnityEngine;
 
 public class FogOfWarManager : MonoBehaviour
 {
-    private PlayerController Controller;
-	public ETeam Team => Controller.GetTeam();
+	//	Variables
+	//	---------
+
+    private PlayerController m_controller;
 
 	[SerializeField]
-    private FogOfWarSystem FOWSystem;
+    private FogOfWarSystem m_FOWSystem;
 
-	public FogOfWarSystem GetFogOfWarSystem
+    [SerializeField]
+    private float m_updateFrequency = 0.05f;
+
+    private float m_lastUpdateDate = 0f;
+
+    //	Properties
+    //	----------
+
+    public ETeam Team => m_controller.Team;
+
+    public FogOfWarSystem GetFogOfWarSystem
 	{
-		get { return FOWSystem; }
+		get { return m_FOWSystem; }
 	}
 
-	[SerializeField]
-	private float UpdateFrequency = 0.05f;
-
-	private float LastUpdateDate = 0f;
-
+	//	Functions
+	//	---------
 
     void Start()
     {
-        Controller = FindObjectOfType<PlayerController>();
-        FOWSystem.Init();
+        m_controller = FindObjectOfType<PlayerController>();
+        m_FOWSystem.Init();
     }
 
     private void Update()
     {
-		if ((Time.time - LastUpdateDate) > UpdateFrequency)
+		if ((Time.time - m_lastUpdateDate) > m_updateFrequency)
 		{
-			LastUpdateDate = Time.time;
+			m_lastUpdateDate = Time.time;
 			UpdateVisibilityTextures();
 			UpdateFactoriesVisibility();
 			UpdateUnitVisibility();
@@ -41,9 +50,9 @@ public class FogOfWarManager : MonoBehaviour
 
 	private void UpdateVisibilityTextures()
 	{
-		FOWSystem.ClearVisibility();
-		FOWSystem.UpdateVisions(FindObjectsOfType<EntityVisibility>());
-		FOWSystem.UpdateTextures(1 << (int)Team);
+		m_FOWSystem.ClearVisibility();
+		m_FOWSystem.UpdateVisions(FindObjectsOfType<EntityVisibility>());
+		m_FOWSystem.UpdateTextures(1 << (int)Team);
 	}
 
 	private void UpdateUnitVisibility()
@@ -59,7 +68,7 @@ public class FogOfWarManager : MonoBehaviour
 		{
 			if (unit.Visibility == null) { continue; }
 
-			if (FOWSystem.IsVisible(1 << (int)Team, unit.Visibility.Position))
+			if (m_FOWSystem.IsVisible(1 << (int)Team, unit.Visibility.Position))
 			{
 				unit.Visibility.SetVisible(true);
 			}
@@ -76,7 +85,7 @@ public class FogOfWarManager : MonoBehaviour
 		{
 			if (building.Visibility == null) { continue; }
 
-            if (FOWSystem.IsVisible(1 << (int)Team, building.Visibility.Position))
+            if (m_FOWSystem.IsVisible(1 << (int)Team, building.Visibility.Position))
 			{
 				building.Visibility.SetVisibleUI(true);
 			}
@@ -85,7 +94,7 @@ public class FogOfWarManager : MonoBehaviour
 				building.Visibility.SetVisibleUI(false);
 			}
 
-			if (FOWSystem.WasVisible(1 << (int)Team, building.Visibility.Position))
+			if (m_FOWSystem.WasVisible(1 << (int)Team, building.Visibility.Position))
 			{
                 building.Visibility.SetVisibleDefault(true);
             }
@@ -105,7 +114,7 @@ public class FogOfWarManager : MonoBehaviour
 
 		foreach (Factory factory in GameServices.GetControllerByTeam(Team.GetOpponent()).GetFactoryList)
 		{
-			if (FOWSystem.IsVisible(1 << (int)Team, factory.Visibility.Position))
+			if (m_FOWSystem.IsVisible(1 << (int)Team, factory.Visibility.Position))
 			{
 				factory.Visibility.SetVisibleUI(true);
 			}
@@ -114,7 +123,7 @@ public class FogOfWarManager : MonoBehaviour
                 factory.Visibility.SetVisibleUI(false);
             }
 
-            if (FOWSystem.WasVisible(1 << (int)Team, factory.Visibility.Position))
+            if (m_FOWSystem.WasVisible(1 << (int)Team, factory.Visibility.Position))
 			{
                 factory.Visibility.SetVisibleDefault(true);
             }

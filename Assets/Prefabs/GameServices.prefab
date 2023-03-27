@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -44,11 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c89977a4d5d69504e9265fd53933f9e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeamMaterials:
+  m_teamMaterials:
   - {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
   - {fileID: 2100000, guid: 03993c9801677ca4b9741101b3033488, type: 2}
   - {fileID: 2100000, guid: 8d99f6689328c0c479f78811db5e37ec, type: 2}
-  gameState: {fileID: 0}
+  m_nonPlayableBorder: 0
+  m_defaultPlayableBoundsSize: 100
 --- !u!114 &4669120816251285810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,5 +63,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd50dd5cc20f88469a89b1e944d0705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirstTeamColor: 0
-  SecondTeamColor: 1
+  firstTeamColor: 0
+  secondTeamColor: 1

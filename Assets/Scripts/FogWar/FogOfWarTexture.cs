@@ -3,42 +3,48 @@ using UnityEngine;
 
 public class FogOfWarTexture : MonoBehaviour
 {
-    public Texture2D Texture;
+    //  Variables
+    //  ---------
+
+    public Texture2D texture;
 
     [SerializeField]
-    private Color GreyColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);
+    private Color m_greyColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);
     [SerializeField]
-    protected Color WhiteColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+    protected Color m_whiteColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     [SerializeField]
-    private Color StartColor = new Color(0, 0, 0, 1.0f);
+    private Color m_startColor = new Color(0, 0, 0, 1.0f);
 
     [SerializeField]
-    private SpriteRenderer SpriteRenderer;
+    private SpriteRenderer m_spriteRenderer;
 
     [SerializeField]
-    private float InterpolateSpeed = 50f;
+    private float m_interpolateSpeed = 50f;
 
     [NonSerialized]
-    private Color[] Colors;
+    private Color[] m_colors;
+
+    //  Functions
+    //  ---------
 
     private void Start()
     {
-        SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void CreateTexture(int width, int height, Vector2 scale)
     {
-        Texture = new Texture2D(width, height);
-        SpriteRenderer.sprite = Sprite.Create(Texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 1);
-        SpriteRenderer.transform.localScale = scale;
+        texture = new Texture2D(width, height);
+        m_spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 1);
+        m_spriteRenderer.transform.localScale = scale;
 
         int size = width * height;
-        Colors = new Color[size];
+        m_colors = new Color[size];
         for (int i = 0; i < size; ++i)
-            Colors[i] = StartColor;
+            m_colors[i] = m_startColor;
 
-        Texture.SetPixels(Colors);
-        Texture.Apply();
+        texture.SetPixels(m_colors);
+        texture.Apply();
     }
 
     public void SetTexture(Grid visibleGrid, Grid previousVisibleGrid, int team)
@@ -48,17 +54,17 @@ public class FogOfWarTexture : MonoBehaviour
             bool isVisible = (visibleGrid.Get(i) & team) == team;
             bool wasVisible = (previousVisibleGrid.Get(i) & team) == team;
 
-            Color newColor = StartColor;
+            Color newColor = m_startColor;
             if (isVisible)
-                newColor = WhiteColor;
+                newColor = m_whiteColor;
             else if (wasVisible)
-                newColor = GreyColor;
+                newColor = m_greyColor;
 
-            newColor.r = Mathf.Lerp(Colors[i].r, newColor.r, Time.deltaTime * InterpolateSpeed);
-            Colors[i] = newColor;
+            newColor.r = Mathf.Lerp(m_colors[i].r, newColor.r, Time.deltaTime * m_interpolateSpeed);
+            m_colors[i] = newColor;
         }
 
-        Texture.SetPixels(Colors);
-        Texture.Apply();
+        texture.SetPixels(m_colors);
+        texture.Apply();
     }
 }

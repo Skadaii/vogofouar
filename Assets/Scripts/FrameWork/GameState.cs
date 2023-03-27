@@ -3,43 +3,40 @@ using UnityEngine;
 
 public class GameState : MonoBehaviour
 {
-    public Action<ETeam> OnGameOver;
-    public ETeam FirstTeamColor = ETeam.Neutral;
-    public ETeam SecondTeamColor = ETeam.Neutral;
-    public bool IsGameOver { get; private set; }
+    //  Variables
+    //  ---------
+
+    public Action<ETeam> onGameOver;
+    public ETeam firstTeamColor = ETeam.Neutral;
+    public ETeam secondTeamColor = ETeam.Neutral;
+    public bool isGameOver { get; private set; }
 
     #region Team and scoring methods
 
     // Scores are based on the number of factories per team
-    int[] TeamScores = new int[2];
-    public int[] GetTeamScores { get { return TeamScores; } }
-    public ETeam GetOpponent(ETeam team)
-    {
-        if (team == FirstTeamColor)
-            return SecondTeamColor;
-        return FirstTeamColor;
-    }
+    private int[] m_teamScores = new int[2];
+    public int[] TeamScores => m_teamScores;
+
+    public ETeam GetOpponent(ETeam team) => team == firstTeamColor ? secondTeamColor : firstTeamColor;
     public void IncreaseTeamScore(ETeam team)
     {
-        if (team >= ETeam.Neutral)
-            return;
-
-        ++TeamScores[(int)team];
+        if (team < ETeam.Neutral)
+            ++m_teamScores[(int)team];
     }
     public void DecreaseTeamScore(ETeam team)
     {
         if (team >= ETeam.Neutral)
             return;
 
-        --TeamScores[(int)team];
+        --m_teamScores[(int)team];
 
-        if (TeamScores[(int)team] <= 0)
-            OnGameOver(GetOpponent(team));
+        if (m_teamScores[(int)team] <= 0)
+            onGameOver(GetOpponent(team));
     }
     #endregion
 
     #region MonoBehaviour methods
-    void Start()
+    private void Start()
     {
     }
 

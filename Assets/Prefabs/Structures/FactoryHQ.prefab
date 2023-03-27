@@ -51,9 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be669cfffbebcd49ac9a9376a64bfdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  FactoryData: {fileID: 11400000, guid: 0d9f0c0baf00e0e45b1c28cf2dacb6a7, type: 2}
-  MaxBuildingQueueSize: 5
+  m_team: 0
+  m_factoryData: {fileID: 11400000, guid: 0d9f0c0baf00e0e45b1c28cf2dacb6a7, type: 2}
+  m_maxBuildingQueueSize: 5
 --- !u!65 &4732168559980594952
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -95,13 +95,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 1
-  Range: 50
-  GameObjectDefaultLayer:
+  team: 0
+  range: 50
+  m_gameObjectDefaultLayer:
   - {fileID: 3454967550924094198}
-  GameObjectUILayer:
+  m_gameObjectUILayer:
   - {fileID: 1479926994273007114}
-  GameObjectMinimapLayer: []
+  m_gameObjectMinimapLayer: []
 --- !u!1 &1479926994273007114
 GameObject:
   m_ObjectHideFlags: 0

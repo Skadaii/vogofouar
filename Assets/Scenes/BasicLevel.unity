@@ -1188,7 +1188,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: SceneEventSystem
+      value: 
+      objectReference: {fileID: 1531011709}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_sceneEventSystem
       value: 
       objectReference: {fileID: 1531011709}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
@@ -1204,6 +1214,11 @@ PrefabInstance:
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: FactoryMenuCanvas
+      value: 
+      objectReference: {fileID: 360283326}
+    - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_factoryMenuCanvas
       value: 
       objectReference: {fileID: 360283326}
     m_RemovedComponents: []
@@ -1719,7 +1734,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -2117,7 +2131,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11493676, guid: c4c916682eac65748a271387fc795cd5, type: 3}
-      propertyPath: Team
+      propertyPath: m_team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1468398700287225518, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: team
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

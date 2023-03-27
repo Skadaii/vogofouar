@@ -2,55 +2,61 @@ using UnityEngine;
 
 public class FogOfWarSystem : MonoBehaviour
 {
-    public int GridWidth;
-    public int GridHeight;
+    //  Variables
+    //  ---------
+
+    public int gridWidth;
+    public int gridHeight;
 
     [SerializeField]
-    protected FogOfWarTexture FogTexture;
+    protected FogOfWarTexture m_fogTexture;
     [SerializeField]
-    protected Camera FogCamera;
+    protected Camera m_fogCamera;
     [SerializeField]
-    protected Transform FogQuadParent;
+    protected Transform m_fogQuadParent;
 
-    private Grid VisibilityGrid;
-    private Grid PreviousVisibilityGrid;
-    private Vector2 TextureScale;
+    private Grid m_visibilityGrid;
+    private Grid m_previousVisibilityGrid;
+    private Vector2 m_textureScale;
+
+    //  Functions
+    //  ---------
 
     public void Init()
     {
-        TextureScale = new Vector2(FogQuadParent.localScale.x / GridWidth,
-                                   FogQuadParent.localScale.y / GridHeight);
-        FogTexture.CreateTexture(GridWidth, GridHeight, TextureScale);
+        m_textureScale = new Vector2(m_fogQuadParent.localScale.x / gridWidth,
+                                   m_fogQuadParent.localScale.y / gridHeight);
+        m_fogTexture.CreateTexture(gridWidth, gridHeight, m_textureScale);
 
-        VisibilityGrid = new Grid(GridWidth, GridHeight, 0);
-        PreviousVisibilityGrid = new Grid(GridWidth, GridHeight, 0);
+        m_visibilityGrid = new Grid(gridWidth, gridHeight, 0);
+        m_previousVisibilityGrid = new Grid(gridWidth, gridHeight, 0);
 
-        FogQuadParent.gameObject.SetActive(true);
+        m_fogQuadParent.gameObject.SetActive(true);
     }
 
     private Vector2Int GetPositionInGrid(Vector2 p)
     {
         return new Vector2Int
         {
-            x = Mathf.RoundToInt(p.x * GridWidth / FogQuadParent.localScale.x),
-            y = Mathf.RoundToInt(p.y * GridHeight / FogQuadParent.localScale.y)
+            x = Mathf.RoundToInt(p.x * gridWidth / m_fogQuadParent.localScale.x),
+            y = Mathf.RoundToInt(p.y * gridHeight / m_fogQuadParent.localScale.y)
         };
     }
 
     private void SetCell(int team, int x, int y)
     {  
-        if (!VisibilityGrid.Contains(x, y))
+        if (!m_visibilityGrid.Contains(x, y))
             return;
-        if ((VisibilityGrid.Values[x + y * VisibilityGrid.Height] & team) > 0)
+        if ((m_visibilityGrid.values[x + y * m_visibilityGrid.height] & team) > 0)
             return;
 
-        VisibilityGrid.Values[x + y * VisibilityGrid.Width] |= team;
-        PreviousVisibilityGrid.Values[x + y * PreviousVisibilityGrid.Width] |= team;
+        m_visibilityGrid.values[x + y * m_visibilityGrid.width] |= team;
+        m_previousVisibilityGrid.values[x + y * m_previousVisibilityGrid.width] |= team;
     }
 
     public void ClearVisibility()
     {
-        VisibilityGrid.Clear();
+        m_visibilityGrid.Clear();
     }
 
     public void UpdateVisions(EntityVisibility[] visibilities)
@@ -59,7 +65,7 @@ public class FogOfWarSystem : MonoBehaviour
         {
             Vector2Int gridPos = GetPositionInGrid(v.Position);
             
-            int radius = Mathf.FloorToInt(v.Range / TextureScale.x) - 1;
+            int radius = Mathf.FloorToInt(v.range / m_textureScale.x) - 1;
             if (radius <= 0)
                 return;
 
@@ -73,13 +79,13 @@ public class FogOfWarSystem : MonoBehaviour
             {
                 for (int j = gridPos.x - x; j <= gridPos.x + x; ++j)
                 {
-                    SetCell(1 << (int)v.Team, j, gridPos.y + y);
-                    SetCell(1 << (int)v.Team, j, gridPos.y - y);
+                    SetCell(1 << (int)v.team, j, gridPos.y + y);
+                    SetCell(1 << (int)v.team, j, gridPos.y - y);
                 }
                 for (int j = gridPos.x - y; j <= gridPos.x + y; ++j)
                 {
-                    SetCell(1 << (int)v.Team, j, gridPos.y + x);
-                    SetCell(1 << (int)v.Team, j, gridPos.y - x);
+                    SetCell(1 << (int)v.team, j, gridPos.y + x);
+                    SetCell(1 << (int)v.team, j, gridPos.y - x);
                 }
 
                 ++y;
@@ -98,18 +104,18 @@ public class FogOfWarSystem : MonoBehaviour
 
     public void UpdateTextures(int team)
     {
-        FogTexture.SetTexture(VisibilityGrid, PreviousVisibilityGrid, team);
+        m_fogTexture.SetTexture(m_visibilityGrid, m_previousVisibilityGrid, team);
     }
 
     public bool IsVisible(int team, Vector2 position)
     {
         Vector2Int posGrid = GetPositionInGrid(position);
-        return VisibilityGrid.IsValue(team, posGrid.x, posGrid.y);
+        return m_visibilityGrid.IsValue(team, posGrid.x, posGrid.y);
     }
 
     public bool WasVisible(int team, Vector2 position)
     {
         Vector2Int posGrid = GetPositionInGrid(position);
-        return PreviousVisibilityGrid.IsValue(team, posGrid.x, posGrid.y);
+        return m_previousVisibilityGrid.IsValue(team, posGrid.x, posGrid.y);
     }
 }

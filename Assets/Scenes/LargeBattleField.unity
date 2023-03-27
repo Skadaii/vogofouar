@@ -691,6 +691,11 @@ PrefabInstance:
       objectReference: {fileID: 776645196}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_sceneEventSystem
+      value: 
+      objectReference: {fileID: 1101717270}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: CapturedTargetsText
       value: 
       objectReference: {fileID: 1508647155}
@@ -707,6 +712,11 @@ PrefabInstance:
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: FactoryMenuCanvas
+      value: 
+      objectReference: {fileID: 1857385670}
+    - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_factoryMenuCanvas
       value: 
       objectReference: {fileID: 1857385670}
     m_RemovedComponents: []
@@ -1192,7 +1202,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -2326,6 +2335,11 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114251786700568190, guid: 571cee9f48b70384b98df7e222d6fee6,
+        type: 3}
+      propertyPath: m_nonPlayableBorder
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4669120816251285810, guid: 571cee9f48b70384b98df7e222d6fee6,
         type: 3}
       propertyPath: FirstTeamColor
@@ -2652,11 +2666,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7323399335524938801, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
-        type: 3}
-      propertyPath: PlayerController
-      value: 
-      objectReference: {fileID: 589627996}
     - target: {fileID: 7323399335524938802, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
       propertyPath: m_RootOrder
@@ -2716,6 +2725,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FogOfWar
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323399335524938807, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ab01d8ebdd0d0048a9d597426a3a800, type: 3}

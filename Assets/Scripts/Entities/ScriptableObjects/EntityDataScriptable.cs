@@ -3,11 +3,11 @@
 public class EntityDataScriptable : ScriptableObject
 {
     [Header("Build Data")]
-    public int TypeId = 0;
-    public string Caption = "Unknown Unit";
-    public int Cost = 1;
-    public float BuildDuration = 1f;
+    public int typeId = 0;
+    public string caption = "Unknown Unit";
+    public int cost = 1;
+    public float buildDuration = 1f;
 
     [Header("Health Points")]
-    public int MaxHP = 100;
+    public int maxHP = 100;
 }

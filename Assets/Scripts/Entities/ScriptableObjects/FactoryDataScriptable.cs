@@ -4,14 +4,14 @@
 public class FactoryDataScriptable : EntityDataScriptable
 {
     [Header("Spawn Unit Settings")]
-    public int NbSpawnSlots = 10;
-    public int SpawnRadius = 12;
-    public int RadiusOffset = 4;
+    public int nbSpawnSlots = 10;
+    public int spawnRadius = 12;
+    public int radiusOffset = 4;
 
     [Header("Available Entities")]
-    public GameObject[] AvailableUnits = null;
-    public GameObject[] AvailableFactories = null;
+    public GameObject[] availableUnits = null;
+    public GameObject[] availableFactories = null;
 
     [Header("FX")]
-    public GameObject DeathFXPrefab = null;
+    public GameObject deathFXPrefab = null;
 }

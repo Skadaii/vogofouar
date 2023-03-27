@@ -3,41 +3,42 @@
 public class TopCamera : MonoBehaviour
 {
     [SerializeField]
-    int MoveSpeed = 5;
+    private int m_moveSpeed = 20;
     [SerializeField]
-    int KeyboardSpeedModifier = 20;
+    private int m_keyboardSpeedModifier = 10;
     [SerializeField]
-    int ZoomSpeed = 100;
+    private int m_zoomSpeed = 400;
     [SerializeField]
-    int MinHeight = 5;
+    private int m_minHeight = 50;
     [SerializeField]
-    int MaxHeight = 100;
+    private int m_maxHeight = 200;
     [SerializeField]
-    AnimationCurve MoveSpeedFromZoomCurve = new AnimationCurve();
-    [SerializeField]
-    float TerrainBorder = 100f;
-    [SerializeField, Tooltip("Set to false for debug camera movement")]
-    bool EnableMoveLimits = true;
+    private AnimationCurve m_moveSpeedFromZoomCurve = new AnimationCurve();
 
-    Vector3 Move = Vector3.zero;
-    Vector3 TerrainSize = Vector3.zero;
+    [SerializeField]
+    private float m_terrainBorder = 0f;
+    [SerializeField, Tooltip("Set to false for debug camera movement")]
+    private bool m_enableMoveLimits = true;
+
+    private Vector3 m_move = Vector3.zero;
+    private Vector3 m_terrainSize = Vector3.zero;
 
     #region Camera movement methods
     public void Zoom(float value)
     {
         if (value < 0f)
         {
-            Move.y += ZoomSpeed * Time.deltaTime;
+            m_move -= transform.forward * m_zoomSpeed * Time.deltaTime;
         }
         else if (value > 0f)
         {
-            Move.y -= ZoomSpeed * Time.deltaTime;
+            m_move += transform.forward * m_zoomSpeed * Time.deltaTime;
         }
     }
-    float ComputeZoomSpeedModifier()
+    private float ComputeZoomSpeedModifier()
     {
-        float zoomRatio = Mathf.Clamp(1f - (MaxHeight - transform.position.y) / (MaxHeight - MinHeight), 0f, 1f);
-        float zoomSpeedModifier = MoveSpeedFromZoomCurve.Evaluate(zoomRatio);
+        float zoomRatio = Mathf.Clamp(1f - (m_maxHeight - transform.position.y) / (m_maxHeight - m_minHeight), 0f, 1f);
+        float zoomSpeedModifier = m_moveSpeedFromZoomCurve.Evaluate(zoomRatio);
         //Debug.Log("zoomSpeedModifier " + zoomSpeedModifier);
 
         return zoomSpeedModifier;
@@ -52,19 +53,19 @@ public class TopCamera : MonoBehaviour
     }
     public void KeyboardMoveHorizontal(float value)
     {
-        MoveHorizontal(value * KeyboardSpeedModifier);
+        MoveHorizontal(value * m_keyboardSpeedModifier);
     }
     public void KeyboardMoveVertical(float value)
     {
-        MoveVertical(value * KeyboardSpeedModifier);
+        MoveVertical(value * m_keyboardSpeedModifier);
     }
     public void MoveHorizontal(float value)
     {
-        Move.x += value * MoveSpeed * ComputeZoomSpeedModifier() * Time.deltaTime;
+        m_move.x += value * m_moveSpeed * ComputeZoomSpeedModifier() * Time.deltaTime;
     }
     public void MoveVertical(float value)
     {
-        Move.z += value * MoveSpeed * ComputeZoomSpeedModifier() * Time.deltaTime;
+        m_move.z += value * m_moveSpeed * ComputeZoomSpeedModifier() * Time.deltaTime;
     }
 
     // Direct focus on one entity (no smooth)
@@ -82,27 +83,27 @@ public class TopCamera : MonoBehaviour
     #endregion
 
     #region MonoBehaviour methods
-    void Start()
+    private void Start()
     {
-        TerrainSize = GameServices.GetTerrainSize();
+        m_terrainSize = GameServices.TerrainSize;
     }
-    void Update()
+    private void Update()
     {
-        if (Move != Vector3.zero)
+        if (m_move != Vector3.zero)
         {
-            transform.position += Move;
-            if (EnableMoveLimits)
+            transform.position += m_move;
+            if (m_enableMoveLimits)
             {
                 // Clamp camera position (max height, terrain bounds)
                 Vector3 newPos = transform.position;
-                newPos.x = Mathf.Clamp(transform.position.x, TerrainBorder, TerrainSize.x - TerrainBorder);
-                newPos.y = Mathf.Clamp(transform.position.y, MinHeight, MaxHeight);
-                newPos.z = Mathf.Clamp(transform.position.z, TerrainBorder, TerrainSize.z - TerrainBorder);
+                newPos.x = Mathf.Clamp(transform.position.x, m_terrainBorder, m_terrainSize.x - m_terrainBorder);
+                newPos.y = Mathf.Clamp(transform.position.y, m_minHeight, m_maxHeight);
+                newPos.z = Mathf.Clamp(transform.position.z, m_terrainBorder, m_terrainSize.z - m_terrainBorder);
                 transform.position = newPos;
             }
         }
 
-        Move = Vector3.zero;
+        m_move = Vector3.zero;
     }
     #endregion
 }

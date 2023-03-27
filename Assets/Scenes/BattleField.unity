@@ -287,6 +287,11 @@ PrefabInstance:
       objectReference: {fileID: 1256912380}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_sceneEventSystem
+      value: 
+      objectReference: {fileID: 455256384}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: CapturedTargetsText
       value: 
       objectReference: {fileID: 513133569}
@@ -295,9 +300,29 @@ PrefabInstance:
       propertyPath: StartingBuildPoints
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_targetCursorPrefab
+      value: 
+      objectReference: {fileID: 134568, guid: 1d403a8ac48769c47bb3ec9a78df3a40, type: 3}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_startingBuildPoints
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_factoryPreviewTransparency
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: FactoryMenuCanvas
+      value: 
+      objectReference: {fileID: 1502398125}
+    - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_factoryMenuCanvas
       value: 
       objectReference: {fileID: 1502398125}
     m_RemovedComponents: []
@@ -338,7 +363,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -376,6 +400,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &458929555 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7550461756960863376, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1993373950}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &513133569 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3297987964377513171, guid: 6274f44d969a12f4f9c683eb6eef2d05,
@@ -388,6 +418,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &517017697 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6031414579993606252, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1993373950}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &562120017
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -765,8 +801,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7323399335524938800, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
+      propertyPath: gridWidth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323399335524938800, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
+        type: 3}
       propertyPath: GridHeight
       value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323399335524938800, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
+        type: 3}
+      propertyPath: gridHeight
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7323399335524938802, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
@@ -831,7 +877,7 @@ PrefabInstance:
     - target: {fileID: 7323399335524938807, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7323399336463703304, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
@@ -1618,6 +1664,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: UnitFactory_Blue
       objectReference: {fileID: 0}
+    - target: {fileID: 6006375350626803912, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+        type: 3}
+      propertyPath: range
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6006375350626803912, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+        type: 3}
+      propertyPath: m_gameObjectUILayer.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6006375350626803912, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+        type: 3}
+      propertyPath: m_gameObjectUILayer.Array.data[0]
+      value: 
+      objectReference: {fileID: 517017697}
+    - target: {fileID: 6006375350626803912, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+        type: 3}
+      propertyPath: m_gameObjectDefaultLayer.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6006375350626803912, guid: 71d18aeefd17f5046abcbf69f67cb97b,
+        type: 3}
+      propertyPath: m_gameObjectDefaultLayer.Array.data[0]
+      value: 
+      objectReference: {fileID: 458929555}
     - target: {fileID: 6108069271913853344, guid: 71d18aeefd17f5046abcbf69f67cb97b,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -1739,12 +1810,12 @@ PrefabInstance:
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 0.8191521
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: 0.5735764
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
@@ -1759,7 +1830,7 @@ PrefabInstance:
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}

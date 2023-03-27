@@ -53,8 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b442eaf4b252a428bd689056b74b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  UnitData: {fileID: 11400000, guid: 4f2d24809fd51e4469fbbdee459ac35d, type: 2}
+  m_team: 0
+  m_unitData: {fileID: 11400000, guid: 4f2d24809fd51e4469fbbdee459ac35d, type: 2}
 --- !u!136 &1707494665243283659
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -119,13 +119,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
-  Range: 30
-  GameObjectDefaultLayer:
-  - {fileID: 1707494663480741838}
-  GameObjectUILayer:
-  - {fileID: 5237823902566746043}
-  GameObjectMinimapLayer: []
+  team: 0
+  range: 0
+  m_gameObjectDefaultLayer: []
+  m_gameObjectUILayer: []
+  m_gameObjectMinimapLayer: []
 --- !u!1 &3107888996703016777
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,12 +673,6 @@ PrefabInstance:
 --- !u!4 &1707494663480436218 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 484240, guid: 7771b823973e1d348a8f17659b61b05a,
-    type: 3}
-  m_PrefabInstance: {fileID: 1707494663480870506}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1707494663480741838 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 133540, guid: 7771b823973e1d348a8f17659b61b05a,
     type: 3}
   m_PrefabInstance: {fileID: 1707494663480870506}
   m_PrefabAsset: {fileID: 0}
