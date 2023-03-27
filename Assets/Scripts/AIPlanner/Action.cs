@@ -5,11 +5,10 @@ using UnityEngine;
 namespace AIPlanner.GOAP
 {
     [System.Serializable]
-    public class Action
+    public class Action : Method
     {
         [HideInInspector] public string name;
 
-        [SerializeField] private Method m_actionMethod;
         [SerializeField] private List<StateId> m_stateEffects = new List<StateId>();
         [SerializeField] private List<Precondition> m_preconditions = new List<Precondition>();
         public List<Precondition> Preconditions => m_preconditions;
@@ -32,20 +31,13 @@ namespace AIPlanner.GOAP
         public static Action CreateSampleAction()
         {
             Action sampleAction = new Action();
-            sampleAction.Name = "Test";
+            sampleAction.name = "Test";
             sampleAction.m_stateEffects.Add(new StateId() { id = 0, stateValue = new StateValue() { Value = new BoolType(true) } });
             sampleAction.m_stateEffects.Add(new StateId() { id = 1, stateValue = new StateValue() { Value = new BoolType(true) } });
             sampleAction.m_stateEffects.Add(new StateId() { id = 2, stateValue = new StateValue() { Value = new BoolType(true) } });
             sampleAction.m_stateEffects.Add(new StateId() { id = 3, stateValue = new StateValue() { Value = new BoolType(true) } });
-            sampleAction.m_actionMethod = new Method();
             Precondition precondition = new Precondition();
-            precondition.Cost = 1000;
             precondition.States = new List<StateId>();
-            // precondition.States.Add(new StateId() { Id = 0, StateValue = new StateValue() { Value = new BoolType(false) } });
-            //precondition.States.Add(new StateId() { Id = 1, StateValue = new StateValue() { Value = new BoolType(false) } });
-            //precondition.States.Add(new StateId() { Id = 2, StateValue = new StateValue() { Value = new BoolType(false) } });
-            //precondition.States.Add(new StateId() { Id = 3, StateValue = new StateValue() { Value = new BoolType(false) } });
-
             precondition.Cost = 100;
 
             sampleAction.m_preconditions.Add(precondition);
@@ -93,8 +85,10 @@ namespace AIPlanner.GOAP
 
         public int GetCost(int preconditionId) => m_preconditions[preconditionId].Cost;
 
-        public void Initialize(GameObject GameObject)
+        public override void Initialize(GameObject GameObject)
         {
+            base.Initialize(GameObject);
+
             for (int i = 0; i < m_stateEffects.Count; ++i)
             {
                 StateId stateId = m_stateEffects[i];
@@ -111,8 +105,6 @@ namespace AIPlanner.GOAP
                     precondition.States[i] = stateId;
                 }
             }
-
-            m_actionMethod.Initialize(GameObject);
         }
 
         public bool Start(in WorldState InWorldState, int preconditionId)
@@ -123,10 +115,9 @@ namespace AIPlanner.GOAP
             return true;
         }
 
-
         public void Update(in WorldState InWorldState, out EActionState OutActionState)
         {
-            OutActionState = (EActionState)m_actionMethod.Invoke(InWorldState);
+            OutActionState = (EActionState)Invoke(InWorldState);
         }
     }
 }

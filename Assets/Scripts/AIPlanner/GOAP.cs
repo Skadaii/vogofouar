@@ -143,7 +143,7 @@ namespace AIPlanner.GOAP
 
             string plan = $"{gameObject.name} | Plan: ";
             foreach (Node node in m_nodes)
-                plan += "->" + node.action.Name;
+                plan += "->" + node.action.name;
 
             Debug.Log(plan + $" | Count : {i} | Generation duration : {stopwatch.ElapsedMilliseconds}");
 
@@ -195,7 +195,7 @@ namespace AIPlanner.GOAP
 
         private void ActionFinished()
         {
-            Debug.Log($"Action Finished: {m_currentNode.action.Name}");
+            Debug.Log($"Action Finished: {m_currentNode.action.name}");
 
             worldState = m_currentNode.action.ApplyEffects(worldState);
             m_currentNode = null;
@@ -203,7 +203,7 @@ namespace AIPlanner.GOAP
 
         private void ActionFailed()
         {
-            Debug.Log($"Action Failed: {m_currentNode.action.Name}");
+            Debug.Log($"Action Failed: {m_currentNode.action.name}");
 
             m_nodes.Clear();
 

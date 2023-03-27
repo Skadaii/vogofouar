@@ -413,16 +413,14 @@ namespace AIPlanner.GOAP
                 actionEditor.showFoldout = EditorUtils.CreateFoldout(actionNameProperty.stringValue, 15, Color.white, FlexDirection.Column);
                 actionEditor.showFoldout.value = false;
 
-
-                SerializedProperty methodProperty = actionEditor.actionProperty.FindPropertyRelative("m_actionMethod");
-                SerializedProperty componentNameProperty = methodProperty.FindPropertyRelative("m_componentName");
+                SerializedProperty componentNameProperty = actionEditor.actionProperty.FindPropertyRelative("m_componentName");
 
                 actionEditor.componentNameProperty = componentNameProperty;
                 actionEditor.componentPopupField = new PopupField<string>("Component", m_actionMethods.Keys.ToList(), 0);
                 actionEditor.componentPopupField.BindProperty(actionEditor.componentNameProperty);
                 actionEditor.componentPopupField.RegisterValueChangedCallback(delegate { SetMethodPopupField(actionEditor, m_actionMethods); });
 
-                SerializedProperty methodNameProperty = methodProperty.FindPropertyRelative("m_methodName");
+                SerializedProperty methodNameProperty = actionEditor.actionProperty.FindPropertyRelative("m_methodName");
 
                 actionEditor.methodNameProperty = methodNameProperty;
                 actionEditor.methodPopupField = new PopupField<string>("Methods");

@@ -117,7 +117,7 @@ namespace AIPlanner.GOAP
             return method;
         }
 
-        public void Initialize(GameObject GameObject)
+        public virtual void Initialize(GameObject GameObject)
         {
             if (string.IsNullOrEmpty(m_componentName) || string.IsNullOrEmpty(m_methodName))
                 return;
