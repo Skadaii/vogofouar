@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Reflection;
+using AIPlanner;
 
 namespace AIPlanner.GOAP
 {
@@ -69,39 +70,40 @@ namespace AIPlanner.GOAP
             return null;
         }
     }
-
-    [Serializable]
-    public class StateType<T> : StateType where T : unmanaged
-    {
-        public T Value;
-
-        public StateType(T Value)
-        {
-            this.Value = Value;
-        }
-
-        public StateType() { }
-    }
-
-    [StateType]
-    public class BoolType : StateType<bool>
-    {
-        public BoolType(bool Value) : base(Value) { }
-        public BoolType() { }
-    }
-
-    [StateType]
-    public class IntType : StateType<int>
-    {
-        public IntType(int Value) : base(Value) { }
-        public IntType() { }
-    }
-
-    [StateType]
-    public class FloatType : StateType<float>
-    {
-        public FloatType(float Value) : base(Value) { }
-        public FloatType() { }
-    }
 }
+
+[Serializable]
+public class StateType<T>  where T : unmanaged
+{
+    public T Value;
+
+    public StateType(T Value)
+    {
+        this.Value = Value;
+    }
+
+    public StateType() { }
+}
+
+[StateType]
+public class BoolType : StateType<bool>
+{
+    public BoolType(bool Value) : base(Value) { }
+    public BoolType() { }
+}
+
+[StateType]
+public class IntType : StateType<int>
+{
+    public IntType(int Value) : base(Value) { }
+    public IntType() { }
+}
+
+[StateType]
+public class FloatType : StateType<float>
+{
+    public FloatType(float Value) : base(Value) { }
+    public FloatType() { }
+}
+
 

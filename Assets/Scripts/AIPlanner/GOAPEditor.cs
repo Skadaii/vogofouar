@@ -9,9 +9,10 @@ using UnityEngine.UIElements;
 
 namespace AIPlanner.GOAP
 {
-    [CustomEditor(typeof(GOAPEditor))]
+    [CustomEditor(typeof(GOAP))]
     public class GOAPEditor : Editor
     {
+
         private VisualElement m_root;
 
         class FoldoutEditor
@@ -132,7 +133,6 @@ namespace AIPlanner.GOAP
 
         private WorldStateEditor m_worldStateEditor;
         private ActionSetEditor m_actionSetEditor;
-        //private StateIdListEditor m_goalEditor;
         private GoalListEditor m_goalListEditor;
 
         private Dictionary<string, string[]> m_stateMethods;
@@ -211,7 +211,7 @@ namespace AIPlanner.GOAP
             m_worldStateEditor = new WorldStateEditor();
             m_worldStateEditor.stateEditors = new List<StateEditor>();
 
-            m_worldStateEditor.worldStateProperty = serializedObject.FindProperty(nameof(GOAP.worldState));
+            m_worldStateEditor.worldStateProperty = serializedObject.FindProperty("m_worldState");
 
             m_worldStateEditor.stateNameProperty = m_worldStateEditor.worldStateProperty.FindPropertyRelative(nameof(WorldState.stateName));
             m_worldStateEditor.stateNameField = new PropertyField(m_worldStateEditor.stateNameProperty);
@@ -237,7 +237,7 @@ namespace AIPlanner.GOAP
                 state.stateValue = new StateValue();
                 state.stateValue.Value = value;
 
-                m_GOAP.worldState.states.Add(state);
+                m_GOAP.WorldState.states.Add(state);
                 serializedObject.Update();
 
                 InitializeWorldStateList();
@@ -265,12 +265,12 @@ namespace AIPlanner.GOAP
         {
             m_worldStateEditor.stateEditors.Clear();
 
-            if (m_GOAP.worldState.states == null)
-                m_GOAP.worldState.states = new List<State>();
+            if (m_GOAP.WorldState.states == null)
+                m_GOAP.WorldState.states = new List<State>();
 
             m_worldStateEditor.statesProperty = m_worldStateEditor.worldStateProperty.FindPropertyRelative(nameof(WorldState.states));
 
-            int stateCount = m_GOAP.worldState.states.Count;
+            int stateCount = m_GOAP.WorldState.states.Count;
 
             for (int i = 0; i < stateCount; ++i)
             {
@@ -621,7 +621,7 @@ namespace AIPlanner.GOAP
                         return;
 
                     int id = stateChoice[selectedTypeName];
-                    Type type = m_GOAP.worldState.states[id].stateValue.Value.GetType();
+                    Type type = m_GOAP.WorldState.states[id].stateValue.Value.GetType();
                     object value = Activator.CreateInstance(type);
 
                     StateValue stateValue = new StateValue();

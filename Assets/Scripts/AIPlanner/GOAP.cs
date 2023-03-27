@@ -6,13 +6,14 @@ namespace AIPlanner.GOAP
 {
     public class GOAP : MonoBehaviour
     {
-        public WorldState worldState;
-
+        [SerializeField] private WorldState m_worldState;
         [SerializeField] private List<Action> m_actionSet = new List<Action>();
+        [SerializeField] private List<Goal> m_goals = new List<Goal>();
+
+        public ref WorldState WorldState => ref m_worldState;
+        public List<Goal> Goals => m_goals;
         public List<Action> ActionSet => m_actionSet;
 
-        [SerializeField] private List<Goal> m_goals = new List<Goal>();
-        public List<Goal> Goals => m_goals;
 
         private Queue<Node> m_nodes = new Queue<Node>();
 
@@ -30,12 +31,12 @@ namespace AIPlanner.GOAP
             for (int i = 0; i < m_goals.Count; ++i)
                 m_goals[i].Initialize(gameObject);
 
-            worldState.Initialize(gameObject);
+            m_worldState.Initialize(gameObject);
         }
 
         private void Update()
         {
-            worldState.UpdateStates();
+            m_worldState.UpdateStates();
 
             UpdateGoal();
             UpdatePlan();
@@ -103,7 +104,7 @@ namespace AIPlanner.GOAP
             for (int i = 0; i < m_goals.Count; ++i)
             {
                 Goal goal = m_goals[i];
-                float newHeuristic = goal.Evaluate(worldState);
+                float newHeuristic = goal.Evaluate(m_worldState);
 
                 if (newHeuristic > heuristic)
                 {
@@ -126,12 +127,12 @@ namespace AIPlanner.GOAP
 
         private void GeneratePlan()
         {
-            worldState.ComputeHashValues();
+            m_worldState.ComputeHashValues();
 
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            Node startNode = Node.CreateEmptyNode(worldState);
-            Node leave = Node.CreateEmptyNode(worldState, int.MaxValue);
+            Node startNode = Node.CreateEmptyNode(m_worldState);
+            Node leave = Node.CreateEmptyNode(m_worldState, int.MaxValue);
 
             int i = 0;
             BuildGraph(ref startNode, ref leave, m_actionSet, m_currentGoal.States, ref i);
@@ -163,8 +164,8 @@ namespace AIPlanner.GOAP
 
             m_currentNode = m_nodes.Dequeue();
 
-            worldState.ComputeHashValues();
-            if (!m_currentNode.action.Start(in worldState, m_currentNode.preconditionId))
+            m_worldState.ComputeHashValues();
+            if (!m_currentNode.action.Start(in m_worldState, m_currentNode.preconditionId))
             {
                 ActionFailed();
                 return;
@@ -180,7 +181,7 @@ namespace AIPlanner.GOAP
             }
 
             Action.EActionState actionState;
-            m_currentNode.action.Update(worldState, out actionState);
+            m_currentNode.action.Update(m_worldState, out actionState);
 
             switch (actionState)
             {
@@ -197,7 +198,7 @@ namespace AIPlanner.GOAP
         {
             Debug.Log($"Action Finished: {m_currentNode.action.name}");
 
-            worldState = m_currentNode.action.ApplyEffects(worldState);
+            m_worldState = m_currentNode.action.ApplyEffects(m_worldState);
             m_currentNode = null;
         }
 
