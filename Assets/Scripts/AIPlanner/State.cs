@@ -37,15 +37,15 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public struct State
     {
-        public string Name;
-        public StateValue StateValue;
+        public string name;
+        public StateValue stateValue;
 
         [SerializeField] private Method m_stateMethod;
 
         public void Initialize(GameObject GameObject)
         {
             m_stateMethod.Initialize(GameObject);
-            StateValue.ComputeHashValue();
+            stateValue.ComputeHashValue();
         }
 
         public bool Update()
@@ -53,7 +53,7 @@ namespace AIPlanner.GOAP
             if (!m_stateMethod.IsValid())
                 return false;
 
-            StateValue.Value = m_stateMethod.Invoke();
+            stateValue.Value = m_stateMethod.Invoke();
 
             return true;
         }
@@ -62,7 +62,7 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public struct StateId
     {
-        public int Id;
-        public StateValue StateValue;
+        public int id;
+        public StateValue stateValue;
     }
 }

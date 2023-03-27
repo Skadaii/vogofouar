@@ -17,7 +17,7 @@ namespace AIPlanner.GOAP
             for (int i = 0; i < m_states.Count; ++i)
             {
                 StateId stateId = m_states[i];
-                stateId.StateValue.ComputeHashValue();
+                stateId.stateValue.ComputeHashValue();
                 m_states[i] = stateId;
             }
 

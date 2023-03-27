@@ -6,7 +6,7 @@ namespace AIPlanner.GOAP
 {
     public class GOAP : MonoBehaviour
     {
-        public WorldState WorldState;
+        public WorldState worldState;
 
         [SerializeField] private List<Action> m_actionSet = new List<Action>();
         public List<Action> ActionSet => m_actionSet;
@@ -30,12 +30,12 @@ namespace AIPlanner.GOAP
             for (int i = 0; i < m_goals.Count; ++i)
                 m_goals[i].Initialize(gameObject);
 
-            WorldState.Initialize(gameObject);
+            worldState.Initialize(gameObject);
         }
 
         private void Update()
         {
-            WorldState.UpdateStates();
+            worldState.UpdateStates();
 
             UpdateGoal();
             UpdatePlan();
@@ -45,7 +45,7 @@ namespace AIPlanner.GOAP
         {
             foreach (StateId stateId in Goal)
             {
-                if (InWorldState.States[stateId.Id].StateValue.HashValue != stateId.StateValue.HashValue)
+                if (InWorldState.states[stateId.id].stateValue.HashValue != stateId.stateValue.HashValue)
                     return false;
             }
 
@@ -56,17 +56,17 @@ namespace AIPlanner.GOAP
         {
             foreach (Action action in AvailableActions)
             {
-                int preconditionId = action.IsValid(Parent.WorldState);
+                int preconditionId = action.IsValid(Parent.worldState);
 
                 if (preconditionId == -1)
                     continue;
 
                 ++i;
-                WorldState NewWorldState = action.ApplyEffects(Parent.WorldState);
+                WorldState NewWorldState = action.ApplyEffects(Parent.worldState);
 
                 Node node = Node.CreateNode(Parent, NewWorldState, action, preconditionId);
 
-                if (Leave.Cost < node.Cost)
+                if (Leave.cost < node.cost)
                     continue;
 
                 if (GoalAchieved(NewWorldState, InGoal))
@@ -87,10 +87,10 @@ namespace AIPlanner.GOAP
 
         private void BuildNodePlan(Node node)
         {
-            if (node.Parent == null)
+            if (node.parent == null)
                 return;
 
-            BuildNodePlan(node.Parent);
+            BuildNodePlan(node.parent);
 
             m_nodes.Enqueue(node);
         }
@@ -103,7 +103,7 @@ namespace AIPlanner.GOAP
             for (int i = 0; i < m_goals.Count; ++i)
             {
                 Goal goal = m_goals[i];
-                float newHeuristic = goal.Evaluate(WorldState);
+                float newHeuristic = goal.Evaluate(worldState);
 
                 if (newHeuristic > heuristic)
                 {
@@ -126,24 +126,24 @@ namespace AIPlanner.GOAP
 
         private void GeneratePlan()
         {
-            WorldState.ComputeHashValues();
+            worldState.ComputeHashValues();
 
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            Node startNode = Node.CreateEmptyNode(WorldState);
-            Node leave = Node.CreateEmptyNode(WorldState, int.MaxValue);
+            Node startNode = Node.CreateEmptyNode(worldState);
+            Node leave = Node.CreateEmptyNode(worldState, int.MaxValue);
 
             int i = 0;
             BuildGraph(ref startNode, ref leave, m_actionSet, m_currentGoal.States, ref i);
 
-            if (leave.Parent == null)
+            if (leave.parent == null)
                 return;
 
             BuildNodePlan(leave);
 
             string plan = $"{gameObject.name} | Plan: ";
             foreach (Node node in m_nodes)
-                plan += "->" + node.Action.Name;
+                plan += "->" + node.action.Name;
 
             Debug.Log(plan + $" | Count : {i} | Generation duration : {stopwatch.ElapsedMilliseconds}");
 
@@ -163,8 +163,8 @@ namespace AIPlanner.GOAP
 
             m_currentNode = m_nodes.Dequeue();
 
-            WorldState.ComputeHashValues();
-            if (!m_currentNode.Action.Start(in WorldState, m_currentNode.PreconditionId))
+            worldState.ComputeHashValues();
+            if (!m_currentNode.action.Start(in worldState, m_currentNode.preconditionId))
             {
                 ActionFailed();
                 return;
@@ -180,7 +180,7 @@ namespace AIPlanner.GOAP
             }
 
             Action.EActionState actionState;
-            m_currentNode.Action.Update(WorldState, out actionState);
+            m_currentNode.action.Update(worldState, out actionState);
 
             switch (actionState)
             {
@@ -195,15 +195,15 @@ namespace AIPlanner.GOAP
 
         private void ActionFinished()
         {
-            Debug.Log($"Action Finished: {m_currentNode.Action.Name}");
+            Debug.Log($"Action Finished: {m_currentNode.action.Name}");
 
-            WorldState = m_currentNode.Action.ApplyEffects(WorldState);
+            worldState = m_currentNode.action.ApplyEffects(worldState);
             m_currentNode = null;
         }
 
         private void ActionFailed()
         {
-            Debug.Log($"Action Failed: {m_currentNode.Action.Name}");
+            Debug.Log($"Action Failed: {m_currentNode.action.Name}");
 
             m_nodes.Clear();
 

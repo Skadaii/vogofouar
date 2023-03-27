@@ -7,29 +7,29 @@ namespace AIPlanner.GOAP
 {
     public class Node
     {
-        public Node Parent;
+        public Node parent;
 
-        public int Cost;
-        public Action Action;
-        public int PreconditionId;
-        public WorldState WorldState;
+        public int cost;
+        public Action action;
+        public int preconditionId;
+        public WorldState worldState;
 
         private static Node CreateNode(Node Parent, WorldState WorldState, Action Action, int PreconditionId, int Cost)
         {
             Node node = new Node();
 
-            node.Parent = Parent;
-            node.Action = Action;
-            node.PreconditionId = PreconditionId;
-            node.Cost = Cost;
-            node.WorldState = WorldState;
+            node.parent = Parent;
+            node.action = Action;
+            node.preconditionId = PreconditionId;
+            node.cost = Cost;
+            node.worldState = WorldState;
 
             return node;
         }
 
         public static Node CreateNode(Node Parent, WorldState WorldState, Action Action, int PreconditionId)
         {
-            return CreateNode(Parent, WorldState, Action, PreconditionId, Action.GetCost(PreconditionId) + Parent.Cost);
+            return CreateNode(Parent, WorldState, Action, PreconditionId, Action.GetCost(PreconditionId) + Parent.cost);
         }
 
         public static Node CreateEmptyNode(WorldState WorldState, int Cost = 0)

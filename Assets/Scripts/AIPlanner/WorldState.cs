@@ -7,47 +7,47 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public struct WorldState
     {
-        [HideInInspector] public string StateName;
+        [HideInInspector] public string stateName;
 
-        [SerializeField] public List<State> States;
+        [SerializeField] public List<State> states;
 
         public void Initialize(GameObject GameObject)
         {
-            for (int i = 0; i < States.Count; ++i)
+            for (int i = 0; i < states.Count; ++i)
             {
-                State state = States[i];
+                State state = states[i];
                 state.Initialize(GameObject);
-                States[i] = state;
+                states[i] = state;
             }
         }
 
         public void ComputeHashValues()
         {
-            for (int i = 0; i < States.Count; ++i)
+            for (int i = 0; i < states.Count; ++i)
             {
-                State state = States[i];
-                state.StateValue.ComputeHashValue();
-                States[i] = state;
+                State state = states[i];
+                state.stateValue.ComputeHashValue();
+                states[i] = state;
             }
         }
 
         public void UpdateStates()
         {
-            for (int i = 0; i < States.Count; i++)
+            for (int i = 0; i < states.Count; i++)
             {
-                State state = States[i];
+                State state = states[i];
 
                 if (state.Update())
-                    States[i] = state;
+                    states[i] = state;
             }
         }
 
         public State GetState(string stateName)
         {
-            for (int i = 0; i < States.Count; ++i)
+            for (int i = 0; i < states.Count; ++i)
             {
-                State state = States[i];
-                if (state.Name == stateName)
+                State state = states[i];
+                if (state.name == stateName)
                     return state;
             }
 

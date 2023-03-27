@@ -8,7 +8,7 @@ namespace AIPlanner.GOAP
 {
     public class StateType
     {
-        private static List<Type> BaseSupportedType = new List<Type>()
+        private static List<Type> m_baseSupportedType = new List<Type>()
     {
         typeof(Vector2),
         typeof(Vector3),
@@ -19,7 +19,7 @@ namespace AIPlanner.GOAP
             get
             {
                 List<Type> supportedTypes = new List<Type>(GetTypesWithHelpAttribute(AppDomain.CurrentDomain.GetAssemblies()));
-                supportedTypes.AddRange(BaseSupportedType);
+                supportedTypes.AddRange(m_baseSupportedType);
                 return supportedTypes;
             }
         }

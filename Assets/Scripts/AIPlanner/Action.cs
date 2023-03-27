@@ -7,7 +7,7 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public class Action
     {
-        [HideInInspector] public string Name;
+        [HideInInspector] public string name;
 
         [SerializeField] private Method m_actionMethod;
         [SerializeField] private List<StateId> m_stateEffects = new List<StateId>();
@@ -33,10 +33,10 @@ namespace AIPlanner.GOAP
         {
             Action sampleAction = new Action();
             sampleAction.Name = "Test";
-            sampleAction.m_stateEffects.Add(new StateId() { Id = 0, StateValue = new StateValue() { Value = new BoolType(true) } });
-            sampleAction.m_stateEffects.Add(new StateId() { Id = 1, StateValue = new StateValue() { Value = new BoolType(true) } });
-            sampleAction.m_stateEffects.Add(new StateId() { Id = 2, StateValue = new StateValue() { Value = new BoolType(true) } });
-            sampleAction.m_stateEffects.Add(new StateId() { Id = 3, StateValue = new StateValue() { Value = new BoolType(true) } });
+            sampleAction.m_stateEffects.Add(new StateId() { id = 0, stateValue = new StateValue() { Value = new BoolType(true) } });
+            sampleAction.m_stateEffects.Add(new StateId() { id = 1, stateValue = new StateValue() { Value = new BoolType(true) } });
+            sampleAction.m_stateEffects.Add(new StateId() { id = 2, stateValue = new StateValue() { Value = new BoolType(true) } });
+            sampleAction.m_stateEffects.Add(new StateId() { id = 3, stateValue = new StateValue() { Value = new BoolType(true) } });
             sampleAction.m_actionMethod = new Method();
             Precondition precondition = new Precondition();
             precondition.Cost = 1000;
@@ -55,13 +55,13 @@ namespace AIPlanner.GOAP
         public WorldState ApplyEffects(WorldState WorldState)
         {
             WorldState NewWorldStates = new WorldState();
-            NewWorldStates.States = WorldState.States.ToList();
+            NewWorldStates.states = WorldState.states.ToList();
 
             foreach (StateId stateEffects in m_stateEffects)
             {
-                State state = NewWorldStates.States[stateEffects.Id];
-                state.StateValue = stateEffects.StateValue;
-                NewWorldStates.States[stateEffects.Id] = state;
+                State state = NewWorldStates.states[stateEffects.id];
+                state.stateValue = stateEffects.stateValue;
+                NewWorldStates.states[stateEffects.id] = state;
             }
 
             return NewWorldStates;
@@ -73,7 +73,7 @@ namespace AIPlanner.GOAP
 
             foreach (StateId stateId in precondition.States)
             {
-                if (InWorldState.States[stateId.Id].StateValue.HashValue != stateId.StateValue.HashValue)
+                if (InWorldState.states[stateId.id].stateValue.HashValue != stateId.stateValue.HashValue)
                     return false;
             }
 
@@ -98,7 +98,7 @@ namespace AIPlanner.GOAP
             for (int i = 0; i < m_stateEffects.Count; ++i)
             {
                 StateId stateId = m_stateEffects[i];
-                stateId.StateValue.ComputeHashValue();
+                stateId.stateValue.ComputeHashValue();
                 m_stateEffects[i] = stateId;
             }
 
@@ -107,7 +107,7 @@ namespace AIPlanner.GOAP
                 for (int i = 0; i < precondition.States.Count; ++i)
                 {
                     StateId stateId = precondition.States[i];
-                    stateId.StateValue.ComputeHashValue();
+                    stateId.stateValue.ComputeHashValue();
                     precondition.States[i] = stateId;
                 }
             }
