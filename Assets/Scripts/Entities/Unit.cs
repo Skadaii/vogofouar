@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class Unit : BaseEntity
 {
     //  Variables
@@ -12,9 +12,21 @@ public class Unit : BaseEntity
      
     private Transform m_bulletSlot;
     private float m_lastActionDate = 0f;
-    private BaseEntity m_entityTarget = null;
-    private TargetBuilding m_captureTarget = null;
-    private NavMeshAgent m_navMeshAgent;
+    protected BaseEntity m_entityTarget = null;
+    protected TargetBuilding m_captureTarget = null;
+    protected NavMeshAgent m_navMeshAgent;
+
+    protected UnitSquad m_squad = null;
+    public virtual UnitSquad Squad
+    {
+        get => m_squad;
+        set
+        {
+            m_squad?.Units.Remove(this);
+            m_squad = value;
+            m_squad?.Units.Add(this);
+        }
+    }
 
     //  Properties
     //  ----------
@@ -22,6 +34,21 @@ public class Unit : BaseEntity
     public UnitDataScriptable UnitData => m_unitData;
     public int Cost => m_unitData.cost;
     public int TypeId => m_unitData.typeId;
+
+    protected float m_lastAttackedTime = 0f;
+    protected Unit m_agressor;
+    public Unit Agressor
+    {
+        get => m_agressor;
+
+        set
+        {
+            m_agressor = value;
+
+            if (m_agressor)
+                m_lastAttackedTime = Time.time;
+        }
+    }
 
     //  Functions
     //  ---------
@@ -50,6 +77,7 @@ public class Unit : BaseEntity
 
         Destroy(gameObject);
     }
+
     #region MonoBehaviour methods
     override protected void Awake()
     {
@@ -63,6 +91,7 @@ public class Unit : BaseEntity
         m_navMeshAgent.angularSpeed = UnitData.angularSpeed;
         m_navMeshAgent.acceleration = UnitData.acceleration;
     }
+
     override protected void Start()
     {
         // Needed for non factory spawned units (debug)
@@ -71,6 +100,7 @@ public class Unit : BaseEntity
 
         base.Start();
     }
+
     override protected void Update()
     {
         // Attack / repair task debug test $$$ to be removed for AI implementation
@@ -105,7 +135,7 @@ public class Unit : BaseEntity
     // $$$ To be updated for AI implementation $$$
 
     // Moving Task
-    public void SetTargetPos(Vector3 pos)
+    public virtual void MoveTo(Vector3 pos)
     {
         if (m_entityTarget != null)
             m_entityTarget = null;
@@ -119,6 +149,10 @@ public class Unit : BaseEntity
             m_navMeshAgent.isStopped = false;
         }
     }
+
+    public virtual void MoveTo(Transform target) => MoveTo(target.position);
+
+    public virtual void MoveToward(Vector3 velocity) => m_navMeshAgent.Move(velocity);
 
     // Targetting Task - attack
     public void SetAttackTarget(BaseEntity target)
@@ -290,6 +324,13 @@ public class Unit : BaseEntity
             int amount = Mathf.FloorToInt(m_unitData.rps * m_unitData.repairFrequency);
             m_entityTarget.Repair(amount);
         }
+    }
+    #endregion
+
+    #region Squad methods : Alert
+    private void Alert()
+    {
+        m_squad.ReceiveAlert(this);
     }
     #endregion
 }

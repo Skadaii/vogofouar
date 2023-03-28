@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // points system for units creation (Ex : light units = 1 pt, medium = 2pts, heavy = 3 pts)
@@ -17,6 +18,8 @@ public class UnitController : MonoBehaviour
     protected int m_capturedTargets = 0;
     protected Transform m_teamRoot = null;
 
+    protected List<UnitSquad> m_squadList = new List<UnitSquad>();
+
     protected List<Unit> m_selectedUnitList = new List<Unit>();
     protected List<Factory> m_factoryList = new List<Factory>();
     protected Factory m_selectedFactory = null;
@@ -25,6 +28,9 @@ public class UnitController : MonoBehaviour
     protected Action m_onBuildPointsUpdated;
     protected Action m_onCaptureTarget;
 
+    [SerializeField] private GameObject m_virtualLeaderPrefab = null;
+
+    public FormationRule m_currentFormation = null;
 
     //  Properties
 
@@ -132,6 +138,45 @@ public class UnitController : MonoBehaviour
         TotalBuildPoints -= points;
         CapturedTargets--;
     }
+    #endregion
+
+    #region Squad methods
+
+    protected UnitSquad CreateDynamicSquad(List<Unit> squadUnits)
+    {
+        Vector3 averagePosition = squadUnits.Select(unit => unit.transform.position).Aggregate((a, b) => a + b) / squadUnits.Count;
+
+        UnitSquad newSquad = new UnitSquad();
+
+        foreach (Unit unit in squadUnits)
+        {
+            UnitSquad lastSquad = unit.Squad;
+
+            // If the two list are equals, there is no need to create a new squad nor a new leader
+            if (lastSquad is not null && lastSquad.Units.SequenceEqual(squadUnits))
+                return unit.Squad;
+
+            unit.Squad = newSquad;
+
+            if (lastSquad is null)
+                continue;
+
+            lastSquad.Units.Remove(unit);
+
+            if (lastSquad.Units.Count > 0)
+                continue;
+
+            lastSquad.Destroy();
+            m_squadList.Remove(lastSquad);
+        }
+
+        newSquad.InitializeLeader(m_virtualLeaderPrefab);
+
+        m_squadList.Add(newSquad);
+
+        return newSquad;
+    }
+
     #endregion
 
     #region Factory methods

@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 #if UNITY_EDITOR
@@ -593,9 +593,10 @@ public sealed class PlayerController : UnitController
             Vector3 newPos = raycastInfo.point;
             SetTargetCursorPosition(newPos);
 
-            // Direct call to moving task $$$ to be improved by AI behaviour
-            foreach (Unit unit in m_selectedUnitList)
-                unit.SetTargetPos(newPos);
+            UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+
+            newSquad.m_formation = m_currentFormation;
+            newSquad.m_leaderComponent.MoveTo(newPos);
         }
     }
 
