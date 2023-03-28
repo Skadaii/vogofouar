@@ -17,8 +17,8 @@ namespace AIPlanner.GOAP
         [System.Serializable]
         public class Precondition
         {
-            public List<StateId> States;
-            public int Cost;
+            public List<StateId> states;
+            public int cost;
         }
 
         public enum EActionState
@@ -37,8 +37,8 @@ namespace AIPlanner.GOAP
             sampleAction.m_stateEffects.Add(new StateId() { id = 2, stateValue = new StateValue() { Value = new BoolType(true) } });
             sampleAction.m_stateEffects.Add(new StateId() { id = 3, stateValue = new StateValue() { Value = new BoolType(true) } });
             Precondition precondition = new Precondition();
-            precondition.States = new List<StateId>();
-            precondition.Cost = 100;
+            precondition.states = new List<StateId>();
+            precondition.cost = 100;
 
             sampleAction.m_preconditions.Add(precondition);
             return sampleAction;
@@ -63,7 +63,7 @@ namespace AIPlanner.GOAP
         {
             Precondition precondition = m_preconditions[preconditionId];
 
-            foreach (StateId stateId in precondition.States)
+            foreach (StateId stateId in precondition.states)
             {
                 if (InWorldState.states[stateId.id].stateValue.HashValue != stateId.stateValue.HashValue)
                     return false;
@@ -83,7 +83,7 @@ namespace AIPlanner.GOAP
             return -1;
         }
 
-        public int GetCost(int preconditionId) => m_preconditions[preconditionId].Cost;
+        public int GetCost(int preconditionId) => m_preconditions[preconditionId].cost;
 
         public override void Initialize(GameObject GameObject)
         {
@@ -98,11 +98,11 @@ namespace AIPlanner.GOAP
 
             foreach (Precondition precondition in m_preconditions)
             {
-                for (int i = 0; i < precondition.States.Count; ++i)
+                for (int i = 0; i < precondition.states.Count; ++i)
                 {
-                    StateId stateId = precondition.States[i];
+                    StateId stateId = precondition.states[i];
                     stateId.stateValue.ComputeHashValue();
-                    precondition.States[i] = stateId;
+                    precondition.states[i] = stateId;
                 }
             }
         }

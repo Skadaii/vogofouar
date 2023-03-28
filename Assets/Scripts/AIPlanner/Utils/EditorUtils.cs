@@ -34,6 +34,15 @@ public class EditorUtils : MonoBehaviour
         return label;
     }
 
+    public static Label CreateLabel(float borderSize, float borderRadius, float bottomSpace, float marginLeft, float marginRight, Color borderColor, Color backgroundColor, FlexDirection flexDirection)
+    {
+        Label label = CreateLabel(borderSize, borderRadius, bottomSpace, borderColor, backgroundColor, flexDirection);
+        label.style.marginLeft = marginLeft;
+        label.style.marginRight = marginRight;
+
+        return label;
+    }
+
     public static VisualElement CreateSpace(Vector2 spaceSize)
     {
         Label label = new Label();
@@ -65,5 +74,17 @@ public class EditorUtils : MonoBehaviour
 
 
         return foldout;
+    }
+
+    public static VisualElement CreateFoldoutLabel(Color borderColor, Color backgroundColor)
+    {
+        VisualElement foldoutLabel = CreateLabel(1f, 0f, 0f, borderColor, backgroundColor, FlexDirection.Column);
+        foldoutLabel.style.position = Position.Absolute;
+        foldoutLabel.style.width = new Length(101f, LengthUnit.Percent);
+        foldoutLabel.style.height = 30f;
+        foldoutLabel.style.top = -5f;
+        foldoutLabel.style.alignSelf = Align.Center;
+
+        return foldoutLabel;
     }
 }

@@ -498,11 +498,11 @@ namespace AIPlanner.GOAP
 
             SerializedProperty preconditionProperty = PreconditionListEditor.preconditionsProperty.GetArrayElementAtIndex(Index);
 
-            preconditionEditor.costProperty = preconditionProperty.FindPropertyRelative("Cost");
+            preconditionEditor.costProperty = preconditionProperty.FindPropertyRelative("cost");
             preconditionEditor.costField = new PropertyField();
             preconditionEditor.costField.BindProperty(preconditionEditor.costProperty);
 
-            preconditionEditor.stateIdListEditor.stateIdsProperty = preconditionProperty.FindPropertyRelative("States");
+            preconditionEditor.stateIdListEditor.stateIdsProperty = preconditionProperty.FindPropertyRelative("states");
             preconditionEditor.stateIdListEditor.stateIdEditors = new List<StateIdEditor>();
             InitializeStateIdList(preconditionEditor.stateIdListEditor, "States");
 
