@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70c53fdf09515d64d9c0162b6d69219c, type: 3}
+  m_Script: {fileID: 11500000, guid: dae6db7ffb9caee4d8a8b5479e09e96f, type: 3}
   m_Name: Tank_Data
   m_EditorClassIdentifier: 
   typeId: 3
@@ -17,19 +17,15 @@ MonoBehaviour:
   cost: 4
   buildDuration: 5
   maxHP: 150
-  dps: 30
-  attackFrequency: 1.5
-  attackDistanceMax: 30
-  captureDistanceMax: 15
-  canRepair: 0
-  rps: 10
-  repairFrequency: 1
-  repairDistanceMax: 10
   speed: 4
   angularSpeed: 130
   acceleration: 10
   isFlying: 0
-  bulletPrefab: {fileID: 6953520636668906323, guid: 1061d596cce45944a8ae97b48af1ac15,
-    type: 3}
   deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
+    type: 3}
+  dps: 30
+  attackFrequency: 1.5
+  attackDistanceMax: 30
+  captureDistanceMax: 15
+  bulletPrefab: {fileID: 6953520636668906323, guid: 1061d596cce45944a8ae97b48af1ac15,
     type: 3}

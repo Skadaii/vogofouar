@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-public class TargetBuilding : MonoBehaviour
-{
 
+public class StaticBuilding : Building
+{
     //  Variables
     //  ---------
+
+    [SerializeField]
+    private BuildingDataScriptable m_buildingDatas;
 
     [SerializeField]
     private float m_captureGaugeStart = 100f;
@@ -20,39 +23,30 @@ public class TargetBuilding : MonoBehaviour
     private Material m_neutralMaterial = null;
     private MeshRenderer m_buildingMeshRenderer = null;
     private Image m_gaugeImage;
-    private Image m_minimapImage;
+    //private Image m_minimapImage;
 
     private int[] m_teamScore;
     private float m_captureGaugeValue;
     private ETeam m_owningTeam = ETeam.Neutral;
     private ETeam m_capturingTeam = ETeam.Neutral;
-
-    private EntityVisibility m_visibility;
-
     //  Properties
     //  ----------
 
-    public ETeam Team => m_owningTeam;
+    public override BuildingDataScriptable BuildingData => m_buildingDatas;
 
-    public EntityVisibility Visibility
-    {
-        get
-        {
-            if (m_visibility == null)
-            {
-                m_visibility = GetComponent<EntityVisibility>();
-            }
-            return m_visibility;
-        }
-    }
 
     //  Functions
     //  ---------
 
     #region MonoBehaviour methods
 
-    void Start()
+    protected virtual new void Start()
     {
+        base.Start();
+
+        m_isCompleted = true;
+        m_isActive = true;
+
         m_buildingMeshRenderer = GetComponentInChildren<MeshRenderer>();
         m_neutralMaterial = m_buildingMeshRenderer.material;
 
@@ -69,8 +63,10 @@ public class TargetBuilding : MonoBehaviour
             m_minimapImage = minimapTransform.GetComponentInChildren<Image>();
     }
 
-    void Update()
+    protected virtual new void Update()
     {
+        base.Update();
+
         if (m_capturingTeam == m_owningTeam || m_capturingTeam == ETeam.Neutral)
             return;
 
@@ -89,7 +85,7 @@ public class TargetBuilding : MonoBehaviour
 
 
     #region Capture methods
-    
+
     public void StartCapture(Unit unit)
     {
         if (unit == null)
@@ -160,7 +156,7 @@ public class TargetBuilding : MonoBehaviour
 
         ResetCapture();
         m_owningTeam = newTeam;
-        if (Visibility) { Visibility.team = m_owningTeam; }
+        if (Visibility) { Visibility.Team = m_owningTeam; }
         if (m_minimapImage) { m_minimapImage.color = GameServices.GetTeamColor(m_owningTeam); }
         m_buildingMeshRenderer.material = newTeam == ETeam.Blue ? m_blueTeamMaterial : m_redTeamMaterial;
     }

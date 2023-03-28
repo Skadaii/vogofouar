@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 
 public class FogOfWarManager : MonoBehaviour
 {
@@ -55,6 +56,30 @@ public class FogOfWarManager : MonoBehaviour
 		m_FOWSystem.UpdateTextures(1 << (int)Team);
 	}
 
+
+	private void UpdateEntityVisibility(Entity entity)
+	{
+        if (entity.Visibility == null) { return; }
+
+        if (m_FOWSystem.IsVisible(1 << (int)entity.Team, entity.Visibility.Position))
+        {
+            entity.Visibility.SetVisibleUI(true);
+        }
+        else
+        {
+            entity.Visibility.SetVisibleUI(false);
+        }
+
+        if (m_FOWSystem.IsVisible(1 << (int)entity.Team, entity.Visibility.Position))
+		{
+            entity.Visibility.SetVisible(true);
+		}
+		else
+		{
+            entity.Visibility.SetVisible(false);
+        }
+    }
+
 	private void UpdateUnitVisibility()
 	{
 		foreach (Unit unit in GameServices.GetControllerByTeam(Team).UnitList)
@@ -66,26 +91,28 @@ public class FogOfWarManager : MonoBehaviour
 
 		foreach (Unit unit in GameServices.GetControllerByTeam(Team.GetOpponent()).UnitList)
 		{
-			if (unit.Visibility == null) { continue; }
+			//UpdateEntityVisibility(unit);
+            if (unit.Visibility == null) { continue; }
 
-			if (m_FOWSystem.IsVisible(1 << (int)Team, unit.Visibility.Position))
-			{
-				unit.Visibility.SetVisible(true);
-			}
-			else
-			{
-                unit.Visibility.SetVisible(false);
+            if (m_FOWSystem.IsVisible(1 << (int)Team, unit.Visibility.Position))
+            {
+            	unit.Visibility.SetVisible(true);
+            }
+            else
+            {
+            	unit.Visibility.SetVisible(false);
             }
         }
 	}
 
 	private void UpdateBuildingVisibility()
 	{
-		foreach (TargetBuilding building in GameServices.GetTargetBuildings())
-		{
+		foreach (StaticBuilding building in GameServices.GetTargetBuildings())
+        {
+            //UpdateEntityVisibility(building);
 			if (building.Visibility == null) { continue; }
 
-            if (m_FOWSystem.IsVisible(1 << (int)Team, building.Visibility.Position))
+			if (m_FOWSystem.IsVisible(1 << (int)Team, building.Visibility.Position))
 			{
 				building.Visibility.SetVisibleUI(true);
 			}
@@ -96,12 +123,12 @@ public class FogOfWarManager : MonoBehaviour
 
 			if (m_FOWSystem.WasVisible(1 << (int)Team, building.Visibility.Position))
 			{
-                building.Visibility.SetVisibleDefault(true);
-            }
+	           building.Visibility.SetVisibleDefault(true);
+			}
 			else
 			{
 				building.Visibility.SetVisible(false);
-            }
+			}
         }
 	}
 
@@ -113,24 +140,25 @@ public class FogOfWarManager : MonoBehaviour
 		}
 
 		foreach (Factory factory in GameServices.GetControllerByTeam(Team.GetOpponent()).GetFactoryList)
-		{
+        {
+            //UpdateEntityVisibility(factory);
 			if (m_FOWSystem.IsVisible(1 << (int)Team, factory.Visibility.Position))
 			{
 				factory.Visibility.SetVisibleUI(true);
 			}
 			else
 			{
-                factory.Visibility.SetVisibleUI(false);
-            }
+			    factory.Visibility.SetVisibleUI(false);
+			}
 
-            if (m_FOWSystem.WasVisible(1 << (int)Team, factory.Visibility.Position))
+			if (m_FOWSystem.WasVisible(1 << (int)Team, factory.Visibility.Position))
 			{
-                factory.Visibility.SetVisibleDefault(true);
-            }
-            else
+			    factory.Visibility.SetVisibleDefault(true);
+			}
+			else
 			{
-                factory.Visibility.SetVisible(false);
-            }
+			    factory.Visibility.SetVisible(false);
+			}
         }
 	}
 }

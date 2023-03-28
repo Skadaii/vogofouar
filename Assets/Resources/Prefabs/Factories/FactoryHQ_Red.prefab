@@ -87,10 +87,15 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5178879722085541045, guid: caf8cf6a12ac9754abb8c4e7540b6e5d,
         type: 3}
-    - target: {fileID: 1876155234036382849, guid: c4c916682eac65748a271387fc795cd5,
+    - target: {fileID: 1785345438760821025, guid: c4c916682eac65748a271387fc795cd5,
         type: 3}
-      propertyPath: m_Name
-      value: BuildProgressImage
+      propertyPath: m_team
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3454967550926237542, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 03993c9801677ca4b9741101b3033488, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4c916682eac65748a271387fc795cd5, type: 3}

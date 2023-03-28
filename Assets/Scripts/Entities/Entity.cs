@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRepairable
+[RequireComponent(typeof(EntityVisibility))]
+public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
 {
     //  Variables
     //  ---------
@@ -13,35 +14,55 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
 
     protected EntityVisibility m_visibility;
 
-    protected int m_HP = 0;
-    protected Action m_onHpUpdated;
-    protected GameObject m_selectedSprite = null;
-    protected Text m_HPText = null;
     protected bool m_isInitialized = false;
+    protected GameObject m_selectedSprite = null;
     protected UnityEngine.UI.Image m_minimapImage;
 
-    public Action onDeadEvent;
+    //  Damageable variables
+
+    protected int m_HP = 0;
+    protected Text m_HPText = null;
+    protected Action m_onHpUpdated;
+    public Action OnDestructionEvent;
+
 
     //  Properties
     //  ----------
 
-    public bool IsSelected { get; protected set; }
     public bool IsAlive { get; protected set; }
 
-    public EntityVisibility Visibility
-    {
-        get
-        {
-            if (m_visibility == null)
-            {
-                m_visibility = GetComponent<EntityVisibility>();
-            }
-            return m_visibility;
-        }
-    }
+    public bool IsSelected { get; protected set; }
+
+    public EntityVisibility Visibility => m_visibility;
 
     //  Functions
     //  ---------
+
+    #region MonoBehaviour methods
+
+    protected virtual void Awake()
+    {
+        m_visibility = GetComponent<EntityVisibility>();
+
+        m_selectedSprite = transform.Find("SelectedSprite")?.gameObject;
+        m_selectedSprite?.SetActive(false);
+
+        m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
+
+        m_onHpUpdated += UpdateHpUI;
+    }
+
+    protected virtual void Start()
+    {
+        Init(Team);
+        UpdateHpUI();
+
+        IsAlive = true;
+    }
+
+    protected virtual void Update() {}
+
+    #endregion
 
     virtual public void Init(ETeam _team)
     {
@@ -50,7 +71,7 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
 
         m_team = _team;
 
-        if (Visibility) { Visibility.team = _team; }
+        if (Visibility) { Visibility.Team = _team; }
 
         Transform minimapTransform = transform.Find("MinimapCanvas");
         if (minimapTransform != null)
@@ -61,15 +82,9 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
 
         m_isInitialized = true;
     }
-    public Color GetColor()
-    {
-        return GameServices.GetTeamColor(Team);
-    }
-    void UpdateHpUI()
-    {
-        if (m_HPText != null)
-            m_HPText.text = "HP : " + m_HP.ToString();
-    }
+
+    public Color GetColor() => GameServices.GetTeamColor(Team);
+
 
     #region ISelectable
     public void SetSelected(bool selected)
@@ -77,9 +92,17 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
         IsSelected = selected;
         m_selectedSprite?.SetActive(IsSelected);
     }
+
     public ETeam Team => m_team;
-    
+
     #endregion
+
+
+    void UpdateHpUI()
+    {
+        if (m_HPText != null)
+            m_HPText.text = "HP : " + m_HP.ToString();
+    }
 
     #region IDamageable
     public void AddDamage(int damageAmount)
@@ -94,7 +117,7 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
         if (m_HP <= 0)
         {
             IsAlive = false;
-            onDeadEvent?.Invoke();
+            OnDestructionEvent?.Invoke();
             Debug.Log("Entity " + gameObject.name + " died");
         }
     }
@@ -116,29 +139,6 @@ public abstract class BaseEntity : MonoBehaviour, ISelectable, IDamageable, IRep
     virtual public void FullRepair()
     {
     }
-    #endregion
 
-    #region MonoBehaviour methods
-    virtual protected void Awake()
-    {
-        IsAlive = true;
-
-        m_selectedSprite = transform.Find("SelectedSprite")?.gameObject;
-        m_selectedSprite?.SetActive(false);
-
-        Transform hpTransform = transform.Find("Canvas/HPText");
-        if (hpTransform)
-            m_HPText = hpTransform.GetComponent<Text>();
-
-        m_onHpUpdated += UpdateHpUI;
-    }
-    virtual protected void Start()
-    {
-        Init(Team);
-        UpdateHpUI();
-    }
-    virtual protected void Update()
-    {
-    }
     #endregion
 }

@@ -69,7 +69,7 @@ public class TopCamera : MonoBehaviour
     }
 
     // Direct focus on one entity (no smooth)
-    public void FocusEntity(BaseEntity entity)
+    public void FocusEntity(Entity entity)
     {
         if (entity == null)
             return;

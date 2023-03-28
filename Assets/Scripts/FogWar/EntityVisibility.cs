@@ -5,7 +5,7 @@ public class EntityVisibility : MonoBehaviour
     //  Variables
     //  ---------
 
-    public ETeam team;
+    [HideInInspector] public ETeam Team;
     public float range;
 
     private bool m_isVisibleDefault = true;

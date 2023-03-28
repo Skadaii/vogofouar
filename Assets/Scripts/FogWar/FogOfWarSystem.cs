@@ -79,13 +79,13 @@ public class FogOfWarSystem : MonoBehaviour
             {
                 for (int j = gridPos.x - x; j <= gridPos.x + x; ++j)
                 {
-                    SetCell(1 << (int)v.team, j, gridPos.y + y);
-                    SetCell(1 << (int)v.team, j, gridPos.y - y);
+                    SetCell(1 << (int)v.Team, j, gridPos.y + y);
+                    SetCell(1 << (int)v.Team, j, gridPos.y - y);
                 }
                 for (int j = gridPos.x - y; j <= gridPos.x + y; ++j)
                 {
-                    SetCell(1 << (int)v.team, j, gridPos.y + x);
-                    SetCell(1 << (int)v.team, j, gridPos.y - x);
+                    SetCell(1 << (int)v.Team, j, gridPos.y + x);
+                    SetCell(1 << (int)v.Team, j, gridPos.y - x);
                 }
 
                 ++y;

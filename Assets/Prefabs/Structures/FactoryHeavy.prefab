@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 401236}
-  - component: {fileID: 11493676}
   - component: {fileID: 4732168559980594952}
   - component: {fileID: 6957881582202263641}
   - component: {fileID: 7731754157532738664}
+  - component: {fileID: 3073495707534750771}
   m_Layer: 11
   m_Name: FactoryHeavy
   m_TagString: Untagged
@@ -39,21 +39,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &11493676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 127182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8be669cfffbebcd49ac9a9376a64bfdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_team: 0
-  m_factoryData: {fileID: 11400000, guid: cd8ba98bfeb3e7f489c8f4208325f7dc, type: 2}
-  m_maxBuildingQueueSize: 5
 --- !u!65 &4732168559980594952
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -95,11 +80,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
-  range: 0
-  m_gameObjectDefaultLayer: []
-  m_gameObjectUILayer: []
-  m_gameObjectMinimapLayer: []
+  Team: 0
+  range: 50
+  m_gameObjectDefaultLayer:
+  - {fileID: 7829233653576492192}
+  m_gameObjectUILayer:
+  - {fileID: 1479926994273007114}
+  m_gameObjectMinimapLayer:
+  - {fileID: 708249736423527611}
+--- !u!114 &3073495707534750771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eee0e478305c8a42b15b2657abd4e84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_team: 0
+  m_factoryData: {fileID: 11400000, guid: cd8ba98bfeb3e7f489c8f4208325f7dc, type: 2}
+  m_maxBuildingQueueSize: 5
 --- !u!1 &708249736423527611
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,7 +460,7 @@ GameObject:
   - component: {fileID: 1534063160137068044}
   - component: {fileID: 223124663958814019}
   m_Layer: 5
-  m_Name: BuildProgressImage
+  m_Name: ProgressImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -680,10 +683,6 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 03993c9801677ca4b9741101b3033488, type: 2}
-    - target: {fileID: 2343304, guid: c87cdd3a16975ca4c9d931d2ae37fff9, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 03993c9801677ca4b9741101b3033488, type: 2}
     - target: {fileID: 2372412, guid: c87cdd3a16975ca4c9d931d2ae37fff9, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -701,6 +700,12 @@ PrefabInstance:
 --- !u!4 &7829233653576116098 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 495082, guid: c87cdd3a16975ca4c9d931d2ae37fff9,
+    type: 3}
+  m_PrefabInstance: {fileID: 7829233653576608360}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7829233653576492192 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 151240, guid: c87cdd3a16975ca4c9d931d2ae37fff9,
     type: 3}
   m_PrefabInstance: {fileID: 7829233653576608360}
   m_PrefabAsset: {fileID: 0}

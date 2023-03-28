@@ -27,7 +27,7 @@ public class GameServices : MonoBehaviour
     private static GameServices m_instance = null;
 
     private UnitController[] m_controllersArray;
-    private TargetBuilding[] m_targetBuildingArray;
+    private StaticBuilding[] m_targetBuildingArray;
     private GameState m_currentGameState = null;
  
     private Terrain m_currentTerrain = null;
@@ -66,7 +66,7 @@ public class GameServices : MonoBehaviour
     public static Material GetTeamMaterial(ETeam team) => m_instance.m_teamMaterials[(int)team];
     public static ETeam GetOpponent(ETeam team) => m_instance.m_currentGameState.GetOpponent(team);
 
-    public static TargetBuilding[] GetTargetBuildings() => m_instance.m_targetBuildingArray;
+    public static StaticBuilding[] GetTargetBuildings() => m_instance.m_targetBuildingArray;
 
     // return RGB color struct for each team
     public static Color GetTeamColor(ETeam team)
@@ -108,7 +108,7 @@ public class GameServices : MonoBehaviour
         }
 
         // Store TargetBuildings
-        m_targetBuildingArray = FindObjectsOfType<TargetBuilding>();
+        m_targetBuildingArray = FindObjectsOfType<StaticBuilding>();
 
         // Store GameState ref
         if (m_currentGameState == null)

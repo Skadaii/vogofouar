@@ -558,32 +558,35 @@ public sealed class PlayerController : UnitController
         // Set unit / factory attack target
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, damageableMask))
         {
-            BaseEntity other = raycastInfo.transform.GetComponent<BaseEntity>();
+            Entity other = raycastInfo.transform.GetComponent<Entity>();
             if (other != null)
             {
                 if (other.Team != Team)
                 {
                     // Direct call to attacking task $$$ to be improved by AI behaviour
-                    foreach (Unit unit in m_selectedUnitList)
-                        unit.SetAttackTarget(other);
+                    foreach (Fighter unit in m_selectedUnitList)
+                        if(unit != null)
+                            unit.SetAttackTarget(other);
                 }
                 else if (other.NeedsRepairing())
                 {
                     // Direct call to reparing task $$$ to be improved by AI behaviour
-                    foreach (Unit unit in m_selectedUnitList)
-                        unit.SetRepairTarget(other);
+                    foreach (Builder unit in m_selectedUnitList)
+                        if (unit != null)
+                            unit.SetRepairTarget(other);
                 }
             }
         }
         // Set capturing target
         else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, targetMask))
         {
-            TargetBuilding target = raycastInfo.transform.GetComponent<TargetBuilding>();
+            StaticBuilding target = raycastInfo.transform.GetComponent<StaticBuilding>();
             if (target != null && target.Team != Team)
             {
                 // Direct call to capturing task $$$ to be improved by AI behaviour
-                foreach (Unit unit in m_selectedUnitList)
-                    unit.SetCaptureTarget(target);
+                foreach (Builder unit in m_selectedUnitList)
+                    if (unit != null)
+                        unit.SetCaptureTarget(target);
             }
         }
         // Set unit move target

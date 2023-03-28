@@ -1,21 +1,17 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-public sealed class Factory : BaseEntity
+
+public class Factory : Building
 {
     //  Internal objects
     //  ----------------
 
-    public enum State
-    {
-        Available = 0,
-        UnderConstruction,
-        BuildingUnit,
-    }
-
     //  Variables
     //  ---------
+
+    //  Factory variables
 
     [SerializeField]
     private FactoryDataScriptable m_factoryData = null;
@@ -23,13 +19,10 @@ public sealed class Factory : BaseEntity
     private GameObject[] m_unitPrefabs = null;
     private GameObject[] m_factoryPrefabs = null;
     private int m_requestedEntityBuildIndex = -1;
-    private Image m_buildGaugeImage;
-    private float m_currentBuildDuration = 0f;
-    private float m_endBuildDate = 0f;
     private int m_spawnCount = 0;
     /* !! max available unit count in menu is set to 9, available factories count to 3 !! */
     private const int MAX_AVAILABLE_UNITS = 9;
-    
+
     private const int MaxAvailableFactories = 3;
 
     private UnitController m_controller = null;
@@ -38,42 +31,26 @@ public sealed class Factory : BaseEntity
     private int m_maxBuildingQueueSize = 5;
     private Queue<int> m_buildingQueue = new Queue<int>();
 
-    public Action<Unit> OnUnitBuilt;
-    public Action<Factory> OnFactoryBuilt;
-    public Action OnBuildCanceled;
+    public Action<Unit> OnUnitFormed;
+    private bool m_isWorking = false;
 
     //  Properties
     //  ----------
 
-    public State CurrentState { get; private set; }
-    public bool IsUnderConstruction { get { return CurrentState == State.UnderConstruction; } }
-    public int Cost { get { return m_factoryData.cost; } }
+    public override BuildingDataScriptable BuildingData => m_factoryData;
     public FactoryDataScriptable GetFactoryData { get { return m_factoryData; } }
     public int AvailableUnitsCount { get { return Mathf.Min(MAX_AVAILABLE_UNITS, m_factoryData.availableUnits.Length); } }
     public int AvailableFactoriesCount { get { return Mathf.Min(MaxAvailableFactories, m_factoryData.availableFactories.Length); } }
-    public bool IsBuildingUnit { get { return CurrentState == State.BuildingUnit; } }
 
     //  Functions
     //  ---------
 
     #region MonoBehaviour methods
+
     protected override void Awake()
     {
         base.Awake();
 
-        m_buildGaugeImage = transform.Find("Canvas/BuildProgressImage").GetComponent<Image>();
-        if (m_buildGaugeImage)
-        {
-            m_buildGaugeImage.fillAmount = 0f;
-            m_buildGaugeImage.color = GameServices.GetTeamColor(Team);
-        }
-
-        if (m_factoryData == null)
-        {
-            Debug.LogWarning("Missing FactoryData in " + gameObject.name);
-        }
-        m_HP = m_factoryData.maxHP;
-        onDeadEvent += Factory_OnDead;
 
         m_unitPrefabs = new GameObject[m_factoryData.availableUnits.Length];
         m_factoryPrefabs = new GameObject[m_factoryData.availableFactories.Length];
@@ -96,72 +73,38 @@ public sealed class Factory : BaseEntity
             m_factoryPrefabs[i] = Resources.Load<GameObject>(path);
         }
     }
+    
     protected override void Start()
     {
         base.Start();
-        GameServices.GameState.IncreaseTeamScore(m_team);
         m_controller = GameServices.GetControllerByTeam(m_team);
     }
+
     protected override void Update()
     {
-        switch (CurrentState)
+        base.Update();
+
+        if (!m_isActive) return;
+
+        if(m_isWorking)
         {
-            case State.Available:
-                break;
+            if (Time.time > m_endBuildDate)
+            {
+                OnUnitFormed?.Invoke(BuildUnit());
+                OnUnitFormed = null; // remove registered methods
+                m_isWorking = false;
 
-            case State.UnderConstruction:
-                // $$$ TODO : improve construction progress rendering
-                if (Time.time > m_endBuildDate)
+                // manage build queue : chain with new unit build if necessary
+                if (m_buildingQueue.Count != 0)
                 {
-                    CurrentState = State.Available;
-                    m_buildGaugeImage.fillAmount = 0f;
+                    int unitIndex = m_buildingQueue.Dequeue();
+                    StartBuildUnit(unitIndex);
                 }
-                else if (m_buildGaugeImage)
-                    m_buildGaugeImage.fillAmount = 1f - (m_endBuildDate - Time.time) / m_factoryData.buildDuration;
-                break;
-
-            case State.BuildingUnit:
-                if (Time.time > m_endBuildDate)
-                {
-                    OnUnitBuilt?.Invoke(BuildUnit());
-                    OnUnitBuilt = null; // remove registered methods
-                    CurrentState = State.Available;
-
-                    // manage build queue : chain with new unit build if necessary
-                    if (m_buildingQueue.Count != 0)
-                    {
-                        int unitIndex = m_buildingQueue.Dequeue();
-                        StartBuildUnit(unitIndex);
-                    }
-                }
-                else if (m_buildGaugeImage)
-                    m_buildGaugeImage.fillAmount = 1f - (m_endBuildDate - Time.time) / m_currentBuildDuration;
-                break;
+            }
+            else if (m_buildGaugeImage)
+                m_buildGaugeImage.fillAmount = 1f - (m_endBuildDate - Time.time) / m_currentBuildDuration;
         }
     }
-    #endregion
-    private void Factory_OnDead()
-    {
-        if (m_factoryData.deathFXPrefab)
-        {
-            GameObject fx = Instantiate(m_factoryData.deathFXPrefab, transform);
-            fx.transform.parent = null;
-        }
-
-        GameServices.GameState.DecreaseTeamScore(m_team);
-        Destroy(gameObject);
-    }
-
-    #region IRepairable
-    public override bool NeedsRepairing() => m_HP < GetFactoryData.maxHP;
-
-    public override void Repair(int amount)
-    {
-        m_HP = Mathf.Min(m_HP + amount, GetFactoryData.maxHP);
-        base.Repair(amount);
-    }
-
-    public override void FullRepair() => Repair(GetFactoryData.maxHP);
 
     #endregion
 
@@ -214,15 +157,11 @@ public sealed class Factory : BaseEntity
     }
     private void StartBuildUnit(int unitMenuIndex)
     {
-        if (IsUnitIndexValid(unitMenuIndex) == false)
-            return;
-
-        // Factory is being constucted
-        if (CurrentState == State.UnderConstruction)
+        if (!IsUnitIndexValid(unitMenuIndex))
             return;
 
         // Build queue
-        if (CurrentState == State.BuildingUnit)
+        if (m_isWorking)
         {
             if (m_buildingQueue.Count < m_maxBuildingQueueSize)
                 m_buildingQueue.Enqueue(unitMenuIndex);
@@ -232,12 +171,12 @@ public sealed class Factory : BaseEntity
         m_currentBuildDuration = GetBuildableUnitData(unitMenuIndex).buildDuration;
         //Debug.Log("currentBuildDuration " + CurrentBuildDuration);
 
-        CurrentState = State.BuildingUnit;
+        m_isWorking = true;
         m_endBuildDate = Time.time + m_currentBuildDuration;
 
         m_requestedEntityBuildIndex = unitMenuIndex;
 
-        OnUnitBuilt += (Unit unit) =>
+        OnUnitFormed += (Unit unit) =>
         {
             if (unit != null)
             {
@@ -253,7 +192,7 @@ public sealed class Factory : BaseEntity
         if (IsUnitIndexValid(m_requestedEntityBuildIndex) == false)
             return null;
 
-        CurrentState = State.Available;
+        m_isWorking = false;
 
         GameObject unitPrefab = m_unitPrefabs[m_requestedEntityBuildIndex];
 
@@ -292,10 +231,9 @@ public sealed class Factory : BaseEntity
     }
     public void CancelCurrentBuild()
     {
-        if (CurrentState == State.UnderConstruction || CurrentState == State.Available)
-            return;
+        if (!m_isWorking) return;
 
-        CurrentState = State.Available;
+        m_isWorking = false;
 
         // refund build points
         m_controller.TotalBuildPoints += GetUnitCost(m_requestedEntityBuildIndex);
@@ -369,7 +307,7 @@ public sealed class Factory : BaseEntity
         if (IsFactoryIndexValid(factoryIndex) == false)
             return null;
 
-        if (CurrentState == State.BuildingUnit)
+        if (m_isWorking)
             return null;
 
         GameObject factoryPrefab = m_factoryPrefabs[factoryIndex];
@@ -381,12 +319,6 @@ public sealed class Factory : BaseEntity
         newFactory.StartSelfConstruction();
 
         return newFactory;
-    }
-    private void StartSelfConstruction()
-    {
-        CurrentState = State.UnderConstruction;
-
-        m_endBuildDate = Time.time + m_factoryData.buildDuration;
     }
 
     #endregion

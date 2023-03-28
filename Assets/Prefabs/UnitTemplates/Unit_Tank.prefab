@@ -238,10 +238,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8306208026992479062}
   - component: {fileID: 8354548474482552083}
-  - component: {fileID: 9097152687149926693}
   - component: {fileID: 6593571166977932406}
   - component: {fileID: 1442247095}
   - component: {fileID: 2577713570794330401}
+  - component: {fileID: -3948139122503201844}
   m_Layer: 10
   m_Name: Unit_Tank
   m_TagString: Untagged
@@ -285,20 +285,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &9097152687149926693
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4489616219243337951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3b442eaf4b252a428bd689056b74b63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_team: 0
-  m_unitData: {fileID: 11400000, guid: 02bf545fde7d7f64d86e63f93a59ee9b, type: 2}
 --- !u!65 &6593571166977932406
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -346,11 +332,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
-  range: 0
-  m_gameObjectDefaultLayer: []
-  m_gameObjectUILayer: []
-  m_gameObjectMinimapLayer: []
+  Team: 0
+  range: 30
+  m_gameObjectDefaultLayer:
+  - {fileID: 1975051277944523149}
+  m_gameObjectUILayer:
+  - {fileID: 959967971253590768}
+  m_gameObjectMinimapLayer:
+  - {fileID: 5744327603587327264}
+--- !u!114 &-3948139122503201844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4489616219243337951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91417698fcc82ae41a1ef2eaa33fc4de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_team: 0
+  m_fighterData: {fileID: 11400000, guid: 509b5cf1e04b73f4f87f5741e5842322, type: 2}
 --- !u!1 &5495304591573610463
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,6 +666,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4918f2b12f4375247985ec4762ddb513, type: 3}
+--- !u!1 &1975051277944523149 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 199484, guid: 4918f2b12f4375247985ec4762ddb513,
+    type: 3}
+  m_PrefabInstance: {fileID: 1975051277944718001}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1975051277944875535 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 420030, guid: 4918f2b12f4375247985ec4762ddb513,

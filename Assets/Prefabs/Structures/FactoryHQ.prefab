@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 401236}
-  - component: {fileID: 11493676}
   - component: {fileID: 4732168559980594952}
   - component: {fileID: 6957881582202263641}
   - component: {fileID: 1468398700287225518}
+  - component: {fileID: 1785345438760821025}
   m_Layer: 11
   m_Name: FactoryHQ
   m_TagString: Untagged
@@ -39,21 +39,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &11493676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 127182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8be669cfffbebcd49ac9a9376a64bfdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_team: 0
-  m_factoryData: {fileID: 11400000, guid: 0d9f0c0baf00e0e45b1c28cf2dacb6a7, type: 2}
-  m_maxBuildingQueueSize: 5
 --- !u!65 &4732168559980594952
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -79,7 +64,7 @@ NavMeshObstacle:
   m_Shape: 1
   m_Extents: {x: 5, y: 3, z: 5}
   m_MoveThreshold: 0.1
-  m_Carve: 1
+  m_Carve: 0
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 3, z: 0}
   m_TimeToStationary: 0
@@ -95,13 +80,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
+  Team: 0
   range: 50
   m_gameObjectDefaultLayer:
   - {fileID: 3454967550924094198}
   m_gameObjectUILayer:
   - {fileID: 1479926994273007114}
-  m_gameObjectMinimapLayer: []
+  m_gameObjectMinimapLayer:
+  - {fileID: 7622604505734769378}
+--- !u!114 &1785345438760821025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eee0e478305c8a42b15b2657abd4e84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_team: 0
+  m_factoryData: {fileID: 11400000, guid: 0d9f0c0baf00e0e45b1c28cf2dacb6a7, type: 2}
+  m_maxBuildingQueueSize: 5
 --- !u!1 &1479926994273007114
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,7 +301,7 @@ GameObject:
   - component: {fileID: 1534063160137068044}
   - component: {fileID: 223124663958814019}
   m_Layer: 5
-  m_Name: BuildProgressImage
+  m_Name: ProgressImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -677,11 +678,11 @@ PrefabInstance:
     - target: {fileID: 2347440, guid: 034e15246a35fc54ca1f1e6aa3ce4a4d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 03993c9801677ca4b9741101b3033488, type: 2}
+      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
     - target: {fileID: 2369424, guid: 034e15246a35fc54ca1f1e6aa3ce4a4d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 03993c9801677ca4b9741101b3033488, type: 2}
+      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 034e15246a35fc54ca1f1e6aa3ce4a4d, type: 3}
 --- !u!4 &3454967550923791126 stripped

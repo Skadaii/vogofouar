@@ -85,11 +85,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1707494665243283661}
-  - component: {fileID: 1707494665243283657}
   - component: {fileID: 3563715967324713862}
   - component: {fileID: 1707494665243283660}
   - component: {fileID: 8898371080241738159}
   - component: {fileID: 8247893265834660055}
+  - component: {fileID: -753666259387286484}
   m_Layer: 10
   m_Name: Unit_Ornithopter_B
   m_TagString: Untagged
@@ -117,20 +117,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1707494665243283657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1707494665243283662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3b442eaf4b252a428bd689056b74b63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_team: 0
-  m_unitData: {fileID: 11400000, guid: 8457afbb9d6b31c4188a955c071a22ba, type: 2}
 --- !u!65 &3563715967324713862
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -194,11 +180,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
-  range: 0
-  m_gameObjectDefaultLayer: []
-  m_gameObjectUILayer: []
-  m_gameObjectMinimapLayer: []
+  Team: 0
+  range: 50
+  m_gameObjectDefaultLayer:
+  - {fileID: 3205159837817245646}
+  m_gameObjectUILayer:
+  - {fileID: 5237823902566746043}
+  m_gameObjectMinimapLayer:
+  - {fileID: 3256175440458673631}
+--- !u!114 &-753666259387286484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707494665243283662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91417698fcc82ae41a1ef2eaa33fc4de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_team: 0
+  m_fighterData: {fileID: 11400000, guid: 1a6f28648c03cc44689ebbffdffe5f20, type: 2}
 --- !u!1 &3256175440458673631
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,6 +658,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62e0cf1aacbf19c4e9d8e3d92fcef72d, type: 3}
+--- !u!1 &3205159837817245646 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 126244, guid: 62e0cf1aacbf19c4e9d8e3d92fcef72d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3205159837817365226}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3205159837817485116 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 415190, guid: 62e0cf1aacbf19c4e9d8e3d92fcef72d,
