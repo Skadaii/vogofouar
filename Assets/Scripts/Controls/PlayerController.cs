@@ -592,15 +592,31 @@ public sealed class PlayerController : UnitController
         // Set unit move target
         else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
         {
-
             Vector3 newPos = raycastInfo.point;
             SetTargetCursorPosition(newPos);
 
-            UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
-
-            newSquad.Formation = m_currentFormation;
-            newSquad.m_leaderComponent.MoveTo(newPos);
+            MoveUnits(m_selectedUnitList, newPos);
         }
+    }
+    private void MoveUnits(List<Unit> units, Vector3 squadTarget)
+    {
+        if (m_selectedUnitList.Count == 1)
+        {
+            Unit unitToMove = m_selectedUnitList.First();
+            unitToMove.Squad = null;
+            unitToMove.MoveTo(squadTarget);
+            return;
+        }
+
+        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+
+        newSquad.Formation = m_currentFormation;
+        newSquad.m_leaderComponent.MoveTo(squadTarget);
+    }
+
+    private void CreateSquadAndMove(List<Unit> units, Vector3 squadTarget)
+    {
+
     }
 
     #endregion
