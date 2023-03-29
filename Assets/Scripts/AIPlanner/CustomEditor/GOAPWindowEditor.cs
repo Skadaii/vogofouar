@@ -93,6 +93,10 @@ namespace AIPlanner.GOAP
 
         class ActionEditor : MethodEditor
         {
+            public Button showPrecondition;
+            public Button showEffect;
+            public Type currentActionPanel;
+
             public SerializedProperty actionProperty;
             public Button removeActionButton;
 
@@ -290,7 +294,7 @@ namespace AIPlanner.GOAP
             if (m_currentGOAPPanel == null)
                 m_currentGOAPPanel = m_worldStateEditor.GetType();
 
-            InitializeShowButton(ref m_worldStateEditor.showButton, m_worldStateEditor.GetType(), "WorldState");
+            InitializeGOAPPanelButton(ref m_worldStateEditor.showButton, m_worldStateEditor.GetType(), "WorldState");
 
 
             m_worldStateEditor.worldStateProperty = m_goapObject.FindProperty("m_worldState");
@@ -430,7 +434,7 @@ namespace AIPlanner.GOAP
             m_actionSetEditor = new ActionSetEditor();
             m_actionSetEditor.actionEditors = new List<ActionEditor>();
 
-            InitializeShowButton(ref m_actionSetEditor.showButton, m_actionSetEditor.GetType(), "Action Set");
+            InitializeGOAPPanelButton(ref m_actionSetEditor.showButton, m_actionSetEditor.GetType(), "Action Set");
 
             m_actionSetEditor.actionSetProperty = m_goapObject.FindProperty("m_actionSet");
 
@@ -480,6 +484,9 @@ namespace AIPlanner.GOAP
             {
                 ActionEditor actionEditor = new ActionEditor();
                 actionEditor.stateIdListEditor = new StateIdListEditor();
+
+                InitializeActionPanelButton(actionEditor, ref actionEditor.showPrecondition, typeof(PreconditionListEditor), "Preconditions");
+                InitializeActionPanelButton(actionEditor, ref actionEditor.showEffect, typeof(StateIdListEditor), "Effects");
 
                 actionEditor.actionProperty = m_actionSetEditor.actionSetProperty.GetArrayElementAtIndex(i);
 
@@ -539,8 +546,8 @@ namespace AIPlanner.GOAP
             });
             preconditionListEditor.addPreconditionButton.text = "Add Precondition";
             preconditionListEditor.addPreconditionButton.style.width = new Length(40f, LengthUnit.Percent);
-            preconditionListEditor.addPreconditionButton.style.alignSelf = Align.FlexEnd;
-            preconditionListEditor.addPreconditionButton.style.position = Position.Absolute;
+            preconditionListEditor.addPreconditionButton.style.alignSelf = Align.Center;
+            preconditionListEditor.addPreconditionButton.style.height = 30f;
 
             preconditionListEditor.showFoldout = EditorUtils.CreateFoldout("Preconditions", 5f, Color.white, FlexDirection.Column);
             preconditionListEditor.showFoldout.value = false;
@@ -720,7 +727,7 @@ namespace AIPlanner.GOAP
             m_goalListEditor = new GoalListEditor();
             m_goalListEditor.goalEditors = new List<GoalEditor>();
 
-            InitializeShowButton(ref m_goalListEditor.showButton, m_goalListEditor.GetType(), "Goal");
+            InitializeGOAPPanelButton(ref m_goalListEditor.showButton, m_goalListEditor.GetType(), "Goal");
 
 
             m_goalListEditor.goalsProperty = m_goapObject.FindProperty("m_goals");
@@ -734,8 +741,9 @@ namespace AIPlanner.GOAP
                 Compose();
             });
             m_goalListEditor.addGoalButton.text = "Add Goal";
-            m_goalListEditor.addGoalButton.style.width = new Length(70f, LengthUnit.Percent);
+            m_goalListEditor.addGoalButton.style.width = new Length(40f, LengthUnit.Percent);
             m_goalListEditor.addGoalButton.style.alignSelf = Align.Center;
+            m_goalListEditor.addGoalButton.style.height = 30f;
 
             int goalCount = m_goap.Goals.Count;
 
@@ -801,7 +809,7 @@ namespace AIPlanner.GOAP
             SetMethodPopupField(methodEditor, methods);
         }
 
-        private void InitializeShowButton(ref Button button, Type goapPanelType, string textButton)
+        private void InitializeGOAPPanelButton(ref Button button, Type goapPanelType, string textButton)
         {
             button = new Button(
                     delegate
@@ -815,6 +823,23 @@ namespace AIPlanner.GOAP
             button.style.unityFontStyleAndWeight = FontStyle.Bold;
             button.style.width = new Length(33f, LengthUnit.Percent);
             button.style.height = new Length(35f);
+        }
+
+        private void InitializeActionPanelButton(ActionEditor actionEditor, ref Button button, Type actionPanelType, string textButton)
+        {
+            button = new Button(
+                    delegate
+                    {
+                        actionEditor.currentActionPanel = actionPanelType;
+                        Compose();
+                    });
+
+            button.text = textButton;
+            button.style.fontSize = 15f;
+            button.style.unityFontStyleAndWeight = FontStyle.Bold;
+            button.style.width = new Length(49.5f, LengthUnit.Percent);
+            button.style.height = new Length(30f);
+            button.style.right = 3f;
         }
         #endregion
 
@@ -886,8 +911,6 @@ namespace AIPlanner.GOAP
                 stateFoldoutLabel.Add(stateEditor.removeStateButton);
                 m_panelScrolView.Add(stateFoldoutLabel);
             }
-
-            //rootVisualElement.Add(worldStateLabel);
         }
         private void ComposeActionSet()
         {
@@ -912,40 +935,24 @@ namespace AIPlanner.GOAP
                 actionEditor.showFoldout.Add(actionEditor.methodPopupField);
                 actionEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
 
-                actionEditor.showFoldout.Add(ComposeStateIdEditor(actionEditor.stateIdListEditor));
+                VisualElement actionPanelLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 80f, 80f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+                actionPanelLabel.Add(actionEditor.showEffect);
+                actionPanelLabel.Add(actionEditor.showPrecondition);
 
-                VisualElement preconditionListFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 0f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
-                VisualElement preconditionListFoldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
-                preconditionListFoldoutLabel.Add(preconditionListFoldoutOverlay);
-                preconditionListFoldoutLabel.Add(actionEditor.preconditionListEditor.showFoldout);
-                preconditionListFoldoutLabel.Add(actionEditor.preconditionListEditor.addPreconditionButton);
+                actionEditor.showFoldout.Add(actionPanelLabel);
 
-                actionEditor.preconditionListEditor.showFoldout.style.left = 10f;
-                actionEditor.preconditionListEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 15f)));
-
-                int preconditionCount = actionEditor.preconditionListEditor.preconditionEditors.Count;
-                for (int j = 0; j < preconditionCount; ++j)
+                if (actionEditor.currentActionPanel == typeof(PreconditionListEditor))
                 {
-                    PreconditionEditor preconditionEditor = actionEditor.preconditionListEditor.preconditionEditors[j];
-                    preconditionEditor.showFoldout.Clear();
-                    preconditionEditor.stateIdListEditor.showFoldout.Clear();
-
-                    VisualElement preconditionFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 0f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
-                    VisualElement preconditionFoldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
-
-                    preconditionFoldoutLabel.Add(preconditionFoldoutOverlay);
-                    preconditionFoldoutLabel.Add(preconditionEditor.showFoldout);
-                    preconditionFoldoutLabel.Add(preconditionEditor.removePreconditionButton);
-
-                    preconditionEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
-                    preconditionEditor.showFoldout.Add(preconditionEditor.costField);
-                    preconditionEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
-                    preconditionEditor.showFoldout.Add(ComposeStateIdEditor(preconditionEditor.stateIdListEditor));
-
-                    actionEditor.preconditionListEditor.showFoldout.Add(preconditionFoldoutLabel);
+                    ComposePreconditionListEditor(actionEditor.preconditionListEditor, actionEditor.showFoldout);
+                    actionEditor.showEffect.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
+                    actionEditor.showPrecondition.style.color = Color.white;
                 }
-
-                actionEditor.showFoldout.Add(preconditionListFoldoutLabel);
+                else
+                {
+                    actionEditor.showFoldout.Add(ComposeStateIdEditor(actionEditor.stateIdListEditor));
+                    actionEditor.showPrecondition.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
+                    actionEditor.showEffect.style.color = Color.white;
+                }
 
                 VisualElement actionFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
                 VisualElement foldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
@@ -959,38 +966,64 @@ namespace AIPlanner.GOAP
 
             m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0, 20f)));
         }
+
+        private void ComposePreconditionListEditor(PreconditionListEditor preconditionListEditor, VisualElement root)
+        {
+            root.Add(preconditionListEditor.addPreconditionButton);
+            root.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
+
+            int preconditionCount = preconditionListEditor.preconditionEditors.Count;
+            for (int j = 0; j < preconditionCount; ++j)
+            {
+                PreconditionEditor preconditionEditor = preconditionListEditor.preconditionEditors[j];
+                preconditionEditor.showFoldout.Clear();
+                preconditionEditor.stateIdListEditor.showFoldout.Clear();
+
+                VisualElement preconditionFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 20f, 0f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
+                VisualElement preconditionFoldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
+
+                preconditionFoldoutLabel.Add(preconditionFoldoutOverlay);
+                preconditionFoldoutLabel.Add(preconditionEditor.showFoldout);
+                preconditionFoldoutLabel.Add(preconditionEditor.removePreconditionButton);
+
+                preconditionEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
+                preconditionEditor.showFoldout.Add(preconditionEditor.costField);
+                preconditionEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
+                preconditionEditor.showFoldout.Add(ComposeStateIdEditor(preconditionEditor.stateIdListEditor));
+
+                root.Add(preconditionFoldoutLabel);
+            }
+        }
+
         private void ComposeGoal()
         {
-            VisualElement goalListSetLabel = EditorUtils.CreateLabel(1f, 5f, 0f, m_borderColor, m_backgroundColor, FlexDirection.Column);
-            VisualElement goalSetText = EditorUtils.CreateText("Goals", 20f, Align.Center);
-
-            goalListSetLabel.Add(goalSetText);
-            goalListSetLabel.Add(m_goalListEditor.addGoalButton);
-            goalListSetLabel.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
+            m_panelScrolView.Add(m_goalListEditor.addGoalButton);
+            m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
 
             for (int i = 0; i < m_goalListEditor.goalEditors.Count; i++)
             {
                 GoalEditor goalEditor = m_goalListEditor.goalEditors[i];
-                VisualElement goalSetLabel = EditorUtils.CreateLabel(1f, 5f, 5f, m_borderColor, m_backgroundColor, FlexDirection.Column);
+                VisualElement goalSetLabel = EditorUtils.CreateLabel(1f, 0f, 20f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Column);
+                VisualElement goalFoldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
 
                 goalEditor.showFoldout.Clear();
 
+                goalEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
                 goalEditor.showFoldout.Add(goalEditor.textElement);
                 goalEditor.showFoldout.Add(goalEditor.componentPopupField);
                 goalEditor.showFoldout.Add(goalEditor.methodPopupField);
                 goalEditor.showFoldout.Add(goalEditor.curveField);
+                goalEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
 
                 goalEditor.stateEditor.showFoldout.Clear();
                 goalEditor.showFoldout.Add(ComposeStateIdEditor(goalEditor.stateEditor));
 
+                goalSetLabel.Add(goalFoldoutOverlay);
                 goalSetLabel.Add(goalEditor.showFoldout);
                 goalSetLabel.Add(goalEditor.removeGoalButton);
 
-                goalListSetLabel.Add(goalSetLabel);
+                m_panelScrolView.Add(goalSetLabel);
             }
-
-            m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
-            m_panelScrolView.Add(goalListSetLabel);
         }
 
         private VisualElement ComposeStateIdEditor(StateIdListEditor stateIdListEditor)
