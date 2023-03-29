@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class UnitLeader : Unit
 {
     private Vector3? m_targetPosition = null;
     private Transform m_targetTransform = null;
 
+    [SerializeField] private float m_targetDistanceEpsilon = 0.1f;
+    [SerializeField] private bool m_usePrediction = false;
     public override UnitSquad Squad
     {
         get => m_squad;
@@ -25,24 +28,24 @@ public class UnitLeader : Unit
     {
         get
         {
-            if (m_targetPosition.HasValue)
-                return m_targetPosition.Value;
-
-            if (m_targetTransform is not null)
-                return m_targetTransform.position;
+            if (m_usePrediction)
+            {
+                if (m_targetPosition.HasValue)
+                    return m_targetPosition.Value;
+            
+                if (m_targetTransform is not null)
+                    return m_targetTransform.position;
+            }
 
             return transform.position;
         }
     }
-
-    public Action m_onMoveChange;
 
     public override void MoveTo(Vector3 target)
     {
         m_targetPosition = target;
 
         base.MoveTo(target);
-        m_onMoveChange.Invoke();
     }
 
     public override void MoveTo(Transform target)
@@ -50,7 +53,6 @@ public class UnitLeader : Unit
         m_targetTransform = target;
 
         base.MoveTo(target);
-        m_onMoveChange.Invoke();
     }
 
     public override void MoveToward(Vector3 velocity)
@@ -59,7 +61,16 @@ public class UnitLeader : Unit
         m_targetPosition = null;
 
         base.MoveToward(velocity);
+    }
 
-        m_onMoveChange.Invoke();
+    public bool HasReachedPos(float epsilon)
+    {
+        return m_navMeshAgent.remainingDistance - m_navMeshAgent.stoppingDistance <= epsilon;
+    }
+
+    private new void Update()
+    { 
+        if (!HasReachedPos(m_targetDistanceEpsilon))
+            m_squad.UpdatePositions();
     }
 }

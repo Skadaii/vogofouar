@@ -170,7 +170,7 @@ public class UnitController : MonoBehaviour
             m_squadList.Remove(lastSquad);
         }
 
-        newSquad.InitializeLeader(m_virtualLeaderPrefab);
+        newSquad.InitializeLeader(m_virtualLeaderPrefab, averagePosition);
 
         m_squadList.Add(newSquad);
 

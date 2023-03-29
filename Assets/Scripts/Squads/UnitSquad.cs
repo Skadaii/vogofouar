@@ -6,7 +6,17 @@ public class UnitSquad
 {
     #region Variables
 
-    public FormationRule m_formation = null;
+    private FormationRule m_formation = null;
+    public FormationRule Formation
+    {
+        get => m_formation;
+
+        set
+        {
+            m_formation = value;
+            UpdatePositions();
+        }
+    }
 
     public UnitLeader m_leaderComponent = null;
 
@@ -49,14 +59,14 @@ public class UnitSquad
     {
         UnityEngine.Object.Destroy(m_leaderComponent.gameObject);
     }
-    public void InitializeLeader(GameObject leaderPrefab)
+    public void InitializeLeader(GameObject leaderPrefab, Vector3 squadMiddle)
     {
         // If leader is null, set a virtual one
-        m_leaderComponent ??= CreateVirtuaLeader(leaderPrefab);
+        m_leaderComponent ??= CreateVirtuaLeader(leaderPrefab, squadMiddle, Quaternion.identity);
 
         m_leaderComponent.Squad = this;
 
-        m_leaderComponent.m_onMoveChange += UpdatePositions;
+        //m_leaderComponent.m_onMoveChange += UpdatePositions;
     }
 
     public void ReceiveAlert(Unit fromUnit)
@@ -75,7 +85,7 @@ public class UnitSquad
         {
             Unit unit = m_units[i];
 
-            if (unit && (!unit.gameObject.activeInHierarchy))
+            if (unit && !unit.gameObject.activeInHierarchy)
                 continue;
 
             Vector3 pos = ComputeUnitPosition(i);
@@ -91,9 +101,9 @@ public class UnitSquad
         return m_leaderComponent.transform.position;
     }
 
-    UnitLeader CreateVirtuaLeader(GameObject leaderPrefab)
+    UnitLeader CreateVirtuaLeader(GameObject leaderPrefab, Vector3 leaderPosition, Quaternion leaderRotation)
     {
-        GameObject leader = UnityEngine.Object.Instantiate(leaderPrefab);
+        GameObject leader = UnityEngine.Object.Instantiate(leaderPrefab, leaderPosition, leaderRotation);
 
         return leader.GetComponent<UnitLeader>();
     }

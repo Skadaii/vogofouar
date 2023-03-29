@@ -143,8 +143,7 @@ public class Unit : BaseEntity
     // Moving Task
     public virtual void MoveTo(Vector3 pos)
     {
-        if (m_entityTarget != null)
-            m_entityTarget = null;
+        m_entityTarget = null;
 
         if (m_captureTarget != null)
             StopCapture();

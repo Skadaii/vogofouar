@@ -1198,6 +1198,12 @@ PrefabInstance:
       objectReference: {fileID: 1531011709}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_currentFormation
+      value: 
+      objectReference: {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505,
+        type: 2}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: m_sceneEventSystem
       value: 
       objectReference: {fileID: 1531011709}
@@ -1206,6 +1212,12 @@ PrefabInstance:
       propertyPath: StartingBuildPoints
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_virtualLeaderPrefab
+      value: 
+      objectReference: {fileID: 7114013581813105076, guid: 70a474a91debe734ea38976829a721da,
+        type: 3}
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: PlayerController

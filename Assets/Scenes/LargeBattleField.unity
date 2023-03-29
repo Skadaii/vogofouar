@@ -691,6 +691,12 @@ PrefabInstance:
       objectReference: {fileID: 776645196}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_currentFormation
+      value: 
+      objectReference: {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505,
+        type: 2}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: m_sceneEventSystem
       value: 
       objectReference: {fileID: 1101717270}
@@ -699,6 +705,12 @@ PrefabInstance:
       propertyPath: CapturedTargetsText
       value: 
       objectReference: {fileID: 1508647155}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_virtualLeaderPrefab
+      value: 
+      objectReference: {fileID: 7114013581813105076, guid: 70a474a91debe734ea38976829a721da,
+        type: 3}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: FactoryPreviewTransparency
@@ -2657,6 +2669,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: AIController
       objectReference: {fileID: 0}
+    - target: {fileID: 7859672622032877473, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_currentFormation
+      value: 
+      objectReference: {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505,
+        type: 2}
+    - target: {fileID: 7859672622032877473, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_virtualLeaderPrefab
+      value: 
+      objectReference: {fileID: 7114013581813105076, guid: 70a474a91debe734ea38976829a721da,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fee74b0095774cf4f9701d9fab58813d, type: 3}
 --- !u!1001 &7323399335918567124
