@@ -7,8 +7,7 @@ public class Unit : BaseEntity
     //  Variables
     //  ---------
 
-    [SerializeField]
-    private UnitDataScriptable m_unitData = null;
+    [SerializeField] private UnitDataScriptable m_unitData = null;
      
     private Transform m_bulletSlot;
     private float m_lastActionDate = 0f;
@@ -21,10 +20,17 @@ public class Unit : BaseEntity
     {
         get => m_squad;
         set
-        {
-            m_squad?.Units.Remove(this);
+        { 
+            if (m_squad is not null)
+            {
+                m_squad.Units.Remove(this);
+                m_squad.UpdatePositions();
+            }
+
             m_squad = value;
-            m_squad?.Units.Add(this);
+
+            if (m_squad is not null)
+                m_squad.Units.Add(this);
         }
     }
 

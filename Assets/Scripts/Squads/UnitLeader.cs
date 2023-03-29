@@ -35,14 +35,14 @@ public class UnitLeader : Unit
         }
     }
 
-    public Action onMoveChange;
+    public Action m_onMoveChange;
 
     public override void MoveTo(Vector3 target)
     {
         m_targetPosition = target;
 
         base.MoveTo(target);
-        onMoveChange.Invoke();
+        m_onMoveChange.Invoke();
     }
 
     public override void MoveTo(Transform target)
@@ -50,7 +50,7 @@ public class UnitLeader : Unit
         m_targetTransform = target;
 
         base.MoveTo(target);
-        onMoveChange.Invoke();
+        m_onMoveChange.Invoke();
     }
 
     public override void MoveToward(Vector3 velocity)
@@ -60,6 +60,6 @@ public class UnitLeader : Unit
 
         base.MoveToward(velocity);
 
-        onMoveChange.Invoke();
+        m_onMoveChange.Invoke();
     }
 }

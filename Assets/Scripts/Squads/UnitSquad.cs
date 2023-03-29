@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,13 +26,20 @@ public class UnitSquad
             m_units = value;
 
             foreach (Unit unit in m_units)
-            {
-                UnitSquad lastSquad = unit.Squad;
-                lastSquad.m_units.Remove(unit);
-
                 unit.Squad = this;
-            }
         }
+    }
+
+    public void RemoveUnit(Unit unit)
+    {
+        if (m_units.Contains(unit))
+            unit.Squad = null;
+    }
+
+    public void AddUnit(Unit unit)
+    {
+        if (!m_units.Contains(unit))
+            unit.Squad = this;
     }
 
     #endregion
@@ -39,7 +47,7 @@ public class UnitSquad
     #region Functions
     public void Destroy()
     {
-        Object.Destroy(m_leaderComponent.gameObject);
+        UnityEngine.Object.Destroy(m_leaderComponent.gameObject);
     }
     public void InitializeLeader(GameObject leaderPrefab)
     {
@@ -48,7 +56,7 @@ public class UnitSquad
 
         m_leaderComponent.Squad = this;
 
-        m_leaderComponent.onMoveChange += UpdatePositions;
+        m_leaderComponent.m_onMoveChange += UpdatePositions;
     }
 
     public void ReceiveAlert(Unit fromUnit)
@@ -85,7 +93,7 @@ public class UnitSquad
 
     UnitLeader CreateVirtuaLeader(GameObject leaderPrefab)
     {
-        GameObject leader = Object.Instantiate(leaderPrefab);
+        GameObject leader = UnityEngine.Object.Instantiate(leaderPrefab);
 
         return leader.GetComponent<UnitLeader>();
     }
