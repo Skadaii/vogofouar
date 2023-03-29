@@ -37,6 +37,9 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public struct State
     {
+#if UNITY_EDITOR
+        public bool show;
+#endif
         public string name;
         public StateValue stateValue;
 
@@ -62,6 +65,10 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public struct StateId
     {
+#if UNITY_EDITOR
+        public bool show;
+#endif
+
         public int id;
         public StateValue stateValue;
     }

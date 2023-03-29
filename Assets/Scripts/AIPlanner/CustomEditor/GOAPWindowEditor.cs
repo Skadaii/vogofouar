@@ -15,6 +15,7 @@ namespace AIPlanner.GOAP
     {
         class FoldoutEditor
         {
+            public SerializedProperty showProperty;
             public Foldout showFoldout;
         }
 
@@ -86,6 +87,8 @@ namespace AIPlanner.GOAP
         class PreconditionListEditor : FoldoutEditor
         {
             public Button addPreconditionButton;
+            public TextField preconditionNameField;
+
 
             public SerializedProperty preconditionsProperty;
             public List<PreconditionEditor> preconditionEditors;
@@ -95,7 +98,7 @@ namespace AIPlanner.GOAP
         {
             public Button showPrecondition;
             public Button showEffect;
-            public Type currentActionPanel;
+            public SerializedProperty currentActionPanelProperty;
 
             public SerializedProperty actionProperty;
             public Button removeActionButton;
@@ -132,6 +135,7 @@ namespace AIPlanner.GOAP
             public Button showButton;
 
             public Button addGoalButton;
+            public TextField goalNameField;
 
             public SerializedProperty goalsProperty;
             public List<GoalEditor> goalEditors;
@@ -367,9 +371,12 @@ namespace AIPlanner.GOAP
 
                 SerializedProperty stateProperty = m_worldStateEditor.statesProperty.GetArrayElementAtIndex(i);
 
+
+                stateEditor.showProperty = stateProperty.FindPropertyRelative(nameof(State.show));
                 stateEditor.stateNameProperty = stateProperty.FindPropertyRelative(nameof(State.name));
+
                 stateEditor.showFoldout = EditorUtils.CreateFoldout(stateEditor.stateNameProperty.stringValue, 5f, Color.white, FlexDirection.Column);
-                stateEditor.showFoldout.value = false;
+                stateEditor.showFoldout.BindProperty(stateEditor.showProperty);
 
                 SerializedProperty stateValueProperty = stateProperty.FindPropertyRelative(nameof(State.stateValue));
 
@@ -444,7 +451,7 @@ namespace AIPlanner.GOAP
             {
                 string actionName = m_actionSetEditor.actionNameField.text;
 
-                if (actionName == string.Empty)
+                if (string.IsNullOrWhiteSpace(actionName))
                     return;
 
                 int actionCount = m_actionSetEditor.actionSetProperty.arraySize - 1;
@@ -485,14 +492,19 @@ namespace AIPlanner.GOAP
                 ActionEditor actionEditor = new ActionEditor();
                 actionEditor.stateIdListEditor = new StateIdListEditor();
 
+                actionEditor.actionProperty = m_actionSetEditor.actionSetProperty.GetArrayElementAtIndex(i);
+
+                actionEditor.currentActionPanelProperty = actionEditor.actionProperty.FindPropertyRelative(nameof(Action.currentActionPanelType));
+
                 InitializeActionPanelButton(actionEditor, ref actionEditor.showPrecondition, typeof(PreconditionListEditor), "Preconditions");
                 InitializeActionPanelButton(actionEditor, ref actionEditor.showEffect, typeof(StateIdListEditor), "Effects");
 
-                actionEditor.actionProperty = m_actionSetEditor.actionSetProperty.GetArrayElementAtIndex(i);
 
+
+                actionEditor.showProperty = actionEditor.actionProperty.FindPropertyRelative(nameof(Action.show));
                 SerializedProperty actionNameProperty = actionEditor.actionProperty.FindPropertyRelative(nameof(Action.name));
                 actionEditor.showFoldout = EditorUtils.CreateFoldout(actionNameProperty.stringValue, 5f, Color.white, FlexDirection.Column);
-                actionEditor.showFoldout.value = false;
+                actionEditor.showFoldout.BindProperty(actionEditor.showProperty);
 
                 InitializeMethodEditor(actionEditor, actionEditor.actionProperty, m_actionMethods);
 
@@ -514,6 +526,7 @@ namespace AIPlanner.GOAP
 
                 actionEditor.stateIdListEditor.stateIdsProperty = actionEditor.actionProperty.FindPropertyRelative("m_stateEffects");
                 actionEditor.stateIdListEditor.stateIdEditors = new List<StateIdEditor>();
+                actionEditor.stateIdListEditor.showProperty = actionEditor.actionProperty.FindPropertyRelative(nameof(Action.showEffects));
                 InitializeStateIdList(actionEditor.stateIdListEditor, "Effects");
 
                 InitializePreconditionList(actionEditor);
@@ -529,28 +542,35 @@ namespace AIPlanner.GOAP
             PreconditionListEditor preconditionListEditor = ActionEditor.preconditionListEditor;
             preconditionListEditor.preconditionEditors = new List<PreconditionEditor>();
             preconditionListEditor.preconditionsProperty = ActionEditor.actionProperty.FindPropertyRelative("m_preconditions");
-
+            preconditionListEditor.preconditionNameField = new TextField("Precondition Name");
+            preconditionListEditor.preconditionNameField.style.width = new Length(70f, LengthUnit.Percent);
             preconditionListEditor.addPreconditionButton = new Button(delegate
             {
+                string preconditionName = preconditionListEditor.preconditionNameField.text;
+
+                if (string.IsNullOrWhiteSpace(preconditionName))
+                    return;
+
                 int preconditionCount = preconditionListEditor.preconditionsProperty.arraySize - 1;
 
                 if (preconditionCount < 0)
                     preconditionCount = 0;
 
                 int actionId = m_actionSetEditor.actionEditors.IndexOf(ActionEditor);
-                goap.ActionSet[actionId].Preconditions.Add(new Action.Precondition());
+                goap.ActionSet[actionId].Preconditions.Add(new Action.Precondition() { name = preconditionName });
                 m_goapObject.Update();
 
                 InitializePreconditionList(ActionEditor);
                 Compose();
             });
             preconditionListEditor.addPreconditionButton.text = "Add Precondition";
-            preconditionListEditor.addPreconditionButton.style.width = new Length(40f, LengthUnit.Percent);
+            preconditionListEditor.addPreconditionButton.style.width = new Length(29f, LengthUnit.Percent);
             preconditionListEditor.addPreconditionButton.style.alignSelf = Align.Center;
-            preconditionListEditor.addPreconditionButton.style.height = 30f;
+
+            preconditionListEditor.showProperty = ActionEditor.actionProperty.FindPropertyRelative(nameof(Action.showPreconditions));
 
             preconditionListEditor.showFoldout = EditorUtils.CreateFoldout("Preconditions", 5f, Color.white, FlexDirection.Column);
-            preconditionListEditor.showFoldout.value = false;
+            preconditionListEditor.showFoldout.BindProperty(preconditionListEditor.showProperty);
 
             int preconditionCount = preconditionListEditor.preconditionsProperty.arraySize;
 
@@ -562,10 +582,13 @@ namespace AIPlanner.GOAP
             PreconditionEditor preconditionEditor = new PreconditionEditor();
             preconditionEditor.stateIdListEditor = new StateIdListEditor();
 
-            preconditionEditor.showFoldout = EditorUtils.CreateFoldout($"Preconditions_{Index}", 15, Color.white, FlexDirection.Column);
-            preconditionEditor.showFoldout.value = false;
-
             SerializedProperty preconditionProperty = PreconditionListEditor.preconditionsProperty.GetArrayElementAtIndex(Index);
+
+            string preconditionName = preconditionProperty.FindPropertyRelative(nameof(Action.Precondition.name)).stringValue;
+            preconditionEditor.showProperty = preconditionProperty.FindPropertyRelative(nameof(Action.Precondition.show));
+            preconditionEditor.showFoldout = EditorUtils.CreateFoldout(preconditionName, 15, Color.white, FlexDirection.Column);
+            preconditionEditor.showFoldout.BindProperty(preconditionEditor.showProperty);
+
 
             preconditionEditor.costProperty = preconditionProperty.FindPropertyRelative("cost");
             preconditionEditor.costField = new PropertyField();
@@ -573,6 +596,7 @@ namespace AIPlanner.GOAP
 
             preconditionEditor.stateIdListEditor.stateIdsProperty = preconditionProperty.FindPropertyRelative("states");
             preconditionEditor.stateIdListEditor.stateIdEditors = new List<StateIdEditor>();
+            preconditionEditor.stateIdListEditor.showProperty = preconditionProperty.FindPropertyRelative(nameof(Action.Precondition.showStates));
             InitializeStateIdList(preconditionEditor.stateIdListEditor, "States");
 
             preconditionEditor.removePreconditionButton = new Button(
@@ -604,7 +628,7 @@ namespace AIPlanner.GOAP
                 InitializeStateId(StateIdListEditor, i);
 
             StateIdListEditor.showFoldout = EditorUtils.CreateFoldout(FoldoutText, 5f, Color.white, FlexDirection.Column);
-            StateIdListEditor.showFoldout.value = false;
+            StateIdListEditor.showFoldout.BindProperty(StateIdListEditor.showProperty);
 
             InitializeAddStateIdButton(StateIdListEditor);
         }
@@ -615,9 +639,11 @@ namespace AIPlanner.GOAP
             stateIdEditor.stateIdProperty = StateIdListEditor.stateIdsProperty.GetArrayElementAtIndex(Index);
             stateIdEditor.idOfStateProperty = stateIdEditor.stateIdProperty.FindPropertyRelative(nameof(StateId.id));
 
+            stateIdEditor.showProperty = stateIdEditor.stateIdProperty.FindPropertyRelative(nameof(StateId.show));
+
             string stateName = m_worldStateEditor.stateEditors[stateIdEditor.idOfStateProperty.intValue].stateNameProperty.stringValue;
             stateIdEditor.showFoldout = EditorUtils.CreateFoldout(stateName, 5f, Color.white, FlexDirection.Column);
-            stateIdEditor.showFoldout.value = false;
+            stateIdEditor.showFoldout.BindProperty(stateIdEditor.showProperty);
 
             SerializedProperty stateValueProperty = stateIdEditor.stateIdProperty.FindPropertyRelative(nameof(StateId.stateValue));
             stateIdEditor.valueProperty = stateValueProperty.FindPropertyRelative("m_value");
@@ -732,18 +758,25 @@ namespace AIPlanner.GOAP
 
             m_goalListEditor.goalsProperty = m_goapObject.FindProperty("m_goals");
 
+            m_goalListEditor.goalNameField = new TextField("Goal Name");
+            m_goalListEditor.goalNameField.style.width = new Length(70f, LengthUnit.Percent);
+
             m_goalListEditor.addGoalButton = new Button(delegate
             {
-                goap.Goals.Add(new Goal());
+                string goalName = m_goalListEditor.goalNameField.text;
+
+                if (string.IsNullOrWhiteSpace(goalName))
+                    return;
+
+                goap.Goals.Add(new Goal() { name = goalName});
                 m_goapObject.Update();
 
                 InitializeGoalEditor(goap.Goals.Count - 1);
                 Compose();
             });
             m_goalListEditor.addGoalButton.text = "Add Goal";
-            m_goalListEditor.addGoalButton.style.width = new Length(40f, LengthUnit.Percent);
-            m_goalListEditor.addGoalButton.style.alignSelf = Align.Center;
-            m_goalListEditor.addGoalButton.style.height = 30f;
+            m_goalListEditor.addGoalButton.style.width = new Length(29f, LengthUnit.Percent);
+            m_goalListEditor.addGoalButton.style.alignSelf = Align.FlexEnd;
 
             int goalCount = goap.Goals.Count;
 
@@ -759,6 +792,7 @@ namespace AIPlanner.GOAP
             goalEditor.stateEditor = new StateIdListEditor();
             goalEditor.stateEditor.stateIdsProperty = goalProperty.FindPropertyRelative("m_states");
             goalEditor.stateEditor.stateIdEditors = new List<StateIdEditor>();
+            goalEditor.stateEditor.showProperty = goalProperty.FindPropertyRelative(nameof(Goal.showStates));
             InitializeStateIdList(goalEditor.stateEditor, "States");
 
             goalEditor.animationCurveProperty = goalProperty.FindPropertyRelative("m_animationCurve");
@@ -785,8 +819,11 @@ namespace AIPlanner.GOAP
             goalEditor.removeGoalButton.style.alignSelf = Align.FlexEnd;
             goalEditor.removeGoalButton.style.position = Position.Absolute;
 
-            goalEditor.showFoldout = EditorUtils.CreateFoldout($"Goal_{index}", 5f, Color.white, FlexDirection.Column);
-            goalEditor.showFoldout.value = false;
+
+            goalEditor.showProperty = goalProperty.FindPropertyRelative(nameof(Goal.show));
+            string goalName = goalProperty.FindPropertyRelative(nameof(Goal.name)).stringValue;
+            goalEditor.showFoldout = EditorUtils.CreateFoldout(goalName, 5f, Color.white, FlexDirection.Column);
+            goalEditor.showFoldout.BindProperty(goalEditor.showProperty);
 
             SerializedProperty methodProperty = goalProperty.FindPropertyRelative("m_considerationMethod");
             InitializeMethodEditor(goalEditor, methodProperty, m_considerationMethods);
@@ -831,7 +868,8 @@ namespace AIPlanner.GOAP
             button = new Button(
                     delegate
                     {
-                        actionEditor.currentActionPanel = actionPanelType;
+                        actionEditor.currentActionPanelProperty.stringValue = actionPanelType.FullName;
+                        m_goapObject.ApplyModifiedPropertiesWithoutUndo();
                         Compose();
                     });
 
@@ -943,7 +981,7 @@ namespace AIPlanner.GOAP
 
                 actionEditor.showFoldout.Add(actionPanelLabel);
 
-                if (actionEditor.currentActionPanel == typeof(PreconditionListEditor))
+                if (actionEditor.currentActionPanelProperty.stringValue == typeof(PreconditionListEditor).FullName)
                 {
                     ComposePreconditionListEditor(actionEditor.preconditionListEditor, actionEditor.showFoldout);
                     actionEditor.showEffect.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
@@ -971,7 +1009,11 @@ namespace AIPlanner.GOAP
 
         private void ComposePreconditionListEditor(PreconditionListEditor preconditionListEditor, VisualElement root)
         {
-            root.Add(preconditionListEditor.addPreconditionButton);
+            VisualElement addPreconditionLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+            addPreconditionLabel.Add(preconditionListEditor.preconditionNameField);
+            addPreconditionLabel.Add(preconditionListEditor.addPreconditionButton);
+
+            root.Add(addPreconditionLabel);
             root.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
 
             int preconditionCount = preconditionListEditor.preconditionEditors.Count;
@@ -999,7 +1041,11 @@ namespace AIPlanner.GOAP
 
         private void ComposeGoal()
         {
-            m_panelScrolView.Add(m_goalListEditor.addGoalButton);
+            VisualElement addGoalLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+            addGoalLabel.Add(m_goalListEditor.goalNameField);
+            addGoalLabel.Add(m_goalListEditor.addGoalButton);
+
+            m_panelScrolView.Add(addGoalLabel);
             m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
 
             for (int i = 0; i < m_goalListEditor.goalEditors.Count; i++)

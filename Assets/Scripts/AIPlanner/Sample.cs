@@ -23,4 +23,10 @@ public class Sample : MonoBehaviour
     {
         return 1f;
     }
+
+    [ConsiderationMethod]
+    public float ConsiderationSample2(WorldState worldState)
+    {
+        return 1f;
+    }
 }

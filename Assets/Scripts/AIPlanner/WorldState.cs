@@ -7,9 +7,12 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public struct WorldState
     {
-        [HideInInspector] public string stateName;
+#if UNITY_EDITOR
+        [HideInInspector] public bool show;
+#endif
 
-        [SerializeField] public List<State> states;
+        public string stateName;
+        public List<State> states;
 
         public void Initialize(GameObject GameObject)
         {

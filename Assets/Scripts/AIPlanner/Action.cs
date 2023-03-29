@@ -7,7 +7,13 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public class Action : Method
     {
+#if UNITY_EDITOR
         [HideInInspector] public string name;
+        [HideInInspector] public bool show;
+        [HideInInspector] public bool showPreconditions;
+        [HideInInspector] public bool showEffects;
+        [HideInInspector] public string currentActionPanelType; 
+#endif
 
         [SerializeField] private List<StateId> m_stateEffects = new List<StateId>();
         [SerializeField] private List<Precondition> m_preconditions = new List<Precondition>();
@@ -17,6 +23,12 @@ namespace AIPlanner.GOAP
         [System.Serializable]
         public class Precondition
         {
+#if UNITY_EDITOR
+            [HideInInspector] public string name;
+            [HideInInspector] public bool show;
+            [HideInInspector] public bool showStates;
+#endif
+
             public List<StateId> states;
             public int cost;
         }

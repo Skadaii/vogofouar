@@ -6,6 +6,13 @@ namespace AIPlanner.GOAP
     [System.Serializable]
     public class Goal
     {
+
+#if UNITY_EDITOR
+        [HideInInspector] public string name;
+        [HideInInspector] public bool show;
+        [HideInInspector] public bool showStates;
+#endif
+
         [SerializeField] private List<StateId> m_states = new List<StateId>();
         public List<StateId> States => m_states;
 
