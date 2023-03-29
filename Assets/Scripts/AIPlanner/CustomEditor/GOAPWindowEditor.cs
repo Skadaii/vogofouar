@@ -146,7 +146,7 @@ namespace AIPlanner.GOAP
         private Dictionary<string, string[]> m_considerationMethods;
         private List<string> m_supportedTypesString;
 
-        [SerializeField] private GOAP m_goap;
+        public GOAP goap;
         private PropertyField m_goapField;
 
         private SerializedObject m_serializedObject;
@@ -184,7 +184,7 @@ namespace AIPlanner.GOAP
             m_panelScrolView = new ScrollView(ScrollViewMode.Vertical);
 
             m_serializedObject = new SerializedObject(this);
-            SerializedProperty goapProperty = m_serializedObject.FindProperty(nameof(m_goap));
+            SerializedProperty goapProperty = m_serializedObject.FindProperty(nameof(goap));
 
             m_goapField = new PropertyField();
             m_goapField.BindProperty(goapProperty);
@@ -215,18 +215,18 @@ namespace AIPlanner.GOAP
 
         private void InitalizeGOAP()
         {
-            if (m_goap == null)
+            if (goap == null)
             {
                 m_goapObject = null;
                 return;
             }
 
-            Method.GetStateMethods(m_goap.gameObject, out m_stateMethods);
-            Method.GetActionMethods(m_goap.gameObject, out m_actionMethods);
-            Method.GetConsiderationMethods(m_goap.gameObject, out m_considerationMethods);
+            Method.GetStateMethods(goap.gameObject, out m_stateMethods);
+            Method.GetActionMethods(goap.gameObject, out m_actionMethods);
+            Method.GetConsiderationMethods(goap.gameObject, out m_considerationMethods);
             m_supportedTypesString = StateType.SupportedTypesString;
 
-            m_goapObject = new SerializedObject(m_goap);
+            m_goapObject = new SerializedObject(goap);
 
             InitializeWorldState();
             InitializeActionSet();
@@ -325,7 +325,7 @@ namespace AIPlanner.GOAP
                 state.stateValue = new StateValue();
                 state.stateValue.Value = value;
 
-                m_goap.WorldState.states.Add(state);
+                goap.WorldState.states.Add(state);
                 m_goapObject.Update();
 
                 InitializeWorldStateList();
@@ -354,12 +354,12 @@ namespace AIPlanner.GOAP
         {
             m_worldStateEditor.stateEditors.Clear();
 
-            if (m_goap.WorldState.states == null)
-                m_goap.WorldState.states = new List<State>();
+            if (goap.WorldState.states == null)
+                goap.WorldState.states = new List<State>();
 
             m_worldStateEditor.statesProperty = m_worldStateEditor.worldStateProperty.FindPropertyRelative(nameof(WorldState.states));
 
-            int stateCount = m_goap.WorldState.states.Count;
+            int stateCount = goap.WorldState.states.Count;
 
             for (int i = 0; i < stateCount; ++i)
             {
@@ -455,7 +455,7 @@ namespace AIPlanner.GOAP
                 Action newAction = new Action();
                 newAction.name = actionName;
 
-                m_goap.ActionSet.Add(newAction);
+                goap.ActionSet.Add(newAction);
                 m_goapObject.Update();
 
                 InitializeActionList();
@@ -538,7 +538,7 @@ namespace AIPlanner.GOAP
                     preconditionCount = 0;
 
                 int actionId = m_actionSetEditor.actionEditors.IndexOf(ActionEditor);
-                m_goap.ActionSet[actionId].Preconditions.Add(new Action.Precondition());
+                goap.ActionSet[actionId].Preconditions.Add(new Action.Precondition());
                 m_goapObject.Update();
 
                 InitializePreconditionList(ActionEditor);
@@ -690,7 +690,7 @@ namespace AIPlanner.GOAP
                         return;
 
                     int id = stateChoice[selectedTypeName];
-                    Type type = m_goap.WorldState.states[id].stateValue.Value.GetType();
+                    Type type = goap.WorldState.states[id].stateValue.Value.GetType();
                     object value = Activator.CreateInstance(type);
 
                     StateValue stateValue = new StateValue();
@@ -734,10 +734,10 @@ namespace AIPlanner.GOAP
 
             m_goalListEditor.addGoalButton = new Button(delegate
             {
-                m_goap.Goals.Add(new Goal());
+                goap.Goals.Add(new Goal());
                 m_goapObject.Update();
 
-                InitializeGoalEditor(m_goap.Goals.Count - 1);
+                InitializeGoalEditor(goap.Goals.Count - 1);
                 Compose();
             });
             m_goalListEditor.addGoalButton.text = "Add Goal";
@@ -745,7 +745,7 @@ namespace AIPlanner.GOAP
             m_goalListEditor.addGoalButton.style.alignSelf = Align.Center;
             m_goalListEditor.addGoalButton.style.height = 30f;
 
-            int goalCount = m_goap.Goals.Count;
+            int goalCount = goap.Goals.Count;
 
             for (int i = 0; i < goalCount; ++i)
                 InitializeGoalEditor(i);
@@ -823,6 +823,7 @@ namespace AIPlanner.GOAP
             button.style.unityFontStyleAndWeight = FontStyle.Bold;
             button.style.width = new Length(33f, LengthUnit.Percent);
             button.style.height = new Length(35f);
+            button.style.right = 3f;
         }
 
         private void InitializeActionPanelButton(ActionEditor actionEditor, ref Button button, Type actionPanelType, string textButton)
@@ -846,11 +847,12 @@ namespace AIPlanner.GOAP
         #region Compose
         private void ComposeGOAP()
         {
-            if (m_goap == null)
+            if (goap == null)
                 return;
 
-            VisualElement goapPanelLabel = EditorUtils.CreateLabel(1f, 5f, 10f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+            VisualElement goapPanelLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Row);
 
+            m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
             m_panelScrolView.Add(goapPanelLabel);
 
             goapPanelLabel.Add(m_worldStateEditor.showButton);
@@ -1043,8 +1045,9 @@ namespace AIPlanner.GOAP
             for (int j = 0; j < stateIdCount; ++j)
             {
                 StateIdEditor stateIdEditor = stateIdListEditor.stateIdEditors[j];
-
+                stateIdEditor.showFoldout.Clear();
                 stateIdEditor.showFoldout.style.left = 10f;
+
                 stateIdEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
                 stateIdEditor.showFoldout.Add(stateIdEditor.valueField);
 
