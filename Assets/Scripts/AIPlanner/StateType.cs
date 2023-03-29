@@ -48,6 +48,18 @@ namespace AIPlanner.GOAP
                 {
                     if (type.GetCustomAttributes(typeof(StateTypeAttribute), true).Length > 0)
                     {
+                        if (type.IsGenericType)
+                        {
+                            Debug.LogError($"state type ({type.FullName}) cannot be a generic type");
+                            continue;
+                        }
+
+                        if (type.IsSubclassOf(typeof(UnityEngine.Object)))
+                        {
+                            Debug.LogError($"state type ({type.FullName}) cannot derive from Unity.Object");
+                            continue;
+                        }
+
                         yield return type;
                     }
                 }

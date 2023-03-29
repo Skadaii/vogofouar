@@ -176,6 +176,9 @@ namespace AIPlanner.GOAP
 
         private void OnFocus()
         {
+            if (m_serializedObject == null || m_panelScrolView == null)
+                return;
+
             InitalizeGOAP();
             Compose();
         }
