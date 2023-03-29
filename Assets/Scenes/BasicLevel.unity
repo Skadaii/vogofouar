@@ -1188,11 +1188,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
-      propertyPath: m_team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
-        type: 3}
       propertyPath: SceneEventSystem
       value: 
       objectReference: {fileID: 1531011709}
@@ -2084,7 +2079,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 127182, guid: c4c916682eac65748a271387fc795cd5, type: 3}
       propertyPath: m_Name
-      value: UnitFactory_Red
+      value: UnitFactory
       objectReference: {fileID: 0}
     - target: {fileID: 401236, guid: c4c916682eac65748a271387fc795cd5, type: 3}
       propertyPath: m_RootOrder

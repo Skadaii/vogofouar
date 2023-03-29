@@ -11,17 +11,55 @@ public abstract class Unit : Entity
     protected NavMeshAgent m_navMeshAgent;
     protected Entity m_target = null;
 
+    //  Squad system variables
+
+    protected UnitSquad m_squad = null;
+    protected float m_lastAttackedTime = 0f;
+    protected Unit m_agressor;
+
     //  Properties
     //  ----------
 
     public abstract UnitDataScriptable UnitData { get; }
-    public int Cost => UnitData.cost;
-    public int TypeId => UnitData.typeId;
+    public int Cost => UnitData ? UnitData.cost : 0;
+    public int TypeId => UnitData ? UnitData.typeId : -1;
+
+    //  Squad system properties
+
+    public virtual UnitSquad Squad
+    {
+        get => m_squad;
+        set
+        {
+            if (m_squad is not null)
+            {
+                m_squad.Units.Remove(this);
+                m_squad.UpdatePositions();
+            }
+
+            m_squad = value;
+
+            if (m_squad is not null)
+                m_squad.Units.Add(this);
+        }
+    }
+    public Unit Agressor
+    {
+        get => m_agressor;
+
+        set
+        {
+            m_agressor = value;
+
+            if (m_agressor)
+                m_lastAttackedTime = Time.time;
+        }
+    }
 
     //  Functions
     //  ---------
 
-    #region MonoBehaviour methods
+        #region MonoBehaviour methods
 
     protected virtual new void Awake()
     {
@@ -50,10 +88,10 @@ public abstract class Unit : Entity
         base.Init(_team);
 
         m_HP = UnitData.maxHP;
-        onDeathEvent += Unit_OnDead;
+        onDeathEvent += Unit_OnDeath;
     }
 
-    void Unit_OnDead()
+    void Unit_OnDeath()
     {
         if (UnitData.deathFXPrefab)
         {
@@ -78,14 +116,25 @@ public abstract class Unit : Entity
     {
         Repair(UnitData.maxHP);
     }
-    
+
+    #endregion
+
+
+    #region Squad methods : Alert
+    private void Alert()
+    {
+        m_squad.ReceiveAlert(this);
+    }
+
     #endregion
 
     // Moving Task
-    public void SetTargetPos(Vector3 pos)
+    public virtual void MoveTo(Vector3 pos)
     {
-        if (m_target != null)
-            m_target = null;
+        m_target = null;
+
+        //if (m_target != null)
+        //  StopCapture();
 
         if (m_navMeshAgent)
         {
@@ -93,4 +142,8 @@ public abstract class Unit : Entity
             m_navMeshAgent.isStopped = false;
         }
     }
+
+    public virtual void MoveTo(Transform target) => MoveTo(target.position);
+
+    public virtual void MoveToward(Vector3 velocity) => m_navMeshAgent.Move(velocity);
 }

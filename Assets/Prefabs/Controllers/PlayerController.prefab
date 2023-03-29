@@ -49,6 +49,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_team: 0
   m_startingBuildPoints: 15
+  m_virtualLeaderPrefab: {fileID: 7114013581813105076, guid: 70a474a91debe734ea38976829a721da,
+    type: 3}
+  m_currentFormation: {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505, type: 2}
   m_targetCursorPrefab: {fileID: 134568, guid: 1d403a8ac48769c47bb3ec9a78df3a40, type: 3}
   m_targetCursorFloorOffset: 0.2
   m_sceneEventSystem: {fileID: 0}

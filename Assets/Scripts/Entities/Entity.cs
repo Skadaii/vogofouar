@@ -96,17 +96,20 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     private void SetTeamColor()
     {
-        Material mat = GameServices.GetDefaultTeamMaterial(Team);
-        if (m_GFX.TryGetComponent(out MeshRenderer renderer))
+        if (m_GFX != null)
         {
-            renderer.material = mat;
-        }
+            Material mat = GameServices.GetDefaultTeamMaterial(Team);
+            if (m_GFX.TryGetComponent(out MeshRenderer renderer))
+            {
+                renderer.material = mat;
+            }
 
-        MeshRenderer[] childRenderers = m_GFX.GetComponentsInChildren<MeshRenderer>();
+            MeshRenderer[] childRenderers = m_GFX.GetComponentsInChildren<MeshRenderer>();
 
-        foreach(MeshRenderer childRenderer in childRenderers)
-        {
-            childRenderer.material = mat;
+            foreach (MeshRenderer childRenderer in childRenderers)
+            {
+                childRenderer.material = mat;
+            }
         }
     }
 

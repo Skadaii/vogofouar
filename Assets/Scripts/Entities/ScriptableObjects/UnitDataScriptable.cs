@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[CreateAssetMenu(fileName = "Unit_Data", menuName = "RTS/Units/Default Unit Data", order = 0)]
 public class UnitDataScriptable : EntityDataScriptable
 {
     [Header("Movement")]

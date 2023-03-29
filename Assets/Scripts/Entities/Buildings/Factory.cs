@@ -16,8 +16,6 @@ public class Factory : Building
     [SerializeField]
     private FactoryDataScriptable m_factoryData = null;
 
-    private GameObject[] m_unitPrefabs = null;
-    private GameObject[] m_factoryPrefabs = null;
     private int m_requestedEntityBuildIndex = -1;
     private int m_spawnCount = 0;
     /* !! max available unit count in menu is set to 9, available factories count to 3 !! */
@@ -50,30 +48,6 @@ public class Factory : Building
     protected override void Awake()
     {
         base.Awake();
-
-
-        m_unitPrefabs = new GameObject[m_factoryData.availableUnits.Length];
-        m_factoryPrefabs = new GameObject[m_factoryData.availableFactories.Length];
-
-        // Load from resources actual Unit prefabs from template data
-        for (int i = 0; i < m_factoryData.availableUnits.Length; i++)
-        {
-            GameObject templateUnitPrefab = m_factoryData.availableUnits[i];
-            //string path = "Prefabs/Units/" + templateUnitPrefab.name + "_" + m_team.ToString();
-            //m_unitPrefabs[i] = Resources.Load<GameObject>(path);
-            m_unitPrefabs[i] = templateUnitPrefab;
-            //if (m_unitPrefabs[i] == null)
-            //    Debug.LogWarning("could not find Unit Prefab at " + path);
-        }
-
-        // Load from resources actual Factory prefabs from template data
-        for (int i = 0; i < m_factoryData.availableFactories.Length; i++)
-        {
-            GameObject templateFactoryPrefab = m_factoryData.availableFactories[i];
-            m_factoryPrefabs[i] = templateFactoryPrefab;
-            //string path = "Prefabs/Factories/" + templateFactoryPrefab.name + "_" + m_team.ToString();
-            //m_factoryPrefabs[i] = Resources.Load<GameObject>(path);
-        }
     }
     
     protected override void Start()
@@ -113,7 +87,7 @@ public class Factory : Building
     #region Unit building methods
     private bool IsUnitIndexValid(int unitIndex)
     {
-        if (unitIndex < 0 || unitIndex >= m_unitPrefabs.Length)
+        if (unitIndex < 0 || unitIndex >= m_factoryData.availableUnits.Length)
         {
             Debug.LogWarning("Wrong unitIndex " + unitIndex);
             return false;
@@ -125,7 +99,7 @@ public class Factory : Building
         if (IsUnitIndexValid(unitIndex) == false)
             return null;
 
-        return m_unitPrefabs[unitIndex].GetComponent<Unit>().UnitData;
+        return m_factoryData.availableUnits[unitIndex].GetComponent<Unit>().UnitData;
     }
     public int GetUnitCost(int unitIndex)
     {
@@ -196,7 +170,7 @@ public class Factory : Building
 
         m_isWorking = false;
 
-        GameObject unitPrefab = m_unitPrefabs[m_requestedEntityBuildIndex];
+        GameObject unitPrefab = m_factoryData.availableUnits[m_requestedEntityBuildIndex];
 
         if (m_buildGaugeImage)
             m_buildGaugeImage.fillAmount = 0f;
@@ -255,10 +229,10 @@ public class Factory : Building
     #endregion
 
     #region Factory building methods
-    public GameObject GetFactoryPrefab(int factoryIndex) => IsFactoryIndexValid(factoryIndex) ? m_factoryPrefabs[factoryIndex] : null;
+    public GameObject GetFactoryPrefab(int factoryIndex) => IsFactoryIndexValid(factoryIndex) ? m_factoryData.availableFactories[factoryIndex] : null;
     private bool IsFactoryIndexValid(int factoryIndex)
     {
-        if (factoryIndex < 0 || factoryIndex >= m_factoryPrefabs.Length)
+        if (factoryIndex < 0 || factoryIndex >= m_factoryData.availableFactories.Length)
         {
             Debug.LogWarning("Wrong factoryIndex " + factoryIndex);
             return false;
@@ -270,7 +244,7 @@ public class Factory : Building
         if (IsFactoryIndexValid(factoryIndex) == false)
             return null;
 
-        return m_factoryPrefabs[factoryIndex].GetComponent<Factory>().GetFactoryData;
+        return m_factoryData.availableFactories[factoryIndex].GetComponent<Factory>().GetFactoryData;
     }
     public int GetFactoryCost(int factoryIndex)
     {
@@ -288,7 +262,7 @@ public class Factory : Building
         if (GameServices.IsPosInPlayableBounds(buildPos) == false)
             return false;
 
-        GameObject factoryPrefab = m_factoryPrefabs[factoryIndex];
+        GameObject factoryPrefab = m_factoryData.availableFactories[factoryIndex];
 
         Vector3 extent = factoryPrefab.GetComponent<BoxCollider>().size / 2f;
 
@@ -312,7 +286,7 @@ public class Factory : Building
         if (m_isWorking)
             return null;
 
-        GameObject factoryPrefab = m_factoryPrefabs[factoryIndex];
+        GameObject factoryPrefab = m_factoryData.availableFactories[factoryIndex];
         Transform teamRoot = GameServices.GetControllerByTeam(Team)?.TeamRoot;
         GameObject factoryInst = Instantiate(factoryPrefab, buildPos, Quaternion.identity, teamRoot);
         factoryInst.name = factoryInst.name.Replace("(Clone)", "_" + m_spawnCount.ToString());
