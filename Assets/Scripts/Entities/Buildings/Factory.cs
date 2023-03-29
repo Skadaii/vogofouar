@@ -77,8 +77,8 @@ public class Factory : Building
                     StartBuildUnit(unitIndex);
                 }
             }
-            else if (m_buildGaugeImage)
-                m_buildGaugeImage.fillAmount = 1f - (m_endBuildDate - Time.time) / m_currentBuildDuration;
+            else if (m_hud != null)
+                m_hud.Progression = 1f - (m_endBuildDate - Time.time) / m_currentBuildDuration;
         }
     }
 
@@ -172,8 +172,8 @@ public class Factory : Building
 
         GameObject unitPrefab = m_factoryData.availableUnits[m_requestedEntityBuildIndex];
 
-        if (m_buildGaugeImage)
-            m_buildGaugeImage.fillAmount = 0f;
+        if (m_hud != null)
+            m_hud.Progression = 0f;
 
         int slotIndex = m_spawnCount % m_factoryData.nbSpawnSlots;
         // compute simple spawn position around the factory
@@ -219,7 +219,8 @@ public class Factory : Building
         }
         m_buildingQueue.Clear();
 
-        m_buildGaugeImage.fillAmount = 0f;
+        if(m_hud != null) m_hud.Progression = 0f;
+
         m_currentBuildDuration = 0f;
         m_requestedEntityBuildIndex = -1;
 

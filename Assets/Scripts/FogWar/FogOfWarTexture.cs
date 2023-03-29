@@ -14,8 +14,6 @@ public class FogOfWarTexture : MonoBehaviour
     protected Color m_whiteColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     [SerializeField]
     private Color m_startColor = new Color(0, 0, 0, 1.0f);
-
-    [SerializeField]
     private SpriteRenderer m_spriteRenderer;
 
     [SerializeField]

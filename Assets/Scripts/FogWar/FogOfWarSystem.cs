@@ -15,12 +15,26 @@ public class FogOfWarSystem : MonoBehaviour
     [SerializeField]
     protected Transform m_fogQuadParent;
 
+    [SerializeField]
+    protected float m_size = 500f;
+
     private Grid m_visibilityGrid;
     private Grid m_previousVisibilityGrid;
     private Vector2 m_textureScale;
 
     //  Functions
     //  ---------
+
+    private void OnValidate()
+    {
+        m_fogCamera.orthographicSize = m_size * 0.5f;
+
+        m_fogTexture.transform.localPosition = new Vector3(m_size * 0.5f, 10f, m_size * 0.5f);
+
+        m_fogQuadParent.localPosition = new Vector3(m_size*0.5f, 10f, m_size * 0.5f);
+        m_fogQuadParent.localScale = new Vector3(m_size, m_size, 1f);
+        m_fogQuadParent.rotation = Quaternion.Euler(90f, 0f, 0f);
+    }
 
     public void Init()
     {

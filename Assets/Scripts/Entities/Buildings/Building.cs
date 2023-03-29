@@ -9,7 +9,7 @@ public abstract class Building : Entity
     //  Variables
     //  ---------
 
-    protected Image m_buildGaugeImage;
+    //protected Image m_buildGaugeImage;
     protected float m_currentBuildDuration = 0f;
     protected float m_endBuildDate = 0f;
 
@@ -31,6 +31,7 @@ public abstract class Building : Entity
     //  ---------
 
     #region MonoBehaviour methods
+
     protected virtual new void Awake()
     {
         base.Awake();
@@ -40,15 +41,19 @@ public abstract class Building : Entity
             Debug.LogWarning("Missing Building data in " + gameObject.name);
         }
 
-        m_buildGaugeImage = transform.Find("Canvas/ProgressImage").GetComponent<Image>();
+        //m_buildGaugeImage = transform.Find("HUD/ProgressImage").GetComponent<Image>();
 
-        if (m_buildGaugeImage)
+        //if (m_buildGaugeImage)
+        //{
+        //    m_buildGaugeImage.fillAmount = 0f;
+        //    m_buildGaugeImage.color = GameServices.GetTeamColor(Team);
+        //}
+        if (m_hud != null)
         {
-            m_buildGaugeImage.fillAmount = 0f;
-            m_buildGaugeImage.color = GameServices.GetTeamColor(Team);
+            m_hud.Progression = 0f;
         }
-
-        m_HP = BuildingData.maxHP;
+        
+        m_HP = m_maxHP = BuildingData.maxHP;
         onDeathEvent += Building_OnDestruction;
     }
 
@@ -63,15 +68,24 @@ public abstract class Building : Entity
     {
         if(IsUnderConstruction)
         {
+            float progression = 0f;
             // $$$ TODO : improve construction progress rendering
             if (Time.time > m_endBuildDate)
             {
                 m_isCompleted = true;
                 m_isActive = true;
-                m_buildGaugeImage.fillAmount = 0f;
             }
-            else if (m_buildGaugeImage)
-                m_buildGaugeImage.fillAmount = 1f - (m_endBuildDate - Time.time) / BuildingData.buildDuration;
+            else
+            {
+                progression = 1f - (m_endBuildDate - Time.time) / BuildingData.buildDuration;
+            }
+
+            //m_buildGaugeImage.fillAmount = progression;
+
+            if (m_hud != null)
+            {
+                m_hud.Progression = progression;
+            }
         }
     }
 

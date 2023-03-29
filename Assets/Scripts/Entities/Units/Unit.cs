@@ -86,8 +86,8 @@ public abstract class Unit : Entity
             return;
 
         base.Init(_team);
-
-        m_HP = UnitData.maxHP;
+        
+        m_HP = m_maxHP = UnitData.maxHP;
         onDeathEvent += Unit_OnDeath;
     }
 

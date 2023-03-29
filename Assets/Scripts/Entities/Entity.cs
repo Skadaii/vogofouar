@@ -19,11 +19,13 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     [SerializeField]
     protected GameObject m_GFX;
+    protected EntityHUD m_hud;
 
     //  Damageable variables
 
     protected int m_HP = 0;
-    protected Text m_HPText = null;
+    protected int m_maxHP = 100;
+    //protected Text m_HPText = null;
     protected Action m_onHpUpdated;
     public Action onDeathEvent;
 
@@ -50,11 +52,12 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     protected virtual void Awake()
     {
         m_visibility = GetComponent<EntityVisibility>();
+        m_hud = transform.GetComponentInChildren<EntityHUD>();
 
         m_selectedSprite = transform.Find("SelectedSprite")?.gameObject;
         m_selectedSprite?.SetActive(false);
 
-        m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
+        //m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
 
         m_onHpUpdated += UpdateHpUI;
     }
@@ -127,8 +130,10 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     void UpdateHpUI()
     {
-        if (m_HPText != null)
-            m_HPText.text = "HP : " + m_HP.ToString();
+        if(m_hud != null)
+        {
+            m_hud.Health = (float)m_HP / (float)m_maxHP;
+        }
     }
 
     #region IDamageable
