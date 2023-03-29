@@ -125,6 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 0
+  m_GFX: {fileID: 6965970394054935342}
   m_fighterData: {fileID: 11400000, guid: 361651c0af3c25f49b561081b06c31b2, type: 2}
 --- !u!1 &1931449292931271659
 GameObject:

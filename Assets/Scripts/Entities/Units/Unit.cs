@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.PlayerLoop;
 
 public abstract class Unit : Entity
 {
@@ -22,7 +23,7 @@ public abstract class Unit : Entity
 
     #region MonoBehaviour methods
 
-    protected override void Awake()
+    protected virtual new void Awake()
     {
         base.Awake();
 
@@ -32,6 +33,11 @@ public abstract class Unit : Entity
         m_navMeshAgent.speed = UnitData.speed;
         m_navMeshAgent.angularSpeed = UnitData.angularSpeed;
         m_navMeshAgent.acceleration = UnitData.acceleration;
+    }
+
+    protected virtual new void Update()
+    {
+        base.Update();
     }
 
     #endregion
@@ -44,7 +50,7 @@ public abstract class Unit : Entity
         base.Init(_team);
 
         m_HP = UnitData.maxHP;
-        OnDestructionEvent += Unit_OnDead;
+        onDeathEvent += Unit_OnDead;
     }
 
     void Unit_OnDead()

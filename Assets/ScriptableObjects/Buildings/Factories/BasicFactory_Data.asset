@@ -17,15 +17,16 @@ MonoBehaviour:
   cost: 10
   buildDuration: 20
   maxHP: 5000
+  deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
+    type: 3}
   nbSpawnSlots: 10
   spawnRadius: 12
   radiusOffset: 4
   availableUnits:
+  - {fileID: 1707494665243283662, guid: c768bbb6a29a11140a6cb8459a70d496, type: 3}
   - {fileID: 1707494665243283662, guid: a37ed104a5fa3b94ea651e2746a3cf75, type: 3}
   - {fileID: 1707494665243283662, guid: 0861cb65edcd3c94490e6ab80aa85b03, type: 3}
   - {fileID: 4489616219243337951, guid: 8b2a20d9b63c1874ebfbd0845a6cd477, type: 3}
   availableFactories:
   - {fileID: 127182, guid: c4c916682eac65748a271387fc795cd5, type: 3}
   - {fileID: 127182, guid: 79699270ed6dad648ad050a5e8010a5c, type: 3}
-  deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
-    type: 3}

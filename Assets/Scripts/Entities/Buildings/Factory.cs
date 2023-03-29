@@ -59,18 +59,20 @@ public class Factory : Building
         for (int i = 0; i < m_factoryData.availableUnits.Length; i++)
         {
             GameObject templateUnitPrefab = m_factoryData.availableUnits[i];
-            string path = "Prefabs/Units/" + templateUnitPrefab.name + "_" + m_team.ToString();
-            m_unitPrefabs[i] = Resources.Load<GameObject>(path);
-            if (m_unitPrefabs[i] == null)
-                Debug.LogWarning("could not find Unit Prefab at " + path);
+            //string path = "Prefabs/Units/" + templateUnitPrefab.name + "_" + m_team.ToString();
+            //m_unitPrefabs[i] = Resources.Load<GameObject>(path);
+            m_unitPrefabs[i] = templateUnitPrefab;
+            //if (m_unitPrefabs[i] == null)
+            //    Debug.LogWarning("could not find Unit Prefab at " + path);
         }
 
         // Load from resources actual Factory prefabs from template data
         for (int i = 0; i < m_factoryData.availableFactories.Length; i++)
         {
             GameObject templateFactoryPrefab = m_factoryData.availableFactories[i];
-            string path = "Prefabs/Factories/" + templateFactoryPrefab.name + "_" + m_team.ToString();
-            m_factoryPrefabs[i] = Resources.Load<GameObject>(path);
+            m_factoryPrefabs[i] = templateFactoryPrefab;
+            //string path = "Prefabs/Factories/" + templateFactoryPrefab.name + "_" + m_team.ToString();
+            //m_factoryPrefabs[i] = Resources.Load<GameObject>(path);
         }
     }
     

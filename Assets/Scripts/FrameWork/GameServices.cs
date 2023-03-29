@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 public enum ETeam
 {
@@ -15,8 +16,8 @@ public class GameServices : MonoBehaviour
     //  Variables
     //  ---------
 
-    [SerializeField, Tooltip("Generic material used for 3D models, in the following order : blue, red and green")]
-    private Material[] m_teamMaterials = new Material[3];
+    //[SerializeField, Tooltip("Generic material used for 3D models, in the following order : blue, red and green")]
+    //private Material[] m_teamMaterials = new Material[3];
 
     [SerializeField, Tooltip("Unplayable terrain border size")]
     private float m_nonPlayableBorder = 100f;
@@ -63,7 +64,22 @@ public class GameServices : MonoBehaviour
             return null;
         return m_instance.m_controllersArray[(int)team];
     }
-    public static Material GetTeamMaterial(ETeam team) => m_instance.m_teamMaterials[(int)team];
+    //public static Material GetTeamMaterial(ETeam team) => m_instance.m_teamMaterials[(int)team];
+
+
+    public static Material GetDefaultTeamMaterial(ETeam team)
+    {
+        switch(team)
+        {
+            case ETeam.Blue:
+                return Resources.Load<Material>("Materials/M_Blue");
+            case ETeam.Red:
+                return Resources.Load<Material>("Materials/M_Red");
+            default:
+                return Resources.Load<Material>("Materials/M_Green"); 
+
+        }
+    }
     public static ETeam GetOpponent(ETeam team) => m_instance.m_currentGameState.GetOpponent(team);
 
     public static StaticBuilding[] GetTargetBuildings() => m_instance.m_targetBuildingArray;

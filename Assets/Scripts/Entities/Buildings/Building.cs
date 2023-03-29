@@ -49,7 +49,7 @@ public abstract class Building : Entity
         }
 
         m_HP = BuildingData.maxHP;
-        OnDestructionEvent += Building_OnDestruction;
+        onDeathEvent += Building_OnDestruction;
     }
 
     protected virtual new void Start()

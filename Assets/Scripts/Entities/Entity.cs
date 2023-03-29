@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(EntityVisibility))]
 public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
@@ -18,12 +17,15 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     protected GameObject m_selectedSprite = null;
     protected UnityEngine.UI.Image m_minimapImage;
 
+    [SerializeField]
+    protected GameObject m_GFX;
+
     //  Damageable variables
 
     protected int m_HP = 0;
     protected Text m_HPText = null;
     protected Action m_onHpUpdated;
-    public Action OnDestructionEvent;
+    public Action onDeathEvent;
 
 
     //  Properties
@@ -39,6 +41,11 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     //  ---------
 
     #region MonoBehaviour methods
+
+    private void OnValidate()
+    {
+        SetTeamColor();
+    }
 
     protected virtual void Awake()
     {
@@ -80,11 +87,28 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
             m_minimapImage.color = GameServices.GetTeamColor(m_team);
         }
 
+        SetTeamColor();
+
         m_isInitialized = true;
     }
 
     public Color GetColor() => GameServices.GetTeamColor(Team);
 
+    private void SetTeamColor()
+    {
+        Material mat = GameServices.GetDefaultTeamMaterial(Team);
+        if (m_GFX.TryGetComponent(out MeshRenderer renderer))
+        {
+            renderer.material = mat;
+        }
+
+        MeshRenderer[] childRenderers = m_GFX.GetComponentsInChildren<MeshRenderer>();
+
+        foreach(MeshRenderer childRenderer in childRenderers)
+        {
+            childRenderer.material = mat;
+        }
+    }
 
     #region ISelectable
     public void SetSelected(bool selected)
@@ -117,7 +141,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
         if (m_HP <= 0)
         {
             IsAlive = false;
-            OnDestructionEvent?.Invoke();
+            onDeathEvent?.Invoke();
             Debug.Log("Entity " + gameObject.name + " died");
         }
     }

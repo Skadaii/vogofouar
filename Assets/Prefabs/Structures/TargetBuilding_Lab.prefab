@@ -185,6 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 2
+  m_GFX: {fileID: 2543990839981046449}
   m_buildingDatas: {fileID: 11400000, guid: 800c599cfa876564f86c71c4c9f8eb39, type: 2}
   m_captureGaugeStart: 100
   m_captureGaugeSpeed: 1

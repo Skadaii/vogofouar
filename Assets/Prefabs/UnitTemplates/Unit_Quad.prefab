@@ -353,6 +353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 0
+  m_GFX: {fileID: 4160934687040193324}
   m_fighterData: {fileID: 11400000, guid: 2f235e4174e6d314c9e325a75798b7ed, type: 2}
 --- !u!1 &5514288557087910740
 GameObject:
@@ -655,23 +656,23 @@ PrefabInstance:
     - target: {fileID: 2313270, guid: d326448635d47ac498ce72a50b3667b1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     - target: {fileID: 2348280, guid: d326448635d47ac498ce72a50b3667b1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     - target: {fileID: 2363198, guid: d326448635d47ac498ce72a50b3667b1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     - target: {fileID: 2366396, guid: d326448635d47ac498ce72a50b3667b1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     - target: {fileID: 2383248, guid: d326448635d47ac498ce72a50b3667b1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d326448635d47ac498ce72a50b3667b1, type: 3}
 --- !u!1 &4160934687040193324 stripped

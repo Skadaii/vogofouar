@@ -25,15 +25,17 @@ public class Fighter : Unit
 
     #region MonoBehaviour methods
 
-    protected override void Awake()
+    protected virtual new void Awake()
     {
         base.Awake();
 
         m_bulletSlot = transform.Find("BulletSlot");
     }
 
-    protected void Update()
+    protected virtual new void Update()
     {
+        base.Update();
+
         if (m_target != null)
         {
             if (m_target.Team != Team && m_target.Team != ETeam.Neutral) ComputeAttack();

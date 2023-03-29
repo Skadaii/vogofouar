@@ -328,6 +328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 0
+  m_GFX: {fileID: 2339850824588072639}
   m_fighterData: {fileID: 11400000, guid: 427de484393f38a42973df21b3561701, type: 2}
 --- !u!1 &4514977901092030006
 GameObject:
@@ -655,15 +656,15 @@ PrefabInstance:
     - target: {fileID: 2359554, guid: 1c951d7bc50d6fe4b91d289b53281c82, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     - target: {fileID: 2382758, guid: 1c951d7bc50d6fe4b91d289b53281c82, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     - target: {fileID: 2388724, guid: 1c951d7bc50d6fe4b91d289b53281c82, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: d7f0c86ff6be81e4d8e82f13e6fa7691, type: 2}
+      objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c951d7bc50d6fe4b91d289b53281c82, type: 3}
 --- !u!1 &2339850824588072639 stripped
