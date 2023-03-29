@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -56,5 +57,14 @@ namespace AIPlanner.GOAP
 
             return new State();
         }
+
+#if UNITY_EDITOR
+        //Serialization is necessary to avoid having a shared state pointer
+        public static WorldState Clone(WorldState worldState)
+        {
+            string strWorldState = JsonUtility.ToJson(worldState);
+            return JsonUtility.FromJson<WorldState>(strWorldState);
+        }
+#endif
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -138,9 +139,34 @@ namespace AIPlanner.GOAP
             public List<GoalEditor> goalEditors;
         }
 
+        class DebugGoalEditor
+        {
+            public int goalId;
+            public Slider considerationSlider;
+        }
+
+        [Serializable]
+        class DebugEditor
+        {
+            public Button showButton;
+
+            public WorldState debugWorldState;
+            public WorldStateEditor debugWorldStateEditor;
+            public Foldout showWorldStateFoldout;
+
+            public Foldout showGoalFoldout;
+            public List<DebugGoalEditor> debugGoalEditors;
+
+            public Button resetButton;
+            public Button generatePlanButton;
+
+            public TextElement outputTextElement;
+        }
+
         private WorldStateEditor m_worldStateEditor;
         private ActionSetEditor m_actionSetEditor;
         private GoalListEditor m_goalListEditor;
+        [SerializeField] private DebugEditor m_debugEditor;
 
         private Dictionary<string, string[]> m_stateMethods;
         private Dictionary<string, string[]> m_actionMethods;
@@ -157,6 +183,8 @@ namespace AIPlanner.GOAP
 
         private Color m_backgroundColor = new Color(0.3f, 0.3f, 0.3f);
         private Color m_borderColor = Color.gray;
+        private Color m_unselectedPanelBtnColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+        private Color m_selectedPanelBtnColor = Color.white;
 
         private ScrollView m_panelScrolView;
 
@@ -235,6 +263,7 @@ namespace AIPlanner.GOAP
             InitializeWorldState();
             InitializeActionSet();
             InitializeGoalListEditor();
+            InitializeDebugEditor();
         }
 
         private void SetMethodPopupField(MethodEditor methodEditor, in Dictionary<string, string[]> inMethods)
@@ -300,7 +329,6 @@ namespace AIPlanner.GOAP
 
             InitializeGOAPPanelButton(ref m_worldStateEditor.showButton, m_worldStateEditor.GetType(), "WorldState");
 
-
             m_worldStateEditor.worldStateProperty = m_goapObject.FindProperty("m_worldState");
 
             m_worldStateEditor.stateNameField = new TextField();
@@ -332,7 +360,8 @@ namespace AIPlanner.GOAP
                 goap.WorldState.states.Add(state);
                 m_goapObject.Update();
 
-                InitializeWorldStateList();
+                InitializeWorldStateList(m_worldStateEditor, false);
+                InitializeDebugEditor();
 
                 foreach (ActionEditor actionEditor in m_actionSetEditor.actionEditors)
                 {
@@ -352,25 +381,24 @@ namespace AIPlanner.GOAP
             m_worldStateEditor.addStateButton.text = "Add State";
             m_worldStateEditor.addStateButton.style.width = new Length(28f, LengthUnit.Percent);
 
-            InitializeWorldStateList();
+            InitializeWorldStateList(m_worldStateEditor, false);
         }
-        private void InitializeWorldStateList()
+        private void InitializeWorldStateList(WorldStateEditor worldStateEditor, bool isDebugWorldState)
         {
-            m_worldStateEditor.stateEditors.Clear();
+            worldStateEditor.stateEditors.Clear();
 
             if (goap.WorldState.states == null)
                 goap.WorldState.states = new List<State>();
 
-            m_worldStateEditor.statesProperty = m_worldStateEditor.worldStateProperty.FindPropertyRelative(nameof(WorldState.states));
+            worldStateEditor.statesProperty = worldStateEditor.worldStateProperty.FindPropertyRelative(nameof(WorldState.states));
 
-            int stateCount = goap.WorldState.states.Count;
+            int stateCount = worldStateEditor.statesProperty.arraySize;
 
             for (int i = 0; i < stateCount; ++i)
-            {
+            { 
                 StateEditor stateEditor = new StateEditor();
 
-                SerializedProperty stateProperty = m_worldStateEditor.statesProperty.GetArrayElementAtIndex(i);
-
+                SerializedProperty stateProperty = worldStateEditor.statesProperty.GetArrayElementAtIndex(i);
 
                 stateEditor.showProperty = stateProperty.FindPropertyRelative(nameof(State.show));
                 stateEditor.stateNameProperty = stateProperty.FindPropertyRelative(nameof(State.name));
@@ -385,54 +413,59 @@ namespace AIPlanner.GOAP
                 stateEditor.valueField.label = stateEditor.valueProperty.managedReferenceValue.GetType().Name;
                 stateEditor.valueField.BindProperty(stateEditor.valueProperty);
 
-                SerializedProperty methodProperty = stateProperty.FindPropertyRelative("m_stateMethod");
-                InitializeMethodEditor(stateEditor, methodProperty, m_stateMethods);
+                if (!isDebugWorldState)
+                {
+                    SerializedProperty methodProperty = stateProperty.FindPropertyRelative("m_stateMethod");
+                    InitializeMethodEditor(stateEditor, methodProperty, m_stateMethods);
 
-                stateEditor.removeStateButton = new Button(
-                    delegate
-                    {
-                        int id = m_worldStateEditor.stateEditors.IndexOf(stateEditor);
-
-                        List<StateIdEditor> linkedStateIdEditors;
-                        if (StateIdEditor.allStateIdEditor.TryGetValue(id, out linkedStateIdEditors))
+                    stateEditor.removeStateButton = new Button(
+                        delegate
                         {
-                            foreach (StateIdEditor stateIdEditor in linkedStateIdEditors)
-                                stateIdEditor.stateIdProperty.DeleteCommand();
-                        }
+                            int id = worldStateEditor.stateEditors.IndexOf(stateEditor);
 
-                        m_worldStateEditor.statesProperty.serializedObject.ApplyModifiedProperties();
-                        InitializeActionSet();
-                        InitializeGoalListEditor();
+                            List<StateIdEditor> linkedStateIdEditors;
+                            if (StateIdEditor.allStateIdEditor.TryGetValue(id, out linkedStateIdEditors))
+                            {
+                                foreach (StateIdEditor stateIdEditor in linkedStateIdEditors)
+                                    stateIdEditor.stateIdProperty.DeleteCommand();
+                            }
 
-                        m_worldStateEditor.statesProperty.DeleteArrayElementAtIndex(id);
+                            worldStateEditor.statesProperty.serializedObject.ApplyModifiedProperties();
+                            InitializeActionSet();
+                            InitializeGoalListEditor();
 
-                        foreach (KeyValuePair<int, List<StateIdEditor>> keyValuePair in StateIdEditor.allStateIdEditor)
-                        {
-                            if (keyValuePair.Key <= id)
-                                continue;
+                            worldStateEditor.statesProperty.DeleteArrayElementAtIndex(id);
 
-                            int newStateEditorId = keyValuePair.Key - 1;
+                            foreach (KeyValuePair<int, List<StateIdEditor>> keyValuePair in StateIdEditor.allStateIdEditor)
+                            {
+                                if (keyValuePair.Key <= id)
+                                    continue;
 
-                            foreach (StateIdEditor linkedStateIdEditor in keyValuePair.Value)
-                                linkedStateIdEditor.idOfStateProperty.intValue = newStateEditorId;
-                        }
+                                int newStateEditorId = keyValuePair.Key - 1;
 
-                        m_worldStateEditor.statesProperty.serializedObject.ApplyModifiedProperties();
+                                foreach (StateIdEditor linkedStateIdEditor in keyValuePair.Value)
+                                    linkedStateIdEditor.idOfStateProperty.intValue = newStateEditorId;
+                            }
 
-                        InitializeWorldStateList();
-                        InitializeActionSet();
-                        InitializeGoalListEditor();
+                            worldStateEditor.statesProperty.serializedObject.ApplyModifiedProperties();
 
-                        Compose();
-                    });
+                            InitializeWorldStateList(worldStateEditor, false);
+                            InitializeActionSet();
+                            InitializeGoalListEditor();
+                            InitializeDebugEditor();
 
-                stateEditor.removeStateButton.text = "Remove";
-                stateEditor.removeStateButton.style.width = new Length(15f, LengthUnit.Percent);
-                stateEditor.removeStateButton.style.alignSelf = Align.FlexEnd;
-                stateEditor.removeStateButton.style.position = Position.Absolute;
-                stateEditor.removeStateButton.style.right = 5f;
+                            Compose();
+                        });
 
-                m_worldStateEditor.stateEditors.Add(stateEditor);
+                    stateEditor.removeStateButton.text = "Remove";
+                    stateEditor.removeStateButton.style.width = new Length(15f, LengthUnit.Percent);
+                    stateEditor.removeStateButton.style.alignSelf = Align.FlexEnd;
+                    stateEditor.removeStateButton.style.position = Position.Absolute;
+                    stateEditor.removeStateButton.style.right = 5f;
+
+                }
+
+                worldStateEditor.stateEditors.Add(stateEditor);
             }
         }
 
@@ -461,6 +494,7 @@ namespace AIPlanner.GOAP
 
                 Action newAction = new Action();
                 newAction.name = actionName;
+                newAction.Preconditions.Add(new Action.Precondition() { name = "DefaultPrecondition" });
 
                 goap.ActionSet.Add(newAction);
                 m_goapObject.Update();
@@ -755,7 +789,6 @@ namespace AIPlanner.GOAP
 
             InitializeGOAPPanelButton(ref m_goalListEditor.showButton, m_goalListEditor.GetType(), "Goal");
 
-
             m_goalListEditor.goalsProperty = m_goapObject.FindProperty("m_goals");
 
             m_goalListEditor.goalNameField = new TextField("Goal Name");
@@ -858,7 +891,7 @@ namespace AIPlanner.GOAP
             button.text = textButton;
             button.style.fontSize = 15f;
             button.style.unityFontStyleAndWeight = FontStyle.Bold;
-            button.style.width = new Length(33f, LengthUnit.Percent);
+            button.style.width = new Length(24.5f, LengthUnit.Percent);
             button.style.height = new Length(35f);
             button.style.right = 3f;
         }
@@ -880,6 +913,137 @@ namespace AIPlanner.GOAP
             button.style.height = new Length(30f);
             button.style.right = 3f;
         }
+
+        private void InitializeDebugEditor()
+        {
+            m_debugEditor = new DebugEditor();
+            m_debugEditor.debugWorldState = WorldState.Clone(goap.WorldState);
+            m_serializedObject.Update();
+
+            m_debugEditor.showWorldStateFoldout = EditorUtils.CreateFoldout("WorldState", 5f, Color.white, FlexDirection.Column);
+
+            InitializeGOAPPanelButton(ref m_debugEditor.showButton, typeof(DebugEditor), "Debug");
+
+            m_debugEditor.debugWorldStateEditor = new WorldStateEditor();
+            m_debugEditor.debugWorldStateEditor.stateEditors = new List<StateEditor>();
+
+            SerializedProperty debugEditorProperty = m_serializedObject.FindProperty("m_debugEditor");
+            m_debugEditor.debugWorldStateEditor.worldStateProperty = debugEditorProperty.FindPropertyRelative(nameof(DebugEditor.debugWorldState));
+
+            InitializeWorldStateList(m_debugEditor.debugWorldStateEditor, true);
+
+            m_debugEditor.showGoalFoldout = EditorUtils.CreateFoldout("Goals", 5f, Color.white, FlexDirection.Column);
+
+            m_debugEditor.debugGoalEditors = new List<DebugGoalEditor>();
+
+            int goalCount = m_goalListEditor.goalEditors.Count;
+            for (int i = 0; i < goalCount; ++i)
+            {
+                DebugGoalEditor debugGoalEditor = new DebugGoalEditor()
+                {
+                    goalId = i,
+                    considerationSlider = new Slider(0f, 1f)
+                };
+
+                debugGoalEditor.considerationSlider.label = m_goalListEditor.goalEditors[i].showFoldout.text;
+                debugGoalEditor.considerationSlider.showInputField = true;
+
+                m_debugEditor.debugGoalEditors.Add(debugGoalEditor);
+            }
+
+            m_debugEditor.resetButton = new Button(
+                    delegate
+                    {
+                        InitializeDebugEditor();
+                        Compose();
+                    });
+            m_debugEditor.resetButton.text = "Reset";
+            m_debugEditor.resetButton.style.fontSize = 15f;
+            m_debugEditor.resetButton.style.width = new Length(25f, LengthUnit.Percent);
+            m_debugEditor.resetButton.style.alignSelf = Align.Center;
+            m_debugEditor.resetButton.style.height = new Length(30f);
+
+            m_debugEditor.generatePlanButton = new Button(DebugGeneratePlan);
+            m_debugEditor.generatePlanButton.text = "Generate Plan";
+            m_debugEditor.generatePlanButton.style.fontSize = 15f;
+            m_debugEditor.generatePlanButton.style.width = new Length(25f, LengthUnit.Percent);
+            m_debugEditor.generatePlanButton.style.alignSelf = Align.Center;
+            m_debugEditor.generatePlanButton.style.height = new Length(30f);
+
+            m_debugEditor.outputTextElement = new TextElement();
+            m_debugEditor.outputTextElement.text = "No plan generated";
+            m_debugEditor.outputTextElement.style.alignSelf = Align.Center;
+            m_debugEditor.outputTextElement.style.fontSize = 15f;
+
+
+        }
+
+        public void DebugGeneratePlan()
+        {
+            float heuristic = 0f;
+            int bestGoalId = -1;
+            int goalCount = m_debugEditor.debugGoalEditors.Count;
+            for (int i = 0; i < goalCount; ++i)
+            {
+                float value = m_debugEditor.debugGoalEditors[i].considerationSlider.value;
+
+                AnimationCurve considerationCurve = goap.Goals[i].Curve;
+                float newHeuristic = considerationCurve.Evaluate(value);
+
+                if (newHeuristic > heuristic)
+                {
+                    heuristic = newHeuristic;
+                    bestGoalId = i;
+                }
+            }
+
+            if (bestGoalId == -1)
+            {
+                m_debugEditor.outputTextElement.text = "No goal is valid";
+                return;
+            }
+
+            string output = $"Goal: {goap.Goals[bestGoalId].name}\n";
+
+            goap.Initialize();
+            m_debugEditor.debugWorldState.ComputeHashValues();
+
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            Node startNode = Node.CreateEmptyNode(m_debugEditor.debugWorldState);
+            Node leave = Node.CreateEmptyNode(m_debugEditor.debugWorldState, int.MaxValue);
+            GOAP.BuildGraph(ref startNode, ref leave, goap.ActionSet, goap.Goals[bestGoalId].States);
+            stopwatch.Stop();
+
+            if (leave.parent == null)
+            {
+                output += $"No plan available";
+                m_debugEditor.outputTextElement.text = output;
+                return;
+            }
+
+            output += "\nPlan : \n";
+            void GetOutputPlan(Node node, ref string refOutput, ref int nodeCount)
+            {
+                if (node.parent == null)
+                    return;
+
+                GetOutputPlan(node.parent, ref refOutput, ref nodeCount);
+                nodeCount++;
+
+                refOutput += $"{nodeCount}. <b>{node.action.name}</b> - Precondition : {node.action.Preconditions[node.preconditionId].name}\n";
+            }
+
+            int nodeCount = 0;
+            GetOutputPlan(leave, ref output, ref nodeCount);
+
+            output += $"\nAction count: {nodeCount} \n";
+            output += $"Generation time: {stopwatch.ElapsedMilliseconds}ms";
+
+
+            m_debugEditor.outputTextElement.text = output;
+
+        }
+
         #endregion
 
         #region Compose
@@ -888,7 +1052,9 @@ namespace AIPlanner.GOAP
             if (goap == null)
                 return;
 
-            VisualElement goapPanelLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+            VisualElement goapPanelLabel = EditorUtils.CreateLabel(1f, 5f, 10f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+            goapPanelLabel.style.alignSelf = Align.Center;
+            goapPanelLabel.style.width = new Length(90f, LengthUnit.Percent);
 
             m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
             m_panelScrolView.Add(goapPanelLabel);
@@ -896,51 +1062,73 @@ namespace AIPlanner.GOAP
             goapPanelLabel.Add(m_worldStateEditor.showButton);
             goapPanelLabel.Add(m_actionSetEditor.showButton);
             goapPanelLabel.Add(m_goalListEditor.showButton);
+            goapPanelLabel.Add(m_debugEditor.showButton);
 
             if (m_currentGOAPPanel == typeof(WorldStateEditor))
             {
-                ComposeWorldState();
-                m_worldStateEditor.showButton.style.color = Color.white;
-                m_actionSetEditor.showButton.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                m_goalListEditor.showButton.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
+                ComposeWorldState(m_worldStateEditor, false, m_panelScrolView);
+                m_worldStateEditor.showButton.style.color = m_selectedPanelBtnColor;
+                m_actionSetEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_goalListEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_debugEditor.showButton.style.color = m_unselectedPanelBtnColor;
             }
             else if (m_currentGOAPPanel == typeof(ActionSetEditor))
             {
                 ComposeActionSet();
-                m_worldStateEditor.showButton.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                m_actionSetEditor.showButton.style.color = Color.white;
-                m_goalListEditor.showButton.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
+                m_worldStateEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_actionSetEditor.showButton.style.color = m_selectedPanelBtnColor;
+                m_goalListEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_debugEditor.showButton.style.color = m_unselectedPanelBtnColor;
+            }
+            else if (m_currentGOAPPanel == typeof(GoalListEditor))
+            {
+                ComposeGoal();
+                m_worldStateEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_actionSetEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_goalListEditor.showButton.style.color = m_selectedPanelBtnColor;
+                m_debugEditor.showButton.style.color = m_unselectedPanelBtnColor;
             }
             else
             {
-                ComposeGoal();
-                m_worldStateEditor.showButton.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                m_actionSetEditor.showButton.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                m_goalListEditor.showButton.style.color = Color.white;
+                ComposeDebug();
+                m_worldStateEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_actionSetEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_goalListEditor.showButton.style.color = m_unselectedPanelBtnColor;
+                m_debugEditor.showButton.style.color = m_selectedPanelBtnColor;
             }
 
         }
 
-        private void ComposeWorldState()
+        private void ComposeWorldState(WorldStateEditor worldStateEditor, bool isDebugWorldState, VisualElement root)
         {
-            VisualElement addStateLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Row);
+            if (!isDebugWorldState)
+            {
+                VisualElement addStateLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Row);
 
-            addStateLabel.Add(m_worldStateEditor.stateNameField);
-            addStateLabel.Add(m_worldStateEditor.statePopupField);
-            addStateLabel.Add(m_worldStateEditor.addStateButton);
+                addStateLabel.Add(worldStateEditor.stateNameField);
+                addStateLabel.Add(worldStateEditor.statePopupField);
+                addStateLabel.Add(worldStateEditor.addStateButton);
 
-            m_panelScrolView.Add(addStateLabel);
+                root.Add(addStateLabel);
+            }
 
-            int stateCount = m_worldStateEditor.stateEditors.Count;
+            int stateCount = worldStateEditor.stateEditors.Count;
             for (int i = 0; i < stateCount; ++i)
             {
-                StateEditor stateEditor = m_worldStateEditor.stateEditors[i];
-
+                StateEditor stateEditor = worldStateEditor.stateEditors[i];
+                stateEditor.showFoldout.Clear();
+                
+                if (isDebugWorldState)
+                    stateEditor.showFoldout.style.left = 10f;
 
                 stateEditor.showFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 10f)));
                 stateEditor.showFoldout.Add(stateEditor.valueField);
-                stateEditor.showFoldout.Add(stateEditor.componentPopupField);
-                stateEditor.showFoldout.Add(stateEditor.methodPopupField);
+
+                if (!isDebugWorldState)
+                {
+                    stateEditor.showFoldout.Add(stateEditor.componentPopupField);
+                    stateEditor.showFoldout.Add(stateEditor.methodPopupField);
+                }
 
                 VisualElement stateFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
 
@@ -948,8 +1136,11 @@ namespace AIPlanner.GOAP
 
                 stateFoldoutLabel.Add(foldoutLabel);
                 stateFoldoutLabel.Add(stateEditor.showFoldout);
-                stateFoldoutLabel.Add(stateEditor.removeStateButton);
-                m_panelScrolView.Add(stateFoldoutLabel);
+
+                if (!isDebugWorldState)
+                    stateFoldoutLabel.Add(stateEditor.removeStateButton);
+
+                root.Add(stateFoldoutLabel);
             }
         }
         private void ComposeActionSet()
@@ -984,14 +1175,14 @@ namespace AIPlanner.GOAP
                 if (actionEditor.currentActionPanelProperty.stringValue == typeof(PreconditionListEditor).FullName)
                 {
                     ComposePreconditionListEditor(actionEditor.preconditionListEditor, actionEditor.showFoldout);
-                    actionEditor.showEffect.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                    actionEditor.showPrecondition.style.color = Color.white;
+                    actionEditor.showEffect.style.color = m_unselectedPanelBtnColor;
+                    actionEditor.showPrecondition.style.color = m_selectedPanelBtnColor;
                 }
                 else
                 {
                     actionEditor.showFoldout.Add(ComposeStateIdEditor(actionEditor.stateIdListEditor));
-                    actionEditor.showPrecondition.style.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                    actionEditor.showEffect.style.color = Color.white;
+                    actionEditor.showPrecondition.style.color = m_unselectedPanelBtnColor;
+                    actionEditor.showEffect.style.color = m_selectedPanelBtnColor;
                 }
 
                 VisualElement actionFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
@@ -1006,7 +1197,6 @@ namespace AIPlanner.GOAP
 
             m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0, 20f)));
         }
-
         private void ComposePreconditionListEditor(PreconditionListEditor preconditionListEditor, VisualElement root)
         {
             VisualElement addPreconditionLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Row);
@@ -1038,7 +1228,6 @@ namespace AIPlanner.GOAP
                 root.Add(preconditionFoldoutLabel);
             }
         }
-
         private void ComposeGoal()
         {
             VisualElement addGoalLabel = EditorUtils.CreateLabel(1f, 5f, 10f, 50f, 50f, m_borderColor, m_backgroundColor, FlexDirection.Row);
@@ -1073,7 +1262,6 @@ namespace AIPlanner.GOAP
                 m_panelScrolView.Add(goalSetLabel);
             }
         }
-
         private VisualElement ComposeStateIdEditor(StateIdListEditor stateIdListEditor)
         {
             VisualElement stateIdListFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 0f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
@@ -1110,6 +1298,43 @@ namespace AIPlanner.GOAP
             return stateIdListFoldoutLabel;
         }
 
+        private void ComposeDebug()
+        {
+            m_panelScrolView.Add(m_debugEditor.resetButton);
+            m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 15f)));
+
+            VisualElement stateFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
+            VisualElement statefoldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
+            stateFoldoutLabel.Add(statefoldoutOverlay);
+            stateFoldoutLabel.Add(m_debugEditor.showWorldStateFoldout);
+
+            m_debugEditor.showWorldStateFoldout.Clear();
+
+            m_debugEditor.showWorldStateFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
+            ComposeWorldState(m_debugEditor.debugWorldStateEditor, true, m_debugEditor.showWorldStateFoldout);
+
+            m_panelScrolView.Add(stateFoldoutLabel);
+
+            VisualElement goalFoldoutLabel = EditorUtils.CreateLabel(1f, 0f, 15f, 20f, 20f, m_borderColor, m_backgroundColor, FlexDirection.Column);
+            VisualElement goalfoldoutOverlay = EditorUtils.CreateFoldoutLabel(m_borderColor, m_backgroundColor);
+            goalFoldoutLabel.Add(goalfoldoutOverlay);
+            goalFoldoutLabel.Add(m_debugEditor.showGoalFoldout);
+
+            m_debugEditor.showGoalFoldout.Clear();
+            m_debugEditor.showGoalFoldout.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
+
+            int goalCount = m_debugEditor.debugGoalEditors.Count;
+            for (int i = 0; i < goalCount; ++i)
+            {
+                m_debugEditor.showGoalFoldout.Add(m_debugEditor.debugGoalEditors[i].considerationSlider);
+            }
+
+            m_panelScrolView.Add(goalFoldoutLabel);
+            m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 15f)));
+            m_panelScrolView.Add(m_debugEditor.generatePlanButton);
+            m_panelScrolView.Add(EditorUtils.CreateSpace(new Vector2(0f, 15f)));
+            m_panelScrolView.Add(m_debugEditor.outputTextElement);
+        }
         #endregion
     }
 }

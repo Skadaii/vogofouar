@@ -14,7 +14,6 @@ namespace AIPlanner.GOAP
         public List<Goal> Goals => m_goals;
         public List<Action> ActionSet => m_actionSet;
 
-
         private Queue<Node> m_nodes = new Queue<Node>();
 
         private Node m_currentNode;
@@ -22,9 +21,11 @@ namespace AIPlanner.GOAP
 
         private void Awake()
         {
-            //for (int i = 0; i < 100; ++i)
-            //   m_actionSet.Add(Action.CreateSampleAction());
+            Initialize();
+        }
 
+        public void Initialize()
+        {
             foreach (Action action in m_actionSet)
                 action.Initialize(gameObject);
 
@@ -42,7 +43,7 @@ namespace AIPlanner.GOAP
             UpdatePlan();
         }
 
-        private bool GoalAchieved(in WorldState InWorldState, in List<StateId> Goal)
+        private static bool GoalAchieved(in WorldState InWorldState, in List<StateId> Goal)
         {
             foreach (StateId stateId in Goal)
             {
@@ -53,7 +54,7 @@ namespace AIPlanner.GOAP
             return true;
         }
 
-        private void BuildGraph(ref Node Parent, ref Node Leave, List<Action> AvailableActions, in List<StateId> InGoal, ref int i)
+        public static void BuildGraph(ref Node Parent, ref Node Leave, List<Action> AvailableActions, in List<StateId> InGoal)
         {
             foreach (Action action in AvailableActions)
             {
@@ -62,7 +63,6 @@ namespace AIPlanner.GOAP
                 if (preconditionId == -1)
                     continue;
 
-                ++i;
                 WorldState NewWorldState = action.ApplyEffects(Parent.worldState);
 
                 Node node = Node.CreateNode(Parent, NewWorldState, action, preconditionId);
@@ -79,7 +79,7 @@ namespace AIPlanner.GOAP
                     List<Action> actionsSubSet = AvailableActions.ToList();
                     actionsSubSet.Remove(action);
 
-                    BuildGraph(ref node, ref Leave, actionsSubSet, InGoal, ref i);
+                    BuildGraph(ref node, ref Leave, actionsSubSet, InGoal);
                 }
 
             }
@@ -134,8 +134,7 @@ namespace AIPlanner.GOAP
             Node startNode = Node.CreateEmptyNode(m_worldState);
             Node leave = Node.CreateEmptyNode(m_worldState, int.MaxValue);
 
-            int i = 0;
-            BuildGraph(ref startNode, ref leave, m_actionSet, m_currentGoal.States, ref i);
+            BuildGraph(ref startNode, ref leave, m_actionSet, m_currentGoal.States);
 
             if (leave.parent == null)
                 return;
@@ -146,7 +145,7 @@ namespace AIPlanner.GOAP
             foreach (Node node in m_nodes)
                 plan += "->" + node.action.name;
 
-            Debug.Log(plan + $" | Count : {i} | Generation duration : {stopwatch.ElapsedMilliseconds}");
+            Debug.Log(plan + $"Generation duration : {stopwatch.ElapsedMilliseconds}");
 
             NextNode();
 

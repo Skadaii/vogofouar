@@ -75,10 +75,13 @@ namespace AIPlanner.GOAP
         {
             Precondition precondition = m_preconditions[preconditionId];
 
-            foreach (StateId stateId in precondition.states)
+            if (precondition.states != null)
             {
-                if (InWorldState.states[stateId.id].stateValue.HashValue != stateId.stateValue.HashValue)
-                    return false;
+                foreach (StateId stateId in precondition.states)
+                {
+                    if (InWorldState.states[stateId.id].stateValue.HashValue != stateId.stateValue.HashValue)
+                        return false;
+                }
             }
 
             return true;

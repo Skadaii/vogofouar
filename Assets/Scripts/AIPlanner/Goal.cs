@@ -17,6 +17,8 @@ namespace AIPlanner.GOAP
         public List<StateId> States => m_states;
 
         [SerializeField] private AnimationCurve m_animationCurve = new AnimationCurve();
+        public AnimationCurve Curve => m_animationCurve;
+
         [SerializeField] private Method m_considerationMethod = new Method();
 
         public void Initialize(GameObject GameObject)
