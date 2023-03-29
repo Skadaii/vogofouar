@@ -614,11 +614,6 @@ public sealed class PlayerController : UnitController
         newSquad.m_leaderComponent.MoveTo(squadTarget);
     }
 
-    private void CreateSquadAndMove(List<Unit> units, Vector3 squadTarget)
-    {
-
-    }
-
     #endregion
 
 

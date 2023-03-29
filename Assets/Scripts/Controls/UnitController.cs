@@ -163,7 +163,8 @@ public class UnitController : MonoBehaviour
 
             lastSquad.Units.Remove(unit);
 
-            if (lastSquad.Units.Count > 0)
+            // Destroy the leader if there is one or less unit left in the last squad
+            if (lastSquad.Units.Count > 1)
                 continue;
 
             lastSquad.Destroy();
