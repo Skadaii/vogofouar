@@ -13,14 +13,22 @@ public class EntityHUD : MonoBehaviour
     [SerializeField]
     private Slider m_progressBar;
 
+    [SerializeField]
+    private float m_healthDurationUpdate = 0.05f;
+    private float m_healthValueSaved = 0f;
+
     Quaternion originalRotation;
 
+    private float m_healthTargetValue = 0f;
+    private float m_lastHealthUpdate = 0f;
 
     public float Health
     {
         set
         {
-            m_healthBar.value = Mathf.Clamp(value, 0f, 1f);
+            m_healthTargetValue = Mathf.Clamp(value, 0f, 1f);
+            m_lastHealthUpdate = Time.time;
+            m_healthValueSaved = m_healthBar.value;
         }
     }
 
@@ -30,7 +38,7 @@ public class EntityHUD : MonoBehaviour
         {
             m_progressBar.value = Mathf.Clamp(value, 0f, 1f);
 
-            if (m_progressBar.value == 1f || m_progressBar.value == 0f)
+            if ( m_progressBar.value == 1f ||  m_progressBar.value == 0f)
             {
                 m_progressBar.gameObject.SetActive(false);
             }
@@ -52,6 +60,12 @@ public class EntityHUD : MonoBehaviour
         if(camTransform != null)
         {
             transform.rotation = camTransform.rotation * originalRotation;
+        }
+
+        if(m_healthBar.isActiveAndEnabled)
+        {
+            float delta = Mathf.Min((Time.time - m_lastHealthUpdate)/ m_healthDurationUpdate, 1f);
+            m_healthBar.value = Mathf.Lerp(m_healthValueSaved, m_healthTargetValue, delta);
         }
     }
 }
