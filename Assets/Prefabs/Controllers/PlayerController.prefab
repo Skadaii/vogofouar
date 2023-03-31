@@ -69,6 +69,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e351ef8902e9464c9bb9dc2ca1ab6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_availableFormations: []
+  m_buttonFormationSelectionPrefab: {fileID: 5141909566761533625, guid: 45f0f8c1c7eb3994da0ef4a35346accd,
+    type: 3}
   m_factoryMenuCanvas: {fileID: 0}
 --- !u!65 &1083475434
 BoxCollider:

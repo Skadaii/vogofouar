@@ -456,6 +456,17 @@ public sealed class PlayerController : UnitController
         m_selectionEnd = Vector3.zero;
     }
 
+    protected override void OnUnitSelected()
+    {
+        m_playerMenuController.UpdateFormationMenu(m_selectedUnitList, SetSquadFormation);
+    }
+
+    protected override void OnUnitUnselected()
+    {
+        m_playerMenuController.UpdateFormationMenu(m_selectedUnitList, SetSquadFormation);
+    }
+
+
     #endregion
 
 
@@ -599,15 +610,25 @@ public sealed class PlayerController : UnitController
         // Set unit move target
         else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
         {
-
             Vector3 newPos = raycastInfo.point;
             SetTargetCursorPosition(newPos);
 
-            UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
-
-            newSquad.Formation = m_currentFormation;
-            newSquad.m_leaderComponent.MoveTo(newPos);
+            MoveUnits(m_selectedUnitList, newPos);
         }
+    }
+    private void MoveUnits(List<Unit> units, Vector3 squadTarget)
+    {
+        if (m_selectedUnitList.Count == 1)
+        {
+            Unit unitToMove = m_selectedUnitList.First();
+            unitToMove.Squad = null;
+            unitToMove.MoveTo(squadTarget);
+            return;
+        }
+
+        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+
+        newSquad.m_leaderComponent.MoveTo(squadTarget);
     }
 
     #endregion
