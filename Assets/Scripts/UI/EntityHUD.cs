@@ -7,20 +7,33 @@ public class EntityHUD : MonoBehaviour
 {
     public Transform camTransform;
 
+    [Header("Health")]
     [SerializeField]
     private Slider m_healthBar;
-
     [SerializeField]
-    private Slider m_progressBar;
-
+    private Image m_healthFill;
+    [SerializeField]
+    private Color m_highHealthColor;
+    [SerializeField]
+    private Color m_lowHealthColor;
     [SerializeField]
     private float m_healthDurationUpdate = 0.05f;
+
     private float m_healthValueSaved = 0f;
-
-    Quaternion originalRotation;
-
     private float m_healthTargetValue = 0f;
     private float m_lastHealthUpdate = 0f;
+
+    [Header("ProgressBar")]
+    [SerializeField]
+    private Slider m_progressBar;
+    [SerializeField]
+    private Image m_progressFill;
+    [SerializeField]
+    private Color m_highProgressColor;
+    [SerializeField]
+    private Color m_lowProgressColor;
+
+    Quaternion originalRotation;
 
     public float Health
     {
@@ -37,6 +50,12 @@ public class EntityHUD : MonoBehaviour
         set
         {
             m_progressBar.value = Mathf.Clamp(value, 0f, 1f);
+            SetProgressBarColor();
+
+            if (m_progressFill != null)
+            {
+                SetProgressBarColor();
+            }
 
             if ( m_progressBar.value == 1f ||  m_progressBar.value == 0f)
             {
@@ -49,10 +68,16 @@ public class EntityHUD : MonoBehaviour
         }
     }
 
+
     void Start()
     {
         camTransform = Camera.main.transform;
         originalRotation = transform.rotation;
+
+        if (m_healthFill != null)
+        {
+            SetHealthBarColor();
+        }
     }
 
     void Update()
@@ -66,6 +91,15 @@ public class EntityHUD : MonoBehaviour
         {
             float delta = Mathf.Min((Time.time - m_lastHealthUpdate)/ m_healthDurationUpdate, 1f);
             m_healthBar.value = Mathf.Lerp(m_healthValueSaved, m_healthTargetValue, delta);
+
+            if(m_healthFill != null)
+            {
+                SetHealthBarColor();
+            }
         }
     }
+
+    private void SetHealthBarColor() => m_healthFill.color = Color.Lerp(m_lowHealthColor, m_highHealthColor, m_healthBar.value / m_healthBar.maxValue);
+
+    private void SetProgressBarColor() => m_progressFill.color = Color.Lerp(m_lowProgressColor, m_highProgressColor, m_progressBar.value / m_progressBar.maxValue);
 }

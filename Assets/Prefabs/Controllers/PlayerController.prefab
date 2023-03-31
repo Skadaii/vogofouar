@@ -56,6 +56,7 @@ MonoBehaviour:
   m_targetCursorFloorOffset: 0.2
   m_sceneEventSystem: {fileID: 0}
   m_factoryPreviewTransparency: 0.3
+  m_selectionLineWidth: 0.1
 --- !u!114 &8446335230809480305
 MonoBehaviour:
   m_ObjectHideFlags: 0

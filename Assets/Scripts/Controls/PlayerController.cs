@@ -24,6 +24,9 @@ public sealed class PlayerController : UnitController
     [SerializeField, Range(0f, 1f)]
     private float m_factoryPreviewTransparency = 0.3f;
 
+    [SerializeField, Range(0.005f, 1)]
+    private float m_selectionLineWidth = 0.1f;
+
     private PointerEventData m_menuPointerEventData = null;
 
     // Build Menu UI
@@ -118,6 +121,7 @@ public sealed class PlayerController : UnitController
 
         m_popCameraRef = Camera.main.GetComponent<TopCamera>();
         m_selectionLineRenderer = GetComponent<LineRenderer>();
+        m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = m_selectionLineWidth;
 
         m_playerMenuController = GetComponent<MenuController>();
        
