@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef3b1ad7dbd87841a4d8c88b228ae0b, type: 3}
   m_Name: LineFormation
   m_EditorClassIdentifier: 
-  unitsPerLine: 3
-  lineSpacing: 2
-  columnSpacing: 2
-  localOffset: {x: 0, y: 0, z: -2}
+  m_unitsPerLine: 3
+  m_lineSpacing: 5
+  m_columnSpacing: 5
+  m_localOffset: {x: 0, y: 0, z: 0}
