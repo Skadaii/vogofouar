@@ -9,7 +9,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Fog
+  - 
   - Water
   - UI
   - Visible
@@ -21,8 +21,8 @@ TagManager:
   - Bullet
   - FlyingZone
   - Minimap
-  - 
-  - 
+  - Fog
+  - ComputeFog
   - 
   - 
   - 

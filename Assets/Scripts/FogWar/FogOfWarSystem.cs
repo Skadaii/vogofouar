@@ -32,9 +32,9 @@ public class FogOfWarSystem : MonoBehaviour
         float size = (m_size + m_offset * 2f);
         m_fogCamera.orthographicSize = size * 0.5f;
 
-        m_fogTexture.transform.localPosition = new Vector3(m_size * 0.5f, 0f, m_size * 0.5f);
+        m_fogTexture.transform.localPosition = new Vector3(m_size * 0.5f, -0.5f, m_size * 0.5f);
         
-        m_fogQuadParent.localPosition = new Vector3(m_size * 0.5f, 0f, m_size * 0.5f);
+        m_fogQuadParent.localPosition = new Vector3(m_size * 0.5f, -0.5f, m_size * 0.5f);
         m_fogQuadParent.localScale = new Vector3(size, size, 1f);
         m_fogQuadParent.rotation = Quaternion.Euler(90f, 0f, 0f);
     }

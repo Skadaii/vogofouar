@@ -33,7 +33,7 @@ public sealed class PlayerController : UnitController
     private MenuController m_playerMenuController;
 
     // Camera
-    private TopCamera m_popCameraRef = null;
+    private PlayerCamera m_cameraPlayer = null;
     private bool m_canMoveCamera = false;
     private Vector2 m_cameraInputPos = Vector2.zero;
     private Vector2 m_cameraPrevInputPos = Vector2.zero;
@@ -97,7 +97,9 @@ public sealed class PlayerController : UnitController
     private void SetCameraFocusOnMainFactory()
     {
         if (m_factoryList.Count > 0)
-            m_popCameraRef.FocusEntity(m_factoryList[0]);
+        {
+            m_cameraPlayer.FocusEntity(m_factoryList[0]);
+        }
     }
     private void CancelCurrentBuild()
     {
@@ -119,7 +121,8 @@ public sealed class PlayerController : UnitController
         m_onBuildPointsUpdated += m_playerMenuController.UpdateBuildPointsUI;
         m_onCaptureTarget += m_playerMenuController.UpdateCapturedTargetsUI;
 
-        m_popCameraRef = Camera.main.GetComponent<TopCamera>();
+        m_cameraPlayer = Camera.main.GetComponent<PlayerCamera>();
+
         m_selectionLineRenderer = GetComponent<LineRenderer>();
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = m_selectionLineWidth;
 
@@ -153,9 +156,9 @@ public sealed class PlayerController : UnitController
         m_onCameraDragMoveStart += StartMoveCamera;
         m_onCameraDragMoveEnd += StopMoveCamera;
 
-        m_onCameraZoom += m_popCameraRef.Zoom;
-        m_onCameraMoveHorizontal += m_popCameraRef.KeyboardMoveHorizontal;
-        m_onCameraMoveVertical += m_popCameraRef.KeyboardMoveVertical;
+        m_onCameraZoom += m_cameraPlayer.Zoom;
+        m_onCameraMoveHorizontal += m_cameraPlayer.KeyboardMoveHorizontal;
+        m_onCameraMoveVertical += m_cameraPlayer.KeyboardMoveVertical;
 
         // Gameplay shortcuts
         m_onFocusBasePressed += SetCameraFocusOnMainFactory;
@@ -628,7 +631,7 @@ public sealed class PlayerController : UnitController
         {
             m_cameraInputPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
             m_cameraFrameMove = m_cameraPrevInputPos - m_cameraInputPos;
-            m_popCameraRef.MouseMove(m_cameraFrameMove);
+            m_cameraPlayer.MouseMove(m_cameraFrameMove);
             m_cameraPrevInputPos = m_cameraInputPos;
         }
     }
