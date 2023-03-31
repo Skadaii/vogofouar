@@ -57,7 +57,9 @@ public class PlayerCamera : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.white;
-        Gizmos.DrawSphere(m_targetPosition, 5f);    
+        Gizmos.DrawSphere(m_targetPosition, 5f);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(m_targetPosition, transform.position);
     }
 
     #endregion

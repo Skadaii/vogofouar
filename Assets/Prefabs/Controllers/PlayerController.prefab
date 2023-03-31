@@ -69,7 +69,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e351ef8902e9464c9bb9dc2ca1ab6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_availableFormations: []
+  m_availableFormations:
+  - {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505, type: 2}
+  - {fileID: 11400000, guid: 798c3c10a13ac0745aeff48faaac15ef, type: 2}
   m_buttonFormationSelectionPrefab: {fileID: 5141909566761533625, guid: 45f0f8c1c7eb3994da0ef4a35346accd,
     type: 3}
   m_factoryMenuCanvas: {fileID: 0}
@@ -106,7 +108,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a784680a31d1bbb429b32a0b842b14de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
