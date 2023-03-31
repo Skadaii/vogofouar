@@ -10,6 +10,8 @@ namespace AIPlanner.GOAP
         [SerializeField] private List<Action> m_actionSet = new List<Action>();
         [SerializeField] private List<Goal> m_goals = new List<Goal>();
 
+        [SerializeField] private bool m_useDebugLog = false;
+
         public ref WorldState WorldState => ref m_worldState;
         public List<Goal> Goals => m_goals;
         public List<Action> ActionSet => m_actionSet;
@@ -81,9 +83,7 @@ namespace AIPlanner.GOAP
 
                     BuildGraph(ref node, ref Leave, actionsSubSet, InGoal);
                 }
-
             }
-
         }
 
         private void BuildNodePlan(Node node)
@@ -120,7 +120,10 @@ namespace AIPlanner.GOAP
             if (m_currentGoal != bestGoal)
             {
                 m_currentGoal = bestGoal;
-                Debug.Log($"New Goal ({bestGoalId})");
+
+                if (m_useDebugLog)
+                    Debug.Log($"New Goal ({bestGoalId})");
+
                 GeneratePlan();
             }
         }
@@ -141,15 +144,19 @@ namespace AIPlanner.GOAP
 
             BuildNodePlan(leave);
 
-            string plan = $"{gameObject.name} | Plan: ";
-            foreach (Node node in m_nodes)
-                plan += "->" + node.action.name;
+            stopwatch.Stop();
 
-            Debug.Log(plan + $"Generation duration : {stopwatch.ElapsedMilliseconds}");
+            if (m_useDebugLog)
+            {
+                string plan = $"{gameObject.name} | Plan: ";
+                foreach (Node node in m_nodes)
+                    plan += "->" + node.action.name;
+
+                Debug.Log(plan + $"Generation duration : {stopwatch.ElapsedMilliseconds}");
+            }
 
             NextNode();
 
-            stopwatch.Stop();
         }
 
         private void NextNode()
@@ -195,7 +202,8 @@ namespace AIPlanner.GOAP
 
         private void ActionFinished()
         {
-            Debug.Log($"Action Finished: {m_currentNode.action.name}");
+            if (m_useDebugLog)
+                Debug.Log($"Action Finished: {m_currentNode.action.name}");
 
             m_worldState = m_currentNode.action.ApplyEffects(m_worldState);
             m_currentNode = null;
@@ -203,7 +211,8 @@ namespace AIPlanner.GOAP
 
         private void ActionFailed()
         {
-            Debug.Log($"Action Failed: {m_currentNode.action.name}");
+            if (m_useDebugLog)
+                Debug.Log($"Action Failed: {m_currentNode.action.name}");
 
             m_nodes.Clear();
 

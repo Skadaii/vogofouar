@@ -12,7 +12,6 @@ namespace AIPlanner.GOAP
         [HideInInspector] public bool show;
 #endif
 
-        public string stateName;
         public List<State> states;
 
         public void Initialize(GameObject GameObject)

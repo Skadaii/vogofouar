@@ -18,6 +18,13 @@ namespace AIPlanner.GOAP
         {
             VisualElement root = new VisualElement();
 
+            SerializedProperty serializeProperty = serializedObject.FindProperty("m_useDebugLog");
+            PropertyField debugLogField = new PropertyField();
+            debugLogField.BindProperty(serializeProperty);
+
+            root.Add(debugLogField);
+            root.Add(EditorUtils.CreateSpace(new Vector2(0f, 20f)));
+
             editPlannerButton = new Button(delegate
             {
                 GOAPWindowEditor window = EditorWindow.GetWindow<GOAPWindowEditor>();
@@ -31,6 +38,8 @@ namespace AIPlanner.GOAP
             editPlannerButton.style.alignSelf = Align.Center;
             editPlannerButton.style.height = 30f;
             root.Add(editPlannerButton);
+
+
             return root;
         }
     }
