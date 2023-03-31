@@ -812,7 +812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 401236, guid: c4c916682eac65748a271387fc795cd5, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401236, guid: c4c916682eac65748a271387fc795cd5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1063,6 +1063,41 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: e474dfb5f52e6ed4a8b430a9ac3fbf2d, type: 2}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_lowProgressColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_lowProgressColor.b
+      value: 0.5377358
+      objectReference: {fileID: 0}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_lowProgressColor.g
+      value: 0.21644709
+      objectReference: {fileID: 0}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_lowProgressColor.r
+      value: 0.2432212
+      objectReference: {fileID: 0}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_highProgressColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_highProgressColor.g
+      value: 0.91764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 5115356226891594069, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_highProgressColor.r
+      value: 0.5176471
+      objectReference: {fileID: 0}
     - target: {fileID: 5478644217675351005, guid: c4c916682eac65748a271387fc795cd5,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -1072,6 +1107,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8992025400818185061, guid: c4c916682eac65748a271387fc795cd5,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4c916682eac65748a271387fc795cd5, type: 3}

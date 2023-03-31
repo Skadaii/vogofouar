@@ -3,6 +3,7 @@ Shader "Unlit/FogShader"
 	Properties
 	{
 		_MainTex("Sprite Texture", 2D) = "white" {}
+		_TintColor("Color", Color) = (0,0,0,0)
 	}
 		SubShader
 	{
@@ -47,12 +48,13 @@ Shader "Unlit/FogShader"
 			}
 
 			sampler2D _MainTex;
+			float4 _TintColor;
 
 			fixed4 frag(v2f IN) : SV_Target
 			{
 				fixed4 c4 = tex2D(_MainTex, IN.texcoord);
-				fixed4 c = fixed4(0, 0, 0, 0);
-				c.a = 1 - c4.r;
+				fixed4 c = _TintColor;
+				c = c * (1 - c4.r);
 				return c;
 			}
 			ENDCG

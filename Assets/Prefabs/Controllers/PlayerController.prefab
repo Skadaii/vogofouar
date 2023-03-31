@@ -56,7 +56,7 @@ MonoBehaviour:
   m_targetCursorFloorOffset: 0.2
   m_sceneEventSystem: {fileID: 0}
   m_factoryPreviewTransparency: 0.3
-  m_selectionLineWidth: 0.1
+  m_selectionLineWidth: 0.25
 --- !u!114 &8446335230809480305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,8 +121,8 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 444453829
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}

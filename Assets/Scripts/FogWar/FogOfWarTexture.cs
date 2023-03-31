@@ -6,14 +6,8 @@ public class FogOfWarTexture : MonoBehaviour
     //  Variables
     //  ---------
 
-    public Texture2D texture;
+    [HideInInspector] public Texture2D texture;
 
-    [SerializeField]
-    private Color m_greyColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);
-    [SerializeField]
-    protected Color m_whiteColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-    [SerializeField]
-    private Color m_startColor = new Color(0, 0, 0, 1.0f);
     private SpriteRenderer m_spriteRenderer;
 
     [SerializeField]
@@ -39,7 +33,7 @@ public class FogOfWarTexture : MonoBehaviour
         int size = width * height;
         m_colors = new Color[size];
         for (int i = 0; i < size; ++i)
-            m_colors[i] = m_startColor;
+            m_colors[i] = Color.black;
 
         texture.SetPixels(m_colors);
         texture.Apply();
@@ -52,11 +46,11 @@ public class FogOfWarTexture : MonoBehaviour
             bool isVisible = (visibleGrid.Get(i) & team) == team;
             bool wasVisible = (previousVisibleGrid.Get(i) & team) == team;
 
-            Color newColor = m_startColor;
+            Color newColor = Color.black;
             if (isVisible)
-                newColor = m_whiteColor;
+                newColor = Color.white;
             else if (wasVisible)
-                newColor = m_greyColor;
+                newColor = Color.gray;
 
             newColor.r = Mathf.Lerp(m_colors[i].r, newColor.r, Time.deltaTime * m_interpolateSpeed);
             m_colors[i] = newColor;
