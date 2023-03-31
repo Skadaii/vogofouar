@@ -17,6 +17,8 @@ public class LineFormation : FormationRule
     [SerializeField]
     private Vector3 m_localOffset = Vector3.zero;
 
+    [SerializeField]
+    private bool m_followRotation = false;
     override public Vector3 ComputePosition(Vector3 center, Quaternion rotation, int index)
     {
         int verticalIndex = Mathf.FloorToInt(index / m_unitsPerLine);
@@ -30,7 +32,10 @@ public class LineFormation : FormationRule
         Vector3 horizontalDirection = (hDirSign * (horizontalIndex)) * m_columnSpacing * Vector3.right;
         Vector3 verticalDirection = verticalIndex * m_lineSpacing * Vector3.back;
 
-        Vector3 direction = rotation * (horizontalDirection + verticalDirection + m_localOffset);
+        Vector3 direction = horizontalDirection + verticalDirection + m_localOffset;
+
+        if (m_followRotation)
+            direction = rotation * direction;
 
         return center + direction;
     }

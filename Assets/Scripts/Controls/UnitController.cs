@@ -199,6 +199,7 @@ public class UnitController : MonoBehaviour
         }
 
         newSquad.InitializeLeader(m_virtualLeaderPrefab, averagePosition);
+        newSquad.Formation = m_currentFormation;
 
         m_squadList.Add(newSquad);
 

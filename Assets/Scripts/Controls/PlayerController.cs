@@ -621,7 +621,6 @@ public sealed class PlayerController : UnitController
 
         UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
 
-        newSquad.Formation = m_currentFormation;
         newSquad.m_leaderComponent.MoveTo(squadTarget);
     }
 
