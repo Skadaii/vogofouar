@@ -63,13 +63,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b275e88ffb677b0419dc57506855bd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 250
-  gridHeight: 250
+  gridWidth: 300
+  gridHeight: 300
   m_fogTexture: {fileID: 7323399336463703305}
   m_fogCamera: {fileID: 7323399337158486192}
   m_fogQuadParent: {fileID: 7323399337508891159}
-  m_spriteTransform: {fileID: 7323399336463703304}
   m_size: 500
+  m_offset: 50
 --- !u!1 &7323399335577898339
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 7323399335973007306}
   - component: {fileID: 7323399335973007348}
   - component: {fileID: 7323399335973007307}
-  m_Layer: 6
+  m_Layer: 15
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 7323399336463703304}
   - component: {fileID: 7323399336463703306}
   - component: {fileID: 7323399336463703305}
-  m_Layer: 3
+  m_Layer: 16
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +228,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7323399336463703311}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 250, y: 10, z: 250}
+  m_LocalPosition: {x: 250, y: 0, z: 250}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -300,9 +300,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   texture: {fileID: 0}
-  m_greyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_whiteColor: {r: 1, g: 1, b: 1, a: 1}
-  m_startColor: {r: 0, g: 0, b: 0, a: 1}
   m_interpolateSpeed: 50
 --- !u!1 &7323399337158486197
 GameObject:
@@ -364,11 +361,11 @@ Camera:
   far clip plane: 150
   field of view: 60
   orthographic: 1
-  orthographic size: 250
+  orthographic size: 300
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 65544
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 16dafdc6c7655f74784219620f260d1f, type: 2}
   m_TargetDisplay: 0
@@ -456,7 +453,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7323399337508891159
 Transform:
   m_ObjectHideFlags: 0
@@ -465,8 +462,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7323399337508891158}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 250, y: 10, z: 250}
-  m_LocalScale: {x: 500, y: 500, z: 1}
+  m_LocalPosition: {x: 250, y: 0, z: 250}
+  m_LocalScale: {x: 600, y: 600, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7323399335973007306}

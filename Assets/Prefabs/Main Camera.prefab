@@ -35,7 +35,7 @@ Transform:
   - {fileID: 3124353300523703826}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 70, y: 0, z: 0}
 --- !u!20 &3124353299293301188
 Camera:
   m_ObjectHideFlags: 0
@@ -46,7 +46,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.023529412, g: 0, b: 0.05882353, a: 0.019607844}
+  m_BackGroundColor: {r: 0.023529412, g: 0, b: 0.05882353, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -117,21 +117,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.025
-      inSlope: 0
-      outSlope: 0
+      value: 0.25
+      inSlope: 0.36183548
+      outSlope: 0.36183548
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.11363637
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 2
-      outSlope: 2
+      inSlope: 1.2257137
+      outSlope: 1.2257137
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.09545457
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -201,7 +201,7 @@ Camera:
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 32
+    m_Bits: 32800
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

@@ -17,6 +17,8 @@ public class FogOfWarSystem : MonoBehaviour
 
     [SerializeField]
     protected float m_size = 500f;
+    [SerializeField]
+    protected float m_offset = 50f;
 
     private Grid m_visibilityGrid;
     private Grid m_previousVisibilityGrid;
@@ -27,12 +29,13 @@ public class FogOfWarSystem : MonoBehaviour
 
     private void OnValidate()
     {
-        m_fogCamera.orthographicSize = m_size * 0.5f;
+        float size = (m_size + m_offset * 2f);
+        m_fogCamera.orthographicSize = size * 0.5f;
 
-        m_fogTexture.transform.localPosition = new Vector3(m_size * 0.5f, 10f, m_size * 0.5f);
-
-        m_fogQuadParent.localPosition = new Vector3(m_size*0.5f, 10f, m_size * 0.5f);
-        m_fogQuadParent.localScale = new Vector3(m_size, m_size, 1f);
+        m_fogTexture.transform.localPosition = new Vector3(m_size * 0.5f, 0f, m_size * 0.5f);
+        
+        m_fogQuadParent.localPosition = new Vector3(m_size * 0.5f, 0f, m_size * 0.5f);
+        m_fogQuadParent.localScale = new Vector3(size, size, 1f);
         m_fogQuadParent.rotation = Quaternion.Euler(90f, 0f, 0f);
     }
 
@@ -52,8 +55,8 @@ public class FogOfWarSystem : MonoBehaviour
     {
         return new Vector2Int
         {
-            x = Mathf.RoundToInt(p.x * gridWidth / m_fogQuadParent.localScale.x),
-            y = Mathf.RoundToInt(p.y * gridHeight / m_fogQuadParent.localScale.y)
+            x = Mathf.RoundToInt((p.x + m_offset) * gridWidth / m_fogQuadParent.localScale.x),
+            y = Mathf.RoundToInt((p.y + m_offset) * gridHeight / m_fogQuadParent.localScale.y)
         };
     }
 
