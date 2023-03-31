@@ -449,6 +449,17 @@ public sealed class PlayerController : UnitController
         m_selectionEnd = Vector3.zero;
     }
 
+    protected override void OnUnitSelected()
+    {
+        m_playerMenuController.UpdateFormationMenu(m_selectedUnitList, SetSquadFormation);
+    }
+
+    protected override void OnUnitUnselected()
+    {
+        m_playerMenuController.UpdateFormationMenu(m_selectedUnitList, SetSquadFormation);
+    }
+
+
     #endregion
 
 

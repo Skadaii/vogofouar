@@ -68,8 +68,13 @@ public class UnitController : MonoBehaviour
     #region Unit methods
     protected void UnselectAllUnits()
     {
+
         foreach (Unit unit in m_selectedUnitList)
             unit.SetSelected(false);
+
+        if (m_selectedUnitList.Any())
+            OnUnitUnselected();
+
         m_selectedUnitList.Clear();
     }
     protected void SelectAllUnits()
@@ -79,6 +84,8 @@ public class UnitController : MonoBehaviour
 
         m_selectedUnitList.Clear();
         m_selectedUnitList.AddRange(UnitList);
+
+        OnUnitSelected();
     }
     protected void SelectAllUnitsByTypeId(int typeId)
     {
@@ -93,28 +100,38 @@ public class UnitController : MonoBehaviour
         {
             unit.SetSelected(true);
         }
+
+        OnUnitSelected();
     }
     protected void SelectUnitList(List<Unit> units)
     {
         foreach (Unit unit in units)
             unit.SetSelected(true);
         m_selectedUnitList.AddRange(units);
+
+        OnUnitSelected();
     }
-    protected void SelectUnitList(Unit [] units)
+    protected void SelectUnitList(Unit[] units)
     {
         foreach (Unit unit in units)
             unit.SetSelected(true);
         m_selectedUnitList.AddRange(units);
+
+        OnUnitSelected();
     }
     protected void SelectUnit(Unit unit)
     {
         unit.SetSelected(true);
         m_selectedUnitList.Add(unit);
+
+        OnUnitSelected();
     }
     protected void UnselectUnit(Unit unit)
     {
         unit.SetSelected(false);
         m_selectedUnitList.Remove(unit);
+
+        OnUnitUnselected();
     }
     virtual public void AddUnit(Unit unit)
     {
@@ -138,9 +155,19 @@ public class UnitController : MonoBehaviour
         TotalBuildPoints -= points;
         CapturedTargets--;
     }
+
+    protected virtual void OnUnitSelected() { }
+    protected virtual void OnUnitUnselected() { }
+
     #endregion
 
     #region Squad methods
+    public void SetSquadFormation(List<Unit> units, FormationRule formation)
+    {
+        UnitSquad unitSquad = CreateDynamicSquad(units);
+
+        unitSquad.Formation = formation;
+    }
 
     protected UnitSquad CreateDynamicSquad(List<Unit> squadUnits)
     {
