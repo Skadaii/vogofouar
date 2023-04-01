@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class PlayerCamera : MonoBehaviour
 {
     //  Variables
     //  ---------
 
+    [SerializeField] private Camera m_cameraUI;
+
     [SerializeField] private Vector3 m_targetPosition;
     [SerializeField] private Vector3 m_offset = new Vector3(0f,25f,-50f);
-    //private Vector3 m_cameraHorizontalOffset;
 
     [SerializeField] private float m_speed;
 
@@ -99,14 +101,14 @@ public class PlayerCamera : MonoBehaviour
 
             if(m_zoomRatio >= m_startDisplayingIconZoom)
             {
-                if((m_camera.cullingMask & m_iconLayer) != m_iconLayer)
+                if((m_cameraUI.cullingMask & m_iconLayer) != m_iconLayer)
                 {
-                    m_camera.cullingMask |= m_iconLayer;
+                    m_cameraUI.cullingMask |= m_iconLayer;
                 }
             }
-            else if((m_camera.cullingMask & m_iconLayer) == m_iconLayer)
+            else if((m_cameraUI.cullingMask & m_iconLayer) == m_iconLayer)
             {
-                m_camera.cullingMask &= ~m_iconLayer;
+                m_cameraUI.cullingMask &= ~m_iconLayer;
             }
 
             m_zoomSpeedModifier = m_moveSpeedFromZoomCurve.Evaluate(m_zoomRatio);

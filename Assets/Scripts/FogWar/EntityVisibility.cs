@@ -69,7 +69,7 @@ public class EntityVisibility : MonoBehaviour
             }
             if (m_gameObjectMinimapLayer.Length > 0)
             {
-                SetLayer(m_gameObjectMinimapLayer[0], LayerMask.NameToLayer("Minimap"));
+                SetLayer(m_gameObjectMinimapLayer[0], LayerMask.NameToLayer("Icon"));
             }
         }
         else

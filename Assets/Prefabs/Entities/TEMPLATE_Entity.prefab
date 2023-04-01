@@ -190,6 +190,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: f59fa70207ec689489378a41af3fd88c,
         type: 3}
+    - target: {fileID: 6118381224010099306, guid: 916f3c6706b86f04eb587d5e8f2135fc,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6818198101500513032, guid: 916f3c6706b86f04eb587d5e8f2135fc,
         type: 3}
       propertyPath: m_Name
@@ -220,6 +225,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 5240285299756894451, guid: b96170ec11d247e499d1d928af3fa937,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6252359395713299423, guid: b96170ec11d247e499d1d928af3fa937,
         type: 3}

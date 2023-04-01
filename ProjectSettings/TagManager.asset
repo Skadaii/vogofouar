@@ -9,21 +9,21 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Floor
   - Water
   - UI
   - Visible
   - Hidden
-  - Floor
-  - Target
-  - Unit
   - Building
+  - Unit
   - Bullet
-  - FlyingZone
-  - Minimap
-  - Fog
   - ComputeFog
+  - Fog
+  - FlyingZone
+  - MinimapOver
   - Icon
+  - 
+  - 
   - 
   - 
   - 

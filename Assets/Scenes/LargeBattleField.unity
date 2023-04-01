@@ -632,7 +632,7 @@ GameObject:
   - component: {fileID: 375110971}
   - component: {fileID: 375110972}
   m_Layer: 0
-  m_Name: MinimapCameraFog
+  m_Name: MinimapCameraOver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -684,7 +684,7 @@ Camera:
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 32768
+    m_Bits: 20480
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 5a3617f79b9b2ec4ea3970d3c7cb9465, type: 2}
   m_TargetDisplay: 0
@@ -1759,7 +1759,7 @@ GameObject:
   - component: {fileID: 1451793186}
   - component: {fileID: 1451793185}
   m_Layer: 0
-  m_Name: MinimapCamera
+  m_Name: MinimapCameraUnder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1796,7 +1796,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 180544
+    m_Bits: 231176
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 5a3617f79b9b2ec4ea3970d3c7cb9465, type: 2}
   m_TargetDisplay: 0
@@ -2270,10 +2270,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1854186914, guid: 32676265f95fdeb40833df7b0b170998, type: 3}
-      propertyPath: m_startDisplayingIconZoom
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_RootOrder
@@ -2287,22 +2283,22 @@ PrefabInstance:
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 126.2
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 100
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.77276194
+      value: 0.92387956
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.634696
+      value: 0.38268346
       objectReference: {fileID: 0}
     - target: {fileID: 3124353299293301191, guid: 32676265f95fdeb40833df7b0b170998,
         type: 3}
@@ -2349,7 +2345,7 @@ GameObject:
   - component: {fileID: 1776657142}
   - component: {fileID: 1776657146}
   - component: {fileID: 1776657145}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2867,6 +2863,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323399337158486192, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
+        type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 7323399337508891158, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}

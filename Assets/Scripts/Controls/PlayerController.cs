@@ -430,7 +430,7 @@ public sealed class PlayerController : UnitController
         UnselectCurrentFactory();
 
         int unitLayerMask = 1 << LayerMask.NameToLayer("Unit");
-        int factoryLayerMask = 1 << LayerMask.NameToLayer("Factory");
+        int factoryLayerMask = 1 << LayerMask.NameToLayer("Building");
         Collider[] colliders = Physics.OverlapBox(center, size / 2f, Quaternion.identity, unitLayerMask | factoryLayerMask, QueryTriggerInteraction.Ignore);
         foreach (Collider col in colliders)
         {
@@ -567,7 +567,7 @@ public sealed class PlayerController : UnitController
         if (m_selectedUnitList.Count == 0)
             return;
 
-        int damageableMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Factory"));
+        int damageableMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int targetMask = 1 << LayerMask.NameToLayer("Target");
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

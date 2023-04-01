@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 7323399335973007306}
   - component: {fileID: 7323399335973007348}
   - component: {fileID: 7323399335973007307}
-  m_Layer: 15
+  m_Layer: 12
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 7323399336463703304}
   - component: {fileID: 7323399336463703306}
   - component: {fileID: 7323399336463703305}
-  m_Layer: 16
+  m_Layer: 11
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +365,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 65544
+    m_Bits: 2048
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 16dafdc6c7655f74784219620f260d1f, type: 2}
   m_TargetDisplay: 0
