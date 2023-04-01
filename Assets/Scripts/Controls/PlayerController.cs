@@ -324,7 +324,7 @@ public sealed class PlayerController : UnitController
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        int factoryMask = 1 << LayerMask.NameToLayer("Factory");
+        int buildingMask = 1 << LayerMask.NameToLayer("Building");
         int unitMask = 1 << LayerMask.NameToLayer("Unit");
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
 
@@ -340,7 +340,7 @@ public sealed class PlayerController : UnitController
 
         RaycastHit raycastInfo;
         // factory selection
-        if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, factoryMask))
+        if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, buildingMask))
         {
             Factory factory = raycastInfo.transform.GetComponent<Factory>();
             if (factory != null)

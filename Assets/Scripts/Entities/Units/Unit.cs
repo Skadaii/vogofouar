@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent))]
 public abstract class Unit : Entity
 {
     //  Variables
@@ -59,18 +61,18 @@ public abstract class Unit : Entity
     //  Functions
     //  ---------
 
-        #region MonoBehaviour methods
+    #region MonoBehaviour methods
+
+    private void OnValidate()
+    {
+        InitializeNavMeshAgent();
+    }
 
     protected virtual new void Awake()
     {
         base.Awake();
 
-        m_navMeshAgent = GetComponent<NavMeshAgent>();
-
-        // fill NavMeshAgent parameters
-        m_navMeshAgent.speed = UnitData.speed;
-        m_navMeshAgent.angularSpeed = UnitData.angularSpeed;
-        m_navMeshAgent.acceleration = UnitData.acceleration;
+        InitializeNavMeshAgent();
     }
 
     protected virtual new void Update()
@@ -102,6 +104,18 @@ public abstract class Unit : Entity
         Destroy(gameObject);
     }
 
+
+    private void InitializeNavMeshAgent()
+    {
+        m_navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if(m_navMeshAgent != null && UnitData != null)
+        {
+            m_navMeshAgent.speed = UnitData.speed;
+            m_navMeshAgent.angularSpeed = UnitData.angularSpeed;
+            m_navMeshAgent.acceleration = UnitData.acceleration;
+        }
+    }
 
     #region IRepairable
 

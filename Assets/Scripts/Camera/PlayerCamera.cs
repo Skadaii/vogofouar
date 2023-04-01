@@ -8,14 +8,16 @@ public class PlayerCamera : MonoBehaviour
     //  ---------
 
     [SerializeField] private Vector3 m_targetPosition;
-    private Vector3 m_cameraHorizontalOffset;
+    [SerializeField] private Vector3 m_offset = new Vector3(0f,25f,-50f);
+    //private Vector3 m_cameraHorizontalOffset;
 
     [SerializeField] private float m_speed;
 
     [Header("Zoom settings")]
-    [SerializeField] private float m_maxHeight = 350f;
-    [SerializeField] private float m_minHeight = 25f;
+    [SerializeField] private float m_maxZoomHeight = 350f;
+    [SerializeField] private float m_minZoomHeight = 0f;
     [SerializeField] private float m_zoomSpeed = 500f;
+    [SerializeField, Range(0f,1f)] private float m_startDisplayingIconZoom = 0.5f;
 
     [SerializeField] private float m_zoom = 100f;
 
@@ -27,7 +29,8 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField]
     private AnimationCurve m_moveSpeedFromZoomCurve = new AnimationCurve();
 
-
+    private Camera m_camera;
+    private int m_iconLayer;
     private Vector3 m_terrainSize = Vector2.zero;
     private float m_zoomSpeedModifier = 1f;
     private float m_keyboardSpeedModifier = 10f;
@@ -39,13 +42,19 @@ public class PlayerCamera : MonoBehaviour
 
     private void OnValidate()
     {
-        Vector3 offset = transform.position - m_targetPosition;
-        m_cameraHorizontalOffset = new Vector3(offset.x, 0f, offset.z);
+        transform.position = m_targetPosition + m_offset;
         transform.forward = Vector3.Normalize(m_targetPosition - transform.position);
+    }
+
+    private void Awake()
+    {
+        m_camera = GetComponent<Camera>();
+        m_iconLayer = LayerMask.GetMask("Icon");
     }
 
     private void Start()
     {
+        m_zoom = m_minZoomHeight;
         m_terrainSize = GameServices.TerrainSize;
     }
 
@@ -73,7 +82,7 @@ public class PlayerCamera : MonoBehaviour
             m_targetPosition.z = Mathf.Clamp(m_targetPosition.z, m_terrainBorderWidth, m_terrainSize.z - m_terrainBorderWidth);
         }
 
-        Vector3 offset = new Vector3(m_cameraHorizontalOffset.x, m_zoom, m_cameraHorizontalOffset.z);
+        Vector3 offset = new Vector3(m_offset.x, m_offset.y + m_zoom, m_offset.z);
         Vector3 targetPosition = m_targetPosition + offset;
         transform.position = Vector3.Lerp(transform.position, targetPosition, 10f * Time.fixedDeltaTime);
         transform.forward  = Vector3.Lerp(transform.forward , - offset.normalized, 10f * Time.fixedDeltaTime);
@@ -85,8 +94,21 @@ public class PlayerCamera : MonoBehaviour
     {
         if (value != 0f)
         {
-            m_zoom = Mathf.Clamp(m_zoom - value * ZOOM_SPEED_FACTOR * m_zoomSpeed * m_zoomSpeedModifier * Time.deltaTime, m_minHeight, m_maxHeight);
-            m_zoomRatio = Mathf.Clamp(1f - (m_maxHeight - m_zoom) / (m_maxHeight - m_minHeight), 0f, 1f);
+            m_zoom = Mathf.Clamp(m_zoom - value * ZOOM_SPEED_FACTOR * m_zoomSpeed * m_zoomSpeedModifier * Time.deltaTime, m_minZoomHeight, m_maxZoomHeight);
+            m_zoomRatio = Mathf.Clamp(1f - (m_maxZoomHeight - m_zoom) / (m_maxZoomHeight - m_minZoomHeight), 0f, 1f);
+
+            if(m_zoomRatio >= m_startDisplayingIconZoom)
+            {
+                if((m_camera.cullingMask & m_iconLayer) != m_iconLayer)
+                {
+                    m_camera.cullingMask |= m_iconLayer;
+                }
+            }
+            else if((m_camera.cullingMask & m_iconLayer) == m_iconLayer)
+            {
+                m_camera.cullingMask &= ~m_iconLayer;
+            }
+
             m_zoomSpeedModifier = m_moveSpeedFromZoomCurve.Evaluate(m_zoomRatio);
         }
     }

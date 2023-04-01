@@ -74,6 +74,8 @@ public abstract class Building : Entity
             {
                 m_isCompleted = true;
                 m_isActive = true;
+
+                gameObject.isStatic = true;
             }
             else
             {

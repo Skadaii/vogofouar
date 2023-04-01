@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class EntityHUD : MonoBehaviour
 {
-    public Transform camTransform;
-
     [Header("Health")]
     [SerializeField]
     private Slider m_healthBar;
@@ -32,8 +30,6 @@ public class EntityHUD : MonoBehaviour
     private Color m_highProgressColor;
     [SerializeField]
     private Color m_lowProgressColor;
-
-    Quaternion originalRotation;
 
     public float Health
     {
@@ -69,24 +65,16 @@ public class EntityHUD : MonoBehaviour
     }
 
 
-    void Start()
+    protected void Start()
     {
-        camTransform = Camera.main.transform;
-        originalRotation = transform.rotation;
-
         if (m_healthFill != null)
         {
             SetHealthBarColor();
         }
     }
 
-    void Update()
+    protected void Update()
     {
-        if(camTransform != null)
-        {
-            transform.rotation = camTransform.rotation * originalRotation;
-        }
-
         if(m_healthBar.isActiveAndEnabled)
         {
             float delta = Mathf.Min((Time.time - m_lastHealthUpdate)/ m_healthDurationUpdate, 1f);

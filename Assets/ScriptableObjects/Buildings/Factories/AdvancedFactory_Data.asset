@@ -23,10 +23,10 @@ MonoBehaviour:
   spawnRadius: 12
   radiusOffset: 4
   availableUnits:
-  - {fileID: 1707494665243283662, guid: c768bbb6a29a11140a6cb8459a70d496, type: 3}
-  - {fileID: 4489616219243337951, guid: d343ee0653dfc4d40931ee9bebec9db4, type: 3}
-  - {fileID: 4489616219243337951, guid: f148e04a5a440174993359f071f61c3c, type: 3}
-  - {fileID: 4489616219243337951, guid: d5d8213b580ff95419dfd90d67eb40a1, type: 3}
+  - {fileID: 2088690731326722551, guid: 755c016812e6a584fb6de6ad7863fedd, type: 3}
+  - {fileID: 4127249019806727215, guid: 158bd108482f0db408d9812e8eda624b, type: 3}
+  - {fileID: 4127249019806727215, guid: b3b0030b5a3eddb49a23902242c7b085, type: 3}
+  - {fileID: 4127249019806727215, guid: 90f2744314821cb4984b982a5247db6a, type: 3}
   availableFactories:
-  - {fileID: 127182, guid: c4c916682eac65748a271387fc795cd5, type: 3}
-  - {fileID: 127182, guid: 79699270ed6dad648ad050a5e8010a5c, type: 3}
+  - {fileID: 4757519944541837824, guid: b042f885d587ca14c805a6c98c5c47ee, type: 3}
+  - {fileID: 4416625676177685912, guid: fc932f2017f853a4f8b5119a43102719, type: 3}

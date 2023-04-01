@@ -17,13 +17,13 @@ TagManager:
   - Floor
   - Target
   - Unit
-  - Factory
+  - Building
   - Bullet
   - FlyingZone
   - Minimap
   - Fog
   - ComputeFog
-  - 
+  - Icon
   - 
   - 
   - 
