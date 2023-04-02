@@ -162,6 +162,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit_TankHeavy_A
       objectReference: {fileID: 0}
+    - target: {fileID: 9065610407378949973, guid: 1f08624b3c0ea68448e09be93f3d4bfe,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065610407378949973, guid: 1f08624b3c0ea68448e09be93f3d4bfe,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f08624b3c0ea68448e09be93f3d4bfe, type: 3}
 --- !u!1 &4127249019806727215 stripped

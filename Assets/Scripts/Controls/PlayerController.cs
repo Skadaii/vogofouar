@@ -14,18 +14,13 @@ public sealed class PlayerController : UnitController
         FactoryPositioning
     }
 
-    [SerializeField]
-    private GameObject m_targetCursorPrefab = null;
-    [SerializeField]
-    private float m_targetCursorFloorOffset = 0.2f;
-    [SerializeField]
-    private EventSystem m_sceneEventSystem = null;
+    [SerializeField] private GameObject m_targetCursorPrefab = null;
+    [SerializeField] private float m_targetCursorFloorOffset = 0.2f;
+    [SerializeField] private EventSystem m_sceneEventSystem = null;
 
-    [SerializeField, Range(0f, 1f)]
-    private float m_factoryPreviewTransparency = 0.3f;
+    [SerializeField, Range(0f, 1f)] private float m_factoryPreviewTransparency = 0.3f;
 
-    [SerializeField, Range(0.005f, 1)]
-    private float m_selectionLineWidth = 0.1f;
+    [SerializeField, Range(1f, 25f)] private float m_selectionLineWidth = 3.5f;
 
     private PointerEventData m_menuPointerEventData = null;
 
@@ -44,8 +39,9 @@ public sealed class PlayerController : UnitController
     private Vector3 m_selectionEnd = Vector3.zero;
     private bool m_selectionStarted = false;
     private float m_selectionBoxHeight = 50f;
-    private LineRenderer m_selectionLineRenderer;
     private GameObject m_targetCursor = null;
+
+    private LineRenderer m_selectionLineRenderer;
 
     // Factory build
     private InputMode m_currentInputMode = InputMode.Orders;
@@ -123,7 +119,7 @@ public sealed class PlayerController : UnitController
 
         m_cameraPlayer = Camera.main.GetComponent<PlayerCamera>();
 
-        m_selectionLineRenderer = GetComponent<LineRenderer>();
+        m_selectionLineRenderer = GetComponentInChildren<LineRenderer>();
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = m_selectionLineWidth;
 
         m_playerMenuController = GetComponent<MenuController>();
@@ -408,6 +404,9 @@ public sealed class PlayerController : UnitController
             m_selectionEnd = raycastInfo.point;
         }
 
+        float width = 2f * m_cameraPlayer.Distance * Mathf.Tan(m_cameraPlayer.FOV * Mathf.Deg2Rad * 0.5f) * (m_selectionLineWidth / Screen.width);
+        Debug.Log(width);
+        m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = width;
         m_selectionLineRenderer.SetPosition(0, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionStart.z));
         m_selectionLineRenderer.SetPosition(1, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionEnd.z));
         m_selectionLineRenderer.SetPosition(2, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionEnd.z));
@@ -516,8 +515,10 @@ public sealed class PlayerController : UnitController
         {
             Debug.LogWarning("Invalid factory prefab for factoryId " + factoryId);
         }
-        m_wantedFactoryPreview = Instantiate(factoryPrefab.transform.GetChild(0).gameObject); // Quick and dirty access to mesh GameObject
+
+        m_wantedFactoryPreview = Instantiate(factoryPrefab.GetComponent<Entity>().GFX);
         m_wantedFactoryPreview.name = m_wantedFactoryPreview.name.Replace("(Clone)", "_Preview");
+
         // Set transparency on materials
         foreach(Renderer rend in m_wantedFactoryPreview.GetComponentsInChildren<MeshRenderer>())
         {

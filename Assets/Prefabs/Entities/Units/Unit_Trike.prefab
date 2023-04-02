@@ -84,6 +84,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1773535154546926692, guid: 1f08624b3c0ea68448e09be93f3d4bfe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2364359028882907820, guid: 1f08624b3c0ea68448e09be93f3d4bfe,
         type: 3}
       propertyPath: m_fighterData
@@ -154,6 +159,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Unit_Trike
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065610407378949973, guid: 1f08624b3c0ea68448e09be93f3d4bfe,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065610407378949973, guid: 1f08624b3c0ea68448e09be93f3d4bfe,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f08624b3c0ea68448e09be93f3d4bfe, type: 3}

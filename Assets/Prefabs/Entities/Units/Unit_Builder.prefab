@@ -179,6 +179,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit_Builder
       objectReference: {fileID: 0}
+    - target: {fileID: 1892005184866376453, guid: a0c08802a2e52614e8ea02c249230a0f,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1892005184866376453, guid: a0c08802a2e52614e8ea02c249230a0f,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2066177972974192964, guid: a0c08802a2e52614e8ea02c249230a0f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8792033857948359405, guid: a0c08802a2e52614e8ea02c249230a0f,
         type: 3}
       propertyPath: m_Height
@@ -193,6 +208,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Center.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9156548947860236340, guid: a0c08802a2e52614e8ea02c249230a0f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0c08802a2e52614e8ea02c249230a0f, type: 3}

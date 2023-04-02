@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8681569132773193803}
   - component: {fileID: 5516408138968310961}
   - component: {fileID: 474262596392171688}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5675027337400755876}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2198941349060024220}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 8832518575313432442}
   - component: {fileID: 651054301476328884}
   - component: {fileID: 8163032552229533943}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 8685150940160590504}
   - component: {fileID: 8254616119731290819}
   - component: {fileID: 5845609200263581665}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: UnitHUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -376,7 +376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3026183779074589534}
   - component: {fileID: 4910914680868765960}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -403,7 +403,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -37.5}
-  m_SizeDelta: {x: 0, y: 75}
+  m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4910914680868765960
 MonoBehaviour:
@@ -465,7 +465,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7416022782457491354}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -503,7 +503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3493593466865876516}
   - component: {fileID: 1892555783842418720}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: ProgressBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -530,7 +530,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 37.5}
-  m_SizeDelta: {x: 0, y: 75}
+  m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1892555783842418720
 MonoBehaviour:
@@ -594,7 +594,7 @@ GameObject:
   - component: {fileID: 8450642843831799301}
   - component: {fileID: 6804876124394734349}
   - component: {fileID: 5126403270303293658}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -670,7 +670,7 @@ GameObject:
   - component: {fileID: 2652008571358577541}
   - component: {fileID: 2134989318941612810}
   - component: {fileID: 1792119081660139770}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}

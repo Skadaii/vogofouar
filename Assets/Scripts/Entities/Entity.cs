@@ -33,6 +33,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     //  Properties
     //  ----------
 
+    public GameObject GFX => m_GFX;
     public bool IsAlive { get; protected set; }
 
     public bool IsSelected { get; protected set; }

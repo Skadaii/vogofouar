@@ -8,37 +8,40 @@ public class PlayerCamera : MonoBehaviour
     //  Variables
     //  ---------
 
-    [SerializeField] private Camera m_cameraUI;
-
     [SerializeField] private Vector3 m_targetPosition;
     [SerializeField] private Vector3 m_offset = new Vector3(0f,25f,-50f);
+    [SerializeField] private Camera m_cameraUI;
 
+    [Header("Speed settings")]
     [SerializeField] private float m_speed;
+    [SerializeField] private AnimationCurve m_moveSpeedFromZoomCurve = new AnimationCurve();
+    [SerializeField] private float m_keyboardSpeedModifier = 1f;
+    [SerializeField] private float m_mouseSpeedModifier = 1f;
 
     [Header("Zoom settings")]
     [SerializeField] private float m_maxZoomHeight = 350f;
     [SerializeField] private float m_minZoomHeight = 0f;
     [SerializeField] private float m_zoomSpeed = 500f;
     [SerializeField, Range(0f,1f)] private float m_startDisplayingIconZoom = 0.5f;
-
     [SerializeField] private float m_zoom = 100f;
-
 
     [Header("Terrain related settings")]
     [SerializeField] private float m_terrainBorderWidth = 5f;
     [SerializeField] private bool m_enableMapRestricion = true;
 
-    [SerializeField]
-    private AnimationCurve m_moveSpeedFromZoomCurve = new AnimationCurve();
 
     private Camera m_camera;
     private int m_iconLayer;
+    private int m_entityHUDLayer;
     private Vector3 m_terrainSize = Vector2.zero;
     private float m_zoomSpeedModifier = 1f;
-    private float m_keyboardSpeedModifier = 10f;
     private float m_zoomRatio = 0f;
 
     private const float ZOOM_SPEED_FACTOR = 100f;
+
+    public float ZoomHeight => m_zoom;
+    public float Distance => Vector3.Distance(m_targetPosition, transform.position);
+    public float FOV => m_camera.fieldOfView;
 
     #region MonoBehaviour methods
 
@@ -52,6 +55,7 @@ public class PlayerCamera : MonoBehaviour
     {
         m_camera = GetComponent<Camera>();
         m_iconLayer = LayerMask.GetMask("Icon");
+        m_entityHUDLayer = LayerMask.GetMask("EntityHUD");
     }
 
     private void Start()
@@ -101,27 +105,29 @@ public class PlayerCamera : MonoBehaviour
 
             if(m_zoomRatio >= m_startDisplayingIconZoom)
             {
-                if((m_cameraUI.cullingMask & m_iconLayer) != m_iconLayer)
-                {
-                    m_cameraUI.cullingMask |= m_iconLayer;
-                }
+                EnableUICameraMask(m_iconLayer);
+                DisableUICameraMask(m_entityHUDLayer);
             }
-            else if((m_cameraUI.cullingMask & m_iconLayer) == m_iconLayer)
+            else
             {
-                m_cameraUI.cullingMask &= ~m_iconLayer;
+                EnableUICameraMask(m_entityHUDLayer);
+                DisableUICameraMask(m_iconLayer);
             }
 
             m_zoomSpeedModifier = m_moveSpeedFromZoomCurve.Evaluate(m_zoomRatio);
         }
     }
 
+    private void EnableUICameraMask(int mask) => m_cameraUI.cullingMask |= mask;
+    private void DisableUICameraMask(int mask) => m_cameraUI.cullingMask &= ~mask;
+
     public void MouseMove(Vector2 move)
     {
         if (Mathf.Approximately(move.sqrMagnitude, 0f))
             return;
 
-        MoveHorizontal(move.x);
-        MoveVertical(move.y);
+        MoveHorizontal(move.x * m_mouseSpeedModifier);
+        MoveVertical(move.y * m_mouseSpeedModifier);
     }
     public void KeyboardMoveHorizontal(float value)
     {
