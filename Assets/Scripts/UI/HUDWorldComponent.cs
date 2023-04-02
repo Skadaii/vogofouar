@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class HUDWorldComponent : MonoBehaviour
 {
-    private Transform camTransform;
     private Quaternion originalRotation;
 
     public bool enableBillboard = true;
@@ -12,38 +12,47 @@ public class HUDWorldComponent : MonoBehaviour
 
     [SerializeField] private float screenSize = 1f;
 
-    protected void Start()
+    private const float SCREEN_SIZE_SCALE_FACTOR = 0.001f;
+
+    protected void Awake()
     {
-        camTransform = Camera.main.transform;
         originalRotation = transform.rotation;
-
-        if (enableFixedScreenSize) ComputeSize();
-        if (enableBillboard && camTransform != null) ComputeBillboard();
     }
 
-    protected void Update()
+    private void OnEnable()
     {
-        if (enableBillboard && camTransform != null) ComputeBillboard();
+        Camera.onPreRender += PreRender;
     }
 
-    private void FixedUpdate()
+    private void OnDisable()
     {
-        if (enableFixedScreenSize) ComputeSize();
+        Camera.onPreRender -= PreRender;
     }
 
-    private void ComputeBillboard()
+    private void PreRender(Camera cam)
     {
-        transform.rotation = camTransform.rotation * originalRotation;
+        if ((cam.cullingMask & (1 << gameObject.layer)) == 0) return;
+
+        if (enableBillboard) ComputeBillboard(cam);
+        if (enableFixedScreenSize) ComputeSize(cam);
     }
 
-    private void ComputeSize()
+    private void ComputeBillboard(Camera camera) => transform.rotation = camera.transform.rotation * originalRotation;
+
+    private void ComputeSize(Camera camera)
     {
-        Vector3 a = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 b = new Vector3(a.x, a.y + screenSize, a.z);
+        float size;
+        if (camera.orthographic)
+        {
+            size = camera.orthographicSize;
+        }
+        else
+        {
+            float halfFOV = camera.fieldOfView * 0.5f * Mathf.Deg2Rad;
+            float distance = Vector3.Distance(transform.position, camera.transform.position);
+            size = distance * Mathf.Tan(halfFOV) * camera.aspect;
+        }
 
-        Vector3 aa = Camera.main.ScreenToWorldPoint(a);
-        Vector3 bb = Camera.main.ScreenToWorldPoint(b);
-
-        transform.localScale = Vector3.one * (aa - bb).magnitude;
+        transform.localScale = Vector3.one * size * screenSize * SCREEN_SIZE_SCALE_FACTOR;
     }
 }

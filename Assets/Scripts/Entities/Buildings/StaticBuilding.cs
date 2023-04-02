@@ -58,9 +58,9 @@ public class StaticBuilding : Building
         m_teamScore[0] = 0;
         m_teamScore[1] = 0;
 
-        Transform minimapTransform = transform.Find("MinimapCanvas");
-        if (minimapTransform != null)
-            m_minimapImage = minimapTransform.GetComponentInChildren<Image>();
+        Transform iconTransform = transform.Find("Icon");
+        if (iconTransform != null)
+            m_icon = iconTransform.GetComponentInChildren<SpriteRenderer>();
     }
 
     protected virtual new void Update()
@@ -157,7 +157,7 @@ public class StaticBuilding : Building
         ResetCapture();
         m_owningTeam = newTeam;
         if (Visibility) { Visibility.Team = m_owningTeam; }
-        if (m_minimapImage) { m_minimapImage.color = GameServices.GetTeamColor(m_owningTeam); }
+        if (m_icon) { m_icon.color = GameServices.GetTeamColor(m_owningTeam); }
         m_buildingMeshRenderer.material = newTeam == ETeam.Blue ? m_blueTeamMaterial : m_redTeamMaterial;
     }
 

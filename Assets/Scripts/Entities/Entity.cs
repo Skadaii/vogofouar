@@ -15,7 +15,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     protected bool m_isInitialized = false;
     protected GameObject m_selectedSprite = null;
-    protected UnityEngine.UI.Image m_minimapImage;
+    protected SpriteRenderer m_icon;
 
     [SerializeField]
     protected GameObject m_GFX;
@@ -84,11 +84,11 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
         if (Visibility) { Visibility.Team = _team; }
 
-        Transform minimapTransform = transform.Find("MinimapCanvas");
-        if (minimapTransform != null)
+        Transform iconTransform = transform.Find("Icon");
+        if (iconTransform != null)
         {
-            m_minimapImage = minimapTransform.GetComponentInChildren<UnityEngine.UI.Image>();
-            m_minimapImage.color = GameServices.GetTeamColor(m_team);
+            m_icon = iconTransform.GetComponentInChildren<SpriteRenderer>();
+            m_icon.color = GameServices.GetTeamColor(m_team);
         }
 
         SetTeamColor();

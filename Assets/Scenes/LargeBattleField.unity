@@ -684,7 +684,7 @@ Camera:
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 20480
+    m_Bits: 53248
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 5a3617f79b9b2ec4ea3970d3c7cb9465, type: 2}
   m_TargetDisplay: 0
@@ -1797,7 +1797,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 231176
+    m_Bits: 198408
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 5a3617f79b9b2ec4ea3970d3c7cb9465, type: 2}
   m_TargetDisplay: 0
@@ -2516,17 +2516,17 @@ PrefabInstance:
     - target: {fileID: 3174516102872575537, guid: 6274f44d969a12f4f9c683eb6eef2d05,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3174516102872575537, guid: 6274f44d969a12f4f9c683eb6eef2d05,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3174516102872575537, guid: 6274f44d969a12f4f9c683eb6eef2d05,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 3297987965787243817, guid: 6274f44d969a12f4f9c683eb6eef2d05,
         type: 3}
@@ -2641,7 +2641,7 @@ PrefabInstance:
     - target: {fileID: 4713461225429673724, guid: 6274f44d969a12f4f9c683eb6eef2d05,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -500
       objectReference: {fileID: 0}
     - target: {fileID: 4715615953063436984, guid: 6274f44d969a12f4f9c683eb6eef2d05,
         type: 3}

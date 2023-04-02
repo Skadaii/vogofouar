@@ -92,6 +92,12 @@ PrefabInstance:
       propertyPath: m_Size.z
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4115780091311449696, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a06a9ab3802d0ac48958c584798c51f5,
+        type: 3}
     - target: {fileID: 5461828194153972949, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
         type: 3}
       propertyPath: m_AnchorMax.x

@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 590147407619690283}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.5, y: 3.5, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3501043414305324317}
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableBillboard: 0
   enableFixedScreenSize: 1
-  screenSize: 4
+  screenSize: 5
 --- !u!1 &6904167145403207692
 GameObject:
   m_ObjectHideFlags: 0
