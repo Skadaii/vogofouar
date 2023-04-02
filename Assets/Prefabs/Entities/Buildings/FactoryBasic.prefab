@@ -165,6 +165,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2576216233452119338}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &1936195086047789898 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4115780091311449696, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
+    type: 3}
+  m_PrefabInstance: {fileID: 2576216233452119338}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3304952943332741534 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1016971508271609012, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
@@ -190,6 +196,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 0
+  m_selectedSprite: {fileID: 6128687716963668940}
+  m_icon: {fileID: 1936195086047789898}
   m_GFX: {fileID: 3304952943332741534}
   m_factoryData: {fileID: 11400000, guid: 0d9f0c0baf00e0e45b1c28cf2dacb6a7, type: 2}
   m_maxBuildingQueueSize: 25
+--- !u!1 &6128687716963668940 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8560768956081207014, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
+    type: 3}
+  m_PrefabInstance: {fileID: 2576216233452119338}
+  m_PrefabAsset: {fileID: 0}

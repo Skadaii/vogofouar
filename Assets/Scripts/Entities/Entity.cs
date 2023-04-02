@@ -11,11 +11,15 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     [SerializeField]
     protected ETeam m_team;
 
+    [SerializeField]
+    protected GameObject m_selectedSprite = null;
+
+    [SerializeField]
+    protected SpriteRenderer m_icon;
+
     protected EntityVisibility m_visibility;
 
     protected bool m_isInitialized = false;
-    protected GameObject m_selectedSprite = null;
-    protected SpriteRenderer m_icon;
 
     [SerializeField]
     protected GameObject m_GFX;
@@ -54,9 +58,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     {
         m_visibility = GetComponent<EntityVisibility>();
         m_hud = transform.GetComponentInChildren<EntityHUD>();
-
-        m_selectedSprite = transform.Find("SelectedSprite")?.gameObject;
-        m_selectedSprite?.SetActive(false);
+        if(m_selectedSprite != null) m_selectedSprite.SetActive(false);
 
         //m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
 
@@ -84,12 +86,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
         if (Visibility) { Visibility.Team = _team; }
 
-        Transform iconTransform = transform.Find("Icon");
-        if (iconTransform != null)
-        {
-            m_icon = iconTransform.GetComponentInChildren<SpriteRenderer>();
-            m_icon.color = GameServices.GetTeamColor(m_team);
-        }
+        if(m_icon != null) m_icon.color = GameServices.GetTeamColor(m_team);
 
         SetTeamColor();
 
@@ -122,6 +119,15 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     {
         IsSelected = selected;
         m_selectedSprite?.SetActive(IsSelected);
+
+        if(IsSelected)
+        {
+            m_icon.color = Color.white;
+        }
+        else
+        {
+            m_icon.color = GameServices.GetTeamColor(m_team);
+        }
     }
 
     public ETeam Team => m_team;

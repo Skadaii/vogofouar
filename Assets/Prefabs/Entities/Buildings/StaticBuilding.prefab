@@ -205,6 +205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 2
+  m_selectedSprite: {fileID: 4340928840157488889}
+  m_icon: {fileID: 8353568085168551551}
   m_GFX: {fileID: 4967162487188513963}
   m_buildingDatas: {fileID: 11400000, guid: 800c599cfa876564f86c71c4c9f8eb39, type: 2}
   m_captureGaugeStart: 100
@@ -212,6 +214,12 @@ MonoBehaviour:
   m_buildPoints: 5
   m_blueTeamMaterial: {fileID: 0}
   m_redTeamMaterial: {fileID: 0}
+--- !u!1 &4340928840157488889 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8560768956081207014, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
+    type: 3}
+  m_PrefabInstance: {fileID: 5400913016172351519}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4967162487188513963 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1016971508271609012, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
@@ -221,6 +229,12 @@ GameObject:
 --- !u!4 &8014032663203487704 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2721429795251654599, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
+    type: 3}
+  m_PrefabInstance: {fileID: 5400913016172351519}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8353568085168551551 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4115780091311449696, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,
     type: 3}
   m_PrefabInstance: {fileID: 5400913016172351519}
   m_PrefabAsset: {fileID: 0}
