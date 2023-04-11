@@ -23,7 +23,7 @@ public class FormationEditor : MonoBehaviour
 
         m_formationDisplayer = layoutTransform.Find("Formation Displayer");
 
-        Transform contentTransform = layoutTransform.Find("Scroll View").Find("Viewport").Find("Content");
+        Transform contentTransform = layoutTransform.Find("Preset Displayer").Find("Viewport").Find("Content");
 
         m_rules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
 
@@ -40,7 +40,7 @@ public class FormationEditor : MonoBehaviour
 
     void SetSelectedFormation(FormationRule newFormation)
     {
-        m_currRule = newFormation;
+        m_currRule = ScriptableObject.CreateInstance(newFormation.GetType()) as FormationRule;
 
         foreach (GameObject virtualUnit in m_virtualUnits)
             Destroy(virtualUnit);
