@@ -96,7 +96,7 @@ public class FormationEditor : MonoBehaviour
 
             GameObject paramHolderGO = Instantiate(prefabPair.prefab, Vector3.zero, Quaternion.identity, m_formationParamContent);
 
-            paramHolderGO.GetComponent<ParameterDisplayer>()?.SetHandle(m_currRule, field);
+            paramHolderGO.GetComponent<ParameterDisplayer>()?.SetHandle(m_currRule, field, () => DisplayUnits());
 
             m_paramHolders.Add(paramHolderGO);
         }

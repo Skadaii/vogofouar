@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class FloatDisplayer : ParameterDisplayer
 {
-    [SerializeField] TMP_InputField m_inputField = null;
+    [SerializeField] private TMP_InputField m_inputField = null;
 
     private void Awake()
     {
@@ -30,7 +30,10 @@ public class FloatDisplayer : ParameterDisplayer
 
     void OnValueChanged(string value)
     {
-        if (Single.TryParse(value, out float result))
-            m_field.SetValue(m_instance, result);
+        if (!float.TryParse(value, out float result))
+            return;
+
+        m_field.SetValue(m_instance, result);
+        m_onSetted?.Invoke();
     }
 }

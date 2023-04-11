@@ -1,3 +1,4 @@
+using AIPlanner.GOAP;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -8,10 +9,13 @@ public abstract class ParameterDisplayer : MonoBehaviour
     protected object m_instance = null;
     protected FieldInfo m_field = null;
 
-    public void SetHandle(object instance, FieldInfo field)
+    protected System.Action m_onSetted = null;
+
+    public void SetHandle(object instance, FieldInfo field, System.Action onUpdated = null)
     {
         m_instance = instance;
         m_field = field;
+        m_onSetted = onUpdated;
 
         OnHandleSetted();
     }

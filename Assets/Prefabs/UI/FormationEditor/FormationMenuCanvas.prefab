@@ -781,6 +781,10 @@ MonoBehaviour:
     type: 3}
   m_unitIconPrefab: {fileID: 6470582165045153711, guid: 8b422822cdd1f234386a5d6c02446e89,
     type: 3}
+  m_placeholderPrefabs:
+  - typeName: Single
+    prefab: {fileID: 6097356341712892621, guid: 04629870fa0462d45948a494e75df6e6,
+      type: 3}
 --- !u!1 &7192322435921627810
 GameObject:
   m_ObjectHideFlags: 0
