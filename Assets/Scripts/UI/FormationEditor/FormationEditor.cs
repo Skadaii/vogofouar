@@ -4,13 +4,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Reflection;
+using System;
+using System.Linq;
 
 public class FormationEditor : MonoBehaviour
 {
+    [System.Serializable]
+    public class TypedPrefab
+    {
+        public string typeName = null;
+        public GameObject prefab = null;
+    }
+
+
     [SerializeField] private float m_zoomMultiplier = 5f;
     [SerializeField] private GameObject m_formationSelectorPrefab = null;
     [SerializeField] private GameObject m_unitIconPrefab = null;
-    [SerializeField] private GameObject m_paramHolderPrefab = null;
+
+    [SerializeField] private TypedPrefab[] m_placeholderPrefabs = null;
 
     private FormationRule[] m_rules = null;
     private FormationRule m_currRule = null;
@@ -79,9 +90,13 @@ public class FormationEditor : MonoBehaviour
 
         foreach (FieldInfo field in fields)
         {
-            GameObject paramHolderGO = Instantiate(m_paramHolderPrefab, Vector3.zero, Quaternion.identity, m_formationParamContent);
-            TextMeshProUGUI paramText = paramHolderGO.GetComponent<TextMeshProUGUI>();
-            paramText.text = field.Name;
+            TypedPrefab prefabPair = m_placeholderPrefabs.FirstOrDefault(pair => pair.typeName == field.FieldType.Name);
+
+            if (prefabPair is null) continue;
+
+            GameObject paramHolderGO = Instantiate(prefabPair.prefab, Vector3.zero, Quaternion.identity, m_formationParamContent);
+
+            paramHolderGO.GetComponent<ParameterDisplayer>()?.SetHandle(m_currRule, field);
 
             m_paramHolders.Add(paramHolderGO);
         }
