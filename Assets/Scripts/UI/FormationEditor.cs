@@ -6,21 +6,30 @@ using UnityEngine.UI;
 
 public class FormationEditor : MonoBehaviour
 {
+    [SerializeField] private float m_zoomMultiplier = 5f;
     [SerializeField] private GameObject m_formationSelectorPrefab = null;
+    [SerializeField] private GameObject m_unitIconPrefab = null;
 
     private FormationRule[] m_rules = null;
     private FormationRule m_currRule = null;
+    private List<GameObject> m_virtualUnits = new List<GameObject>();
+
+    private Transform m_formationDisplayer = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        Transform ContentTransform = transform.Find("FormationPreset_Panel").Find("Scroll View").Find("Viewport").Find("Content");
+        Transform layoutTransform = transform.Find("FormationPreset_Panel").Find("Layout");
+
+        m_formationDisplayer = layoutTransform.Find("Formation Displayer");
+
+        Transform contentTransform = layoutTransform.Find("Scroll View").Find("Viewport").Find("Content");
 
         m_rules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
 
         foreach (FormationRule rule in m_rules)
         {
-            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, ContentTransform);
+            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, contentTransform);
             Button buttonComp = buttonGO.GetComponent<Button>();
             buttonComp.onClick.AddListener(() => SetSelectedFormation(rule));
 
@@ -31,8 +40,20 @@ public class FormationEditor : MonoBehaviour
 
     void SetSelectedFormation(FormationRule newFormation)
     {
-        Debug.Log(newFormation.name);
         m_currRule = newFormation;
+
+        foreach (GameObject virtualUnit in m_virtualUnits)
+            Destroy(virtualUnit);
+
+        for (int i = 0; i < 10; i++)
+        {
+            Vector3 worldPosition = m_currRule.ComputePosition(Vector3.zero, m_formationDisplayer.rotation, i);
+
+            Vector3 virtualUnitPosition = new Vector3(worldPosition.x, worldPosition.z, 0f) * m_zoomMultiplier + m_formationDisplayer.position;
+
+            GameObject virtualUnitGO = Instantiate(m_unitIconPrefab, virtualUnitPosition, Quaternion.identity, m_formationDisplayer);
+            m_virtualUnits.Add(virtualUnitGO);
+        }
     }
 
     // Update is called once per frame
