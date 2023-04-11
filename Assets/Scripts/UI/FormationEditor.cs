@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Reflection;
 
 public class FormationEditor : MonoBehaviour
 {
     [SerializeField] private float m_zoomMultiplier = 5f;
     [SerializeField] private GameObject m_formationSelectorPrefab = null;
     [SerializeField] private GameObject m_unitIconPrefab = null;
+    [SerializeField] private GameObject m_paramHolderPrefab = null;
 
     private FormationRule[] m_rules = null;
     private FormationRule m_currRule = null;
     private List<GameObject> m_virtualUnits = new List<GameObject>();
 
     private Transform m_formationDisplayer = null;
+    private Transform m_formationPresetContent = null;
+    private Transform m_formationParamContent = null;
+
+    private List<GameObject> m_paramHolders = new List<GameObject>();
+
 
     // Start is called before the first frame update
     void Start()
@@ -23,13 +30,14 @@ public class FormationEditor : MonoBehaviour
 
         m_formationDisplayer = layoutTransform.Find("Formation Displayer");
 
-        Transform contentTransform = layoutTransform.Find("Preset Displayer").Find("Viewport").Find("Content");
+        m_formationPresetContent = layoutTransform.Find("Preset Displayer").Find("Viewport").Find("Content");
+        m_formationParamContent = layoutTransform.Find("Parameter Displayer").Find("Viewport").Find("Content");
 
         m_rules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
 
         foreach (FormationRule rule in m_rules)
         {
-            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, contentTransform);
+            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationPresetContent);
             Button buttonComp = buttonGO.GetComponent<Button>();
             buttonComp.onClick.AddListener(() => SetSelectedFormation(rule));
 
@@ -42,6 +50,12 @@ public class FormationEditor : MonoBehaviour
     {
         m_currRule = ScriptableObject.CreateInstance(newFormation.GetType()) as FormationRule;
 
+        DisplayUnits();
+        DisplayParams();
+    }
+
+    void DisplayUnits()
+    {
         foreach (GameObject virtualUnit in m_virtualUnits)
             Destroy(virtualUnit);
 
@@ -56,9 +70,20 @@ public class FormationEditor : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void DisplayParams()
     {
-        
+        foreach (GameObject paramHolder in m_paramHolders)
+            Destroy(paramHolder);
+
+        FieldInfo[] fields = m_currRule.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        foreach (FieldInfo field in fields)
+        {
+            GameObject paramHolderGO = Instantiate(m_paramHolderPrefab, Vector3.zero, Quaternion.identity, m_formationParamContent);
+            TextMeshProUGUI paramText = paramHolderGO.GetComponent<TextMeshProUGUI>();
+            paramText.text = field.Name;
+
+            m_paramHolders.Add(paramHolderGO);
+        }
     }
 }
