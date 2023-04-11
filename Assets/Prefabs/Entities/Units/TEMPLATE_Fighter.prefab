@@ -113,6 +113,18 @@ MonoBehaviour:
   m_selectedSprite: {fileID: 8872880689081304340}
   m_icon: {fileID: 3814843364995126674}
   m_GFX: {fileID: 284353262084998982}
+  m_commands:
+  - m_actionVoid:
+      m_PersistentCalls:
+        m_Calls: []
+    m_actionLocation:
+      m_PersistentCalls:
+        m_Calls: []
+    m_actionTarget:
+      m_PersistentCalls:
+        m_Calls: []
+    m_name: Stop
+    m_icon: {fileID: 0}
   m_fighterData: {fileID: 0}
 --- !u!1 &8872880689081304340 stripped
 GameObject:

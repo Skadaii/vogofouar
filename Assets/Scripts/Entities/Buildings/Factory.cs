@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Factory : Building
@@ -32,8 +33,13 @@ public class Factory : Building
     public Action<Unit> OnUnitFormed;
     private bool m_isWorking = false;
 
+    private static List<Command> m_factoryCommands;
+
     //  Properties
     //  ----------
+
+    public new static Command[] Commands => m_factoryCommands.ToArray().Concat(Entity.Commands) as Command[];
+    public override Command[] TypeCommands => Commands;
 
     public override BuildingDataScriptable BuildingData => m_factoryData;
     public FactoryDataScriptable GetFactoryData { get { return m_factoryData; } }
@@ -48,8 +54,14 @@ public class Factory : Building
     protected override void Awake()
     {
         base.Awake();
+
+        //  Initialize factory commands
+        m_factoryCommands ??= new List<Command>
+        {
+        };
+
     }
-    
+
     protected override void Start()
     {
         base.Start();

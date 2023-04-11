@@ -1,9 +1,10 @@
+using AIPlanner.GOAP;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(EntityVisibility))]
-public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
+public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
 {
     //  Variables
     //  ---------
@@ -30,12 +31,16 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     protected int m_HP = 0;
     protected int m_maxHP = 100;
     //protected Text m_HPText = null;
-    protected Action m_onHpUpdated;
-    public Action onDeathEvent;
+    protected System.Action m_onHpUpdated;
+    public System.Action onDeathEvent;
+
+    private static List<Command> m_entityCommands;
 
 
     //  Properties
     //  ----------
+    public static Command[] Commands => m_entityCommands.ToArray();
+    public virtual Command[] TypeCommands => Commands;
 
     public GameObject GFX => m_GFX;
     public bool IsAlive { get; protected set; }
@@ -63,11 +68,18 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
         //m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
 
         m_onHpUpdated += UpdateHpUI;
+
+        //  Initialize commands
+        m_entityCommands ??= new List<Command>
+        {
+            new VoidCommand(newActionName: "Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/T_cross"))
+        };
     }
 
     protected virtual void Start()
     {
         Init(Team);
+
         UpdateHpUI();
 
         IsAlive = true;
@@ -77,7 +89,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     #endregion
 
-    virtual public void Init(ETeam _team)
+    public virtual void Init(ETeam _team)
     {
         if (m_isInitialized)
             return;
@@ -112,6 +124,11 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
                 childRenderer.material = mat;
             }
         }
+    }
+
+    public virtual void Stop()
+    {
+
     }
 
     #region ISelectable

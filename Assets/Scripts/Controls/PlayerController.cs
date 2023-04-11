@@ -17,12 +17,16 @@ public sealed class PlayerController : UnitController
     [SerializeField] private GameObject m_targetCursorPrefab = null;
     [SerializeField] private float m_targetCursorFloorOffset = 0.2f;
     [SerializeField] private EventSystem m_sceneEventSystem = null;
+    [SerializeField] private float m_wheelMenuMinDelay = 0.5f;
+    [SerializeField] private WheelMenu m_wheelMenu = null;
 
     [SerializeField, Range(0f, 1f)] private float m_factoryPreviewTransparency = 0.3f;
 
     [SerializeField, Range(1f, 25f)] private float m_selectionLineWidth = 3.5f;
 
     private PointerEventData m_menuPointerEventData = null;
+
+    private float m_rightMouseButtonDownElapsedTime = 0f;
 
     // Build Menu UI
     private MenuController m_playerMenuController;
@@ -53,8 +57,13 @@ public sealed class PlayerController : UnitController
     private Action m_onMouseLeftPressed = null;
     private Action m_onMouseLeft = null;
     private Action m_onMouseLeftReleased = null;
-    private Action m_onUnitActionStart = null;
-    private Action m_onUnitActionEnd = null;
+
+    private Action m_onMouseRightPressed = null;
+    private Action m_onMouseRight = null;
+    private Action m_onMouseRightReleased = null;
+
+    //private Action m_onUnitActionStart = null;
+    //private Action m_onUnitActionEnd = null;
     private Action m_onCameraDragMoveStart = null;
     private Action m_onCameraDragMoveEnd = null;
 
@@ -71,38 +80,21 @@ public sealed class PlayerController : UnitController
     private Action m_onSelectAllPressed = null;
     private Action[] m_onCategoryPressed = new Action[9];
 
-    private GameObject GetTargetCursor()
-    {
-        if (m_targetCursor == null)
-        {
-            m_targetCursor = Instantiate(m_targetCursorPrefab);
-            m_targetCursor.name = m_targetCursor.name.Replace("(Clone)", "");
-        }
-        return m_targetCursor;
-    }
-    private void SetTargetCursorPosition(Vector3 pos)
-    {
-        SetTargetCursorVisible(true);
-        pos.y += m_targetCursorFloorOffset;
-        GetTargetCursor().transform.position = pos;
-    }
-    private void SetTargetCursorVisible(bool isVisible)
-    {
-        GetTargetCursor().SetActive(isVisible);
-    }
-    private void SetCameraFocusOnMainFactory()
-    {
-        if (m_factoryList.Count > 0)
-        {
-            m_cameraPlayer.FocusEntity(m_factoryList[0]);
-        }
-    }
-    private void CancelCurrentBuild()
-    {
-        m_selectedFactory?.CancelCurrentBuild();
-        m_playerMenuController.HideAllFactoryBuildQueue();
-    }
 
+    //  Properties
+
+    private GameObject TargetCursor
+    {
+        get
+        {
+            if (m_targetCursor == null)
+            {
+                m_targetCursor = Instantiate(m_targetCursorPrefab);
+                m_targetCursor.name = m_targetCursor.name.Replace("(Clone)", "");
+            }
+            return m_targetCursor;
+        }
+    }
 
     #region MonoBehaviour methods
     
@@ -145,7 +137,9 @@ public sealed class PlayerController : UnitController
         m_onMouseLeftReleased += EndSelection;
 
         // right click : Unit actions (move / attack / capture ...)
-        m_onUnitActionEnd += ComputeUnitsAction;
+        //m_onUnitActionEnd += ComputeUnitsAction;
+        m_onMouseRight += HandleRightMouse;
+        m_onMouseRightReleased += HandleRightMouseRelease;
 
         // Camera movement
         // middle click : camera movement
@@ -255,15 +249,15 @@ public sealed class PlayerController : UnitController
 
         // Update mouse inputs
 #if UNITY_EDITOR
-        if (EditorWindow.focusedWindow != EditorWindow.mouseOverWindow)
-            return;
+        if (EditorWindow.focusedWindow != EditorWindow.mouseOverWindow) return;
 #endif
-        if (Input.GetMouseButtonDown(0))
-            m_onMouseLeftPressed?.Invoke();
-        if (Input.GetMouseButton(0))
-            m_onMouseLeft?.Invoke();
-        if (Input.GetMouseButtonUp(0))
-            m_onMouseLeftReleased?.Invoke();
+        if (Input.GetMouseButtonDown(0)) m_onMouseLeftPressed?.Invoke();
+        if (Input.GetMouseButton(0)) m_onMouseLeft?.Invoke();
+        if (Input.GetMouseButtonUp(0)) m_onMouseLeftReleased?.Invoke();
+
+        if (Input.GetMouseButtonDown(1)) m_onMouseRightPressed?.Invoke();
+        if (Input.GetMouseButton(1)) m_onMouseRight?.Invoke();
+        if (Input.GetMouseButtonUp(1)) m_onMouseRightReleased?.Invoke();
 
     }
     private void UpdateActionInput()
@@ -276,10 +270,10 @@ public sealed class PlayerController : UnitController
             m_onCancelBuildPressed?.Invoke();
 
         // Contextual unit actions (attack / capture ...)
-        if (Input.GetMouseButtonDown(1))
-            m_onUnitActionStart?.Invoke();
-        if (Input.GetMouseButtonUp(1))
-            m_onUnitActionEnd?.Invoke();
+        //if (Input.GetMouseButtonDown(1))
+        //    m_onUnitActionStart?.Invoke();
+        //if (Input.GetMouseButtonUp(1))
+        //    m_onUnitActionEnd?.Invoke();
     }
     private void UpdateCameraInput()
     {
@@ -310,6 +304,29 @@ public sealed class PlayerController : UnitController
             m_onCameraDragMoveEnd?.Invoke();
     }
     #endregion
+
+    private void SetTargetCursorPosition(Vector3 pos)
+    {
+        SetTargetCursorVisible(true);
+        pos.y += m_targetCursorFloorOffset;
+        TargetCursor.transform.position = pos;
+    }
+    private void SetTargetCursorVisible(bool isVisible)
+    {
+        TargetCursor.SetActive(isVisible);
+    }
+    private void SetCameraFocusOnMainFactory()
+    {
+        if (m_factoryList.Count > 0)
+        {
+            m_cameraPlayer.FocusEntity(m_factoryList[0]);
+        }
+    }
+    private void CancelCurrentBuild()
+    {
+        m_selectedFactory?.CancelCurrentBuild();
+        m_playerMenuController.HideAllFactoryBuildQueue();
+    }
 
 
     #region Unit selection methods
@@ -412,6 +429,7 @@ public sealed class PlayerController : UnitController
         m_selectionLineRenderer.SetPosition(2, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionEnd.z));
         m_selectionLineRenderer.SetPosition(3, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionStart.z));
     }
+
     private void EndSelection()
     {
         if (m_selectionStarted == false)
@@ -563,49 +581,46 @@ public sealed class PlayerController : UnitController
 
 
     #region Entity targetting (attack / capture) and movement methods
-    private void ComputeUnitsAction()
+
+    private void HandleRightMouse()
+    {
+        m_rightMouseButtonDownElapsedTime += Time.deltaTime;
+
+        if (m_rightMouseButtonDownElapsedTime >= m_wheelMenuMinDelay && !m_wheelMenu.isActiveAndEnabled)
+        {
+            ShowUnitCommandWheel();
+        }
+    }
+
+    private void HandleRightMouseRelease()
+    {
+        if(m_rightMouseButtonDownElapsedTime < m_wheelMenuMinDelay)
+        {
+            ComputeUnitsAction();
+        }
+
+        m_rightMouseButtonDownElapsedTime = 0f;
+    }
+
+    private void ShowUnitCommandWheel()
     {
         if (m_selectedUnitList.Count == 0)
             return;
 
-        int damageableMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
-        int targetMask = 1 << LayerMask.NameToLayer("Target");
+        m_onMouseRightReleased += ValidateCommandWheel;
+
+        int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastInfo;
 
         // Set unit / factory attack target
-        if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, damageableMask))
+        if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, entityMask))
         {
-            Entity other = raycastInfo.transform.GetComponent<Entity>();
-            if (other != null)
+            if (raycastInfo.transform.TryGetComponent(out Entity other))
             {
-                if (other.Team != Team)
-                {
-                    // Direct call to attacking task $$$ to be improved by AI behaviour
-                    foreach (Fighter unit in m_selectedUnitList)
-                        if(unit != null)
-                            unit.SetAttackTarget(other);
-                }
-                else if (other.NeedsRepairing())
-                {
-                    // Direct call to reparing task $$$ to be improved by AI behaviour
-                    foreach (Builder unit in m_selectedUnitList)
-                        if (unit != null)
-                            unit.SetRepairTarget(other);
-                }
-            }
-        }
-        // Set capturing target
-        else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, targetMask))
-        {
-            StaticBuilding target = raycastInfo.transform.GetComponent<StaticBuilding>();
-            if (target != null && target.Team != Team)
-            {
-                // Direct call to capturing task $$$ to be improved by AI behaviour
-                foreach (Builder unit in m_selectedUnitList)
-                    if (unit != null)
-                        unit.SetCaptureTarget(target);
+                m_wheelMenu.SetWheel(m_selectedUnitList, other);       
             }
         }
         // Set unit move target
@@ -614,9 +629,59 @@ public sealed class PlayerController : UnitController
             Vector3 newPos = raycastInfo.point;
             SetTargetCursorPosition(newPos);
 
+            m_wheelMenu.SetWheel(m_selectedUnitList, newPos);
+        }
+    }
+
+
+    private void ValidateCommandWheel()
+    {
+        m_wheelMenu.ExecuteCommand();
+        m_onMouseRightReleased -= ValidateCommandWheel;
+    }
+
+    private void ComputeUnitsAction()
+    {
+        if (m_selectedUnitList.Count == 0)
+            return;
+
+        int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
+        int floorMask = 1 << LayerMask.NameToLayer("Floor");
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit raycastInfo;
+
+        // Set unit / factory attack target
+        if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, entityMask))
+        {
+            if (raycastInfo.transform.TryGetComponent(out Entity other))
+            {
+
+                if (other.Team != Team)
+                {
+                  // Direct call to attacking task $$$ to be improved by AI behaviour
+                  foreach (Fighter unit in m_selectedUnitList)
+                      if(unit != null)
+                          unit.SetAttackTarget(other);
+                }
+                else if (other.NeedsRepairing())
+                {
+                  // Direct call to reparing task $$$ to be improved by AI behaviour
+                  foreach (Builder unit in m_selectedUnitList)
+                      if (unit != null)
+                          unit.SetRepairTarget(other);
+                }
+            }
+        }
+        // Set unit move target
+        else if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
+        {
+            Vector3 newPos = raycastInfo.point;
+            SetTargetCursorPosition(newPos);
             MoveUnits(m_selectedUnitList, newPos);
         }
     }
+
+
     private void MoveUnits(List<Unit> units, Vector3 squadTarget)
     {
         if (m_selectedUnitList.Count == 1)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -14,14 +15,35 @@ public class Builder : Unit
     [SerializeField]
     private BuilderDataScriptable m_builderData = null;
 
+    private static List<Command> m_builderCommands;
+
     //  Properties
     //  ----------
+
+    public new static Command[] Commands => m_builderCommands.ToArray().Concat(Unit.Commands).ToArray();
+    public override Command[] TypeCommands => Commands;
 
     public override UnitDataScriptable UnitData => m_builderData;
 
     //  Functions
     //  ---------
 
+
+    #region MonoBehaviour methods
+
+    protected virtual new void Awake()
+    {
+        base.Awake();
+
+        //  Initialize builder commands
+
+        m_builderCommands ??= new List<Command>
+        {
+            new LocationCommand(newActionName: "Build", newMethod:"Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
+        };
+    }
+
+    #endregion
     // Targetting Task - capture
     public void SetCaptureTarget(Entity target)
     {

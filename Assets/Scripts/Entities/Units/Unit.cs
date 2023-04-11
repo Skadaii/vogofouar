@@ -1,6 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
+using static UnityEditor.PlayerSettings;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -19,8 +23,16 @@ public abstract class Unit : Entity
     protected float m_lastAttackedTime = 0f;
     protected Unit m_agressor;
 
+    private List<Vector3> m_patrolPoint = new List<Vector3>();
+    private int m_patrolIndex = 0;
+
+    private static List<Command> m_unitCommands;
+
     //  Properties
     //  ----------
+
+    public new static Command[] Commands => m_unitCommands.ToArray().Concat(Entity.Commands).ToArray();
+    public override Command[] TypeCommands => Commands;
 
     public abstract UnitDataScriptable UnitData { get; }
     public int Cost => UnitData ? UnitData.cost : 0;
@@ -73,11 +85,29 @@ public abstract class Unit : Entity
         base.Awake();
 
         InitializeNavMeshAgent();
+
+        //  Initialize unit commands
+        m_unitCommands ??= new List<Command>
+        {
+            new LocationCommand(newActionName: "Move", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
+            new TargetCommand(newActionName: "Move", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
+            new LocationCommand(newActionName: "Patrol", newMethod:"AddPatrolPoint", icon: Resources.Load<Sprite>("Textures/T_Move"))
+        };
+
     }
 
     protected virtual new void Update()
     {
         base.Update();
+
+        if(m_patrolPoint.Count > 0 && m_navMeshAgent)
+        {
+            if(m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance)
+            {
+                m_patrolIndex = (m_patrolIndex +1)% m_patrolPoint.Count;
+            }
+            m_navMeshAgent.SetDestination(m_patrolPoint[m_patrolIndex]);
+        }
     }
 
     #endregion
@@ -145,6 +175,7 @@ public abstract class Unit : Entity
     // Moving Task
     public virtual void MoveTo(Vector3 pos)
     {
+        Stop();
         m_target = null;
 
         //if (m_target != null)
@@ -157,7 +188,20 @@ public abstract class Unit : Entity
         }
     }
 
+    public void AddPatrolPoint(Vector3 pos)
+    {
+        m_patrolPoint.Add(pos);
+    }
+
+    public override void Stop()
+    {
+        base.Stop();
+
+        m_patrolPoint.Clear();
+    }
+
     public virtual void MoveTo(Transform target) => MoveTo(target.position);
+    public virtual void MoveTo(Entity target) => MoveTo(target.transform.position);
 
     public virtual void MoveToward(Vector3 velocity) => m_navMeshAgent.Move(velocity);
 }

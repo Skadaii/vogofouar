@@ -10,13 +10,10 @@ using TMPro;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField]
-    private FormationRule[] m_availableFormations = null;
+    //  Variables
+    //  ---------
 
-    [SerializeField]
-    private GameObject m_buttonFormationSelectionPrefab = null;
-    [SerializeField]
-    private Transform m_factoryMenuCanvas = null;
+    [SerializeField] private Transform m_playerUI = null;
 
     private UnitController m_controller = null;
     private GameObject m_factoryMenuPanel = null;
@@ -26,20 +23,78 @@ public class MenuController : MonoBehaviour
     private Button[] m_buildFactoryButtons = null;
     private Button m_cancelBuildButton = null;
     private Text[] m_buildQueueTexts = null;
+
+    //  Formations
+
+    [Header("Formations")]
+    [SerializeField] private FormationRule[] m_availableFormations = null;
+    [SerializeField] private GameObject m_buttonFormationSelectionPrefab = null;
+
     private Button[] m_formationButtons = null;
 
     public GraphicRaycaster BuildMenuRaycaster { get; private set; }
 
-    public void HideFactoryMenu()
+
+    //  Functions
+    //  ---------
+
+    #region MonoBehaviour methods
+
+    void Awake()
     {
-        if (m_factoryMenuPanel)
+        if (m_playerUI == null)
+        {
+            Debug.LogWarning("Player UI not assigned in inspector");
+            return;
+        }
+
+        m_controller = GetComponent<UnitController>();
+
+        Transform FactoryMenuPanelTransform = m_playerUI.Find("FactoryMenu_Panel");
+        if (FactoryMenuPanelTransform)
+        {
+            m_factoryMenuPanel = FactoryMenuPanelTransform.gameObject;
             m_factoryMenuPanel.SetActive(false);
+        }
+        BuildMenuRaycaster = m_playerUI.GetComponent<GraphicRaycaster>();
+        Transform BuildPointsTextTransform = m_playerUI.Find("BuildPointsText");
+        if (BuildPointsTextTransform)
+        {
+            m_buildPointsText = BuildPointsTextTransform.GetComponent<Text>();
+        }
+        Transform CapturedTargetsTextTransform = m_playerUI.Find("CapturedTargetsText");
+        if (CapturedTargetsTextTransform)
+        {
+            m_capturedTargetsText = CapturedTargetsTextTransform.GetComponent<Text>();
+        }
     }
-    public void ShowFactoryMenu()
+    void Start()
     {
-        if (m_factoryMenuPanel)
-            m_factoryMenuPanel.SetActive(true);
+        m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
+        m_buildFactoryButtons = m_factoryMenuPanel.transform.Find("BuildFactoryMenu_Panel").GetComponentsInChildren<Button>();
+        m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
+        m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
+
+        Transform ContentTransform = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
+
+        m_formationButtons = new Button[m_availableFormations.Length];
+        for (int i = 0; i < m_availableFormations.Length; i++)
+        {
+            GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
+
+            Button buttonComp = buttonGO.GetComponent<Button>();
+            m_formationButtons[i] = buttonComp;
+
+            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+            textComp.text = m_availableFormations[i].name;
+        }
     }
+
+    #endregion
+
+
+    public void HideFactoryMenu() => m_factoryMenuPanel?.SetActive(false);
+    public void ShowFactoryMenu() => m_factoryMenuPanel?.SetActive(true);
     public void UpdateBuildPointsUI()
     {
         if (m_buildPointsText != null)
@@ -172,56 +227,6 @@ public class MenuController : MonoBehaviour
             Button button = m_formationButtons[i];
             FormationRule currentFormation = m_availableFormations[i];
             button.onClick.AddListener(() => setSquadMethod(selectedUnit, currentFormation));
-        }
-    }
-
-    void Awake()
-    {
-        if (m_factoryMenuCanvas == null)
-        {
-            Debug.LogWarning("FactoryMenuCanvas not assigned in inspector");
-            return;
-        }
-
-        m_controller = GetComponent<UnitController>();
-
-        Transform FactoryMenuPanelTransform = m_factoryMenuCanvas.Find("FactoryMenu_Panel");
-        if (FactoryMenuPanelTransform)
-        {
-            m_factoryMenuPanel = FactoryMenuPanelTransform.gameObject;
-            m_factoryMenuPanel.SetActive(false);
-        }
-        BuildMenuRaycaster = m_factoryMenuCanvas.GetComponent<GraphicRaycaster>();
-        Transform BuildPointsTextTransform = m_factoryMenuCanvas.Find("BuildPointsText");
-        if (BuildPointsTextTransform)
-        {
-            m_buildPointsText = BuildPointsTextTransform.GetComponent<Text>();
-        }
-        Transform CapturedTargetsTextTransform = m_factoryMenuCanvas.Find("CapturedTargetsText");
-        if (CapturedTargetsTextTransform)
-        {
-            m_capturedTargetsText = CapturedTargetsTextTransform.GetComponent<Text>();
-        }
-    }
-    void Start()
-    {
-        m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
-        m_buildFactoryButtons = m_factoryMenuPanel.transform.Find("BuildFactoryMenu_Panel").GetComponentsInChildren<Button>();
-        m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
-        m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
-
-        Transform ContentTransform = m_factoryMenuCanvas.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
-
-        m_formationButtons = new Button[m_availableFormations.Length];
-        for (int i = 0; i < m_availableFormations.Length; i++)
-        {
-            GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
-
-            Button buttonComp = buttonGO.GetComponent<Button>();
-            m_formationButtons[i] = buttonComp;
-
-            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = m_availableFormations[i].name;
         }
     }
 }

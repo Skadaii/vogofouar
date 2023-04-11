@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,8 +20,14 @@ public abstract class Building : Entity
     public Action<Building> OnBuildingBuilt;
     public Action OnBuildCanceled;
 
+    private static List<Command> m_buildingCommands;
+
+
     //  Properties
     //  ----------
+
+    public new static Command[] Commands => m_buildingCommands.ToArray().Concat(Entity.Commands) as Command[];
+    public override Command[] TypeCommands => Commands;
 
     public abstract BuildingDataScriptable BuildingData { get; }
     public int Cost { get { return BuildingData.cost; } }
@@ -55,6 +62,12 @@ public abstract class Building : Entity
         
         m_HP = m_maxHP = BuildingData.maxHP;
         onDeathEvent += Building_OnDestruction;
+
+
+        //  Initialize building commands
+        m_buildingCommands ??= new List<Command>
+        {
+        };
     }
 
     protected virtual new void Start()
