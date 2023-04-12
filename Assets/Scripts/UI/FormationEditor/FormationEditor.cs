@@ -12,7 +12,7 @@ public class FormationEditor : MonoBehaviour
     [System.Serializable]
     public class TypedPrefab
     {
-        public string typeName = null;
+        public List<string> typeNames = null;
         public GameObject prefab = null;
     }
 
@@ -90,7 +90,7 @@ public class FormationEditor : MonoBehaviour
 
         foreach (FieldInfo field in fields)
         {
-            TypedPrefab prefabPair = m_placeholderPrefabs.FirstOrDefault(pair => pair.typeName == field.FieldType.Name);
+            TypedPrefab prefabPair = m_placeholderPrefabs.FirstOrDefault(pair => pair.typeNames.Contains(field.FieldType.Name));
 
             if (prefabPair is null) continue;
 

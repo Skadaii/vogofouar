@@ -72,7 +72,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -112.600006, y: 0}
+  m_AnchoredPosition: {x: -112.600006, y: -0.000061035156}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &5315959318709410134
@@ -383,7 +383,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -112.600006, y: 0}
+  m_AnchoredPosition: {x: -112.600006, y: -0.000061035156}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7079102182660655638
@@ -415,10 +415,10 @@ MonoBehaviour:
   m_Padding:
     m_Left: 5
     m_Right: 0
-    m_Top: 5
+    m_Top: 20
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 5
+  m_Spacing: 30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
@@ -547,8 +547,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3789239569290868964}
   m_HandleRect: {fileID: 3719559316279946799}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.99999267
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -720,7 +720,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -782,8 +782,18 @@ MonoBehaviour:
   m_unitIconPrefab: {fileID: 6470582165045153711, guid: 8b422822cdd1f234386a5d6c02446e89,
     type: 3}
   m_placeholderPrefabs:
-  - typeName: Single
-    prefab: {fileID: 6097356341712892621, guid: 04629870fa0462d45948a494e75df6e6,
+  - typeNames:
+    - Single
+    - Int16
+    - float
+    - Int32
+    - Int64
+    prefab: {fileID: 6508805472501292700, guid: 3873f072dd05fda4695bc55c5f8ff8ed,
+      type: 3}
+  - typeNames:
+    - Boolean
+    - bool
+    prefab: {fileID: 6508805472501292700, guid: 62a7b69e61f7114438d8a5bbda627035,
       type: 3}
 --- !u!1 &7192322435921627810
 GameObject:
@@ -1128,8 +1138,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7192322436456159056}
   m_HandleRect: {fileID: 7192322436456159071}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.99999267
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
