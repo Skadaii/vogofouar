@@ -1,11 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Reflection;
-using System;
 using System.Linq;
+using System.IO;
+using Newtonsoft.Json;
 
 public class FormationEditor : MonoBehaviour
 {
@@ -16,6 +16,8 @@ public class FormationEditor : MonoBehaviour
         public GameObject prefab = null;
     }
 
+    [SerializeField] private string loadingDirectory = "SavedFormations";
+    [SerializeField] private TMP_InputField m_filenameField = null;
 
     [SerializeField] private float m_zoomMultiplier = 5f;
     [SerializeField] private GameObject m_formationSelectorPrefab = null;
@@ -23,12 +25,14 @@ public class FormationEditor : MonoBehaviour
 
     [SerializeField] private TypedPrefab[] m_placeholderPrefabs = null;
 
-    private FormationRule[] m_rules = null;
+    private FormationRule[] m_presetRules = null;
+    private Dictionary<string, FormationRule> m_instancedRules = new Dictionary<string, FormationRule>();
     private FormationRule m_currRule = null;
     private List<GameObject> m_virtualUnits = new List<GameObject>();
 
     private Transform m_formationDisplayer = null;
     private Transform m_formationPresetContent = null;
+    private Transform m_formationInstanceContent = null;
     private Transform m_formationParamContent = null;
 
     private List<GameObject> m_paramHolders = new List<GameObject>();
@@ -42,11 +46,19 @@ public class FormationEditor : MonoBehaviour
         m_formationDisplayer = layoutTransform.Find("Formation Displayer");
 
         m_formationPresetContent = layoutTransform.Find("Preset Displayer").Find("Viewport").Find("Content");
+        m_formationInstanceContent = layoutTransform.Find("Instance Displayer").Find("Viewport").Find("Content");
         m_formationParamContent = layoutTransform.Find("Parameter Displayer").Find("Viewport").Find("Content");
 
-        m_rules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
+        LoadPreset();
+        InitializePresetViewport();
 
-        foreach (FormationRule rule in m_rules)
+        LoadInstancedRules();
+        InitializeInstanceViewport();
+    }
+
+    void InitializePresetViewport()
+    {
+        foreach (FormationRule rule in m_presetRules)
         {
             GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationPresetContent);
             Button buttonComp = buttonGO.GetComponent<Button>();
@@ -54,6 +66,44 @@ public class FormationEditor : MonoBehaviour
 
             TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
             textComp.text = rule.name;
+        }
+    }
+
+    void InitializeInstanceViewport()
+    {
+        foreach (var (ruleName, rule) in m_instancedRules)
+        {
+            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationInstanceContent);
+            Button buttonComp = buttonGO.GetComponent<Button>();
+            buttonComp.onClick.AddListener(() => SetSelectedFormation(rule));
+
+            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+            textComp.text = ruleName;
+        }
+    }
+
+    void LoadPreset()
+    {
+        m_presetRules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
+    }
+
+    void LoadInstancedRules()
+    {
+        string dirpath = loadingDirectory;
+
+        if (!Directory.Exists(dirpath))
+            return;
+
+        string[] filePathes = Directory.GetFiles(dirpath, "*.json");
+
+        foreach (string filepath in filePathes)
+        {
+            string ruleStr = File.ReadAllText(filepath);
+
+            FormationRule loadedRule = JsonConvert.DeserializeObject<LineFormation>(ruleStr);
+
+            if (loadedRule is not null)
+                m_instancedRules.Add(Path.GetFileNameWithoutExtension(filepath), loadedRule);
         }
     }
 
@@ -100,5 +150,24 @@ public class FormationEditor : MonoBehaviour
 
             m_paramHolders.Add(paramHolderGO);
         }
+    }
+
+    public void SaveCurrentRule()
+    {
+        string dirpath = loadingDirectory;
+
+        if (!Directory.Exists(dirpath))
+            Directory.CreateDirectory(dirpath);
+
+        string ruleAsJSON = JsonConvert.SerializeObject(m_currRule);
+
+        string fileName = m_filenameField.text;
+
+        string filePath = dirpath + '/' + fileName + ".json";
+
+        File.WriteAllText(filePath, ruleAsJSON);
+
+        if (!m_instancedRules.ContainsKey(fileName))
+            m_instancedRules.Add(fileName, m_currRule);
     }
 }
