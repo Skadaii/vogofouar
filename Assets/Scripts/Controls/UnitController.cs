@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 // points system for units creation (Ex : light units = 1 pt, medium = 2pts, heavy = 3 pts)
 // max points can be increased by capturing TargetBuilding entities
@@ -266,6 +267,57 @@ public class UnitController : MonoBehaviour
         {
             AddFactory(newFactory);
             TotalBuildPoints -= cost;
+
+            return true;
+        }
+        return false;
+    }
+
+
+    private static bool CanPlaceBuilding(GameObject buildingPrefab, Vector3 position)
+    {
+        if (GameServices.IsPosInPlayableBounds(position) == false)
+            return false;
+
+        Vector3 extent = buildingPrefab.GetComponent<BoxCollider>().size / 2f;
+
+        float overlapYOffset = 0.1f;
+        position += Vector3.up * (extent.y + overlapYOffset);
+
+        if (Physics.CheckBox(position, extent))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected bool RequestBuildingConstruction(GameObject buildingPrefab, Vector3 buildPos, Builder[] builders)
+    {
+        Building building = buildingPrefab.GetComponent<Building>();
+
+        if(building == null) return false;
+
+        int cost = building.Cost;
+        if (TotalBuildPoints < cost) return false;
+
+        // Check if positon is valid
+        if (CanPlaceBuilding(buildingPrefab, buildPos) == false)
+            return false;
+
+        Transform teamRoot = GameServices.GetControllerByTeam(Team)?.TeamRoot;
+        Building createdBuilding = Instantiate(buildingPrefab, buildPos, Quaternion.identity, teamRoot).GetComponent<Building>();
+        createdBuilding.Init(Team);
+
+        if (createdBuilding != null)
+        {
+            if(createdBuilding as Factory != null) AddFactory(createdBuilding as Factory);
+            TotalBuildPoints -= cost;
+
+            foreach(Builder builder in builders)
+            {
+                builder.Build(createdBuilding);
+            }
 
             return true;
         }

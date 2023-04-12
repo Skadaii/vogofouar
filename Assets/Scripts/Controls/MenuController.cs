@@ -141,7 +141,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void UpdateFactoryMenu(Factory selectedFactory, Func<int, bool> requestUnitBuildMethod, Action<int> enterFactoryBuildModeMethod)
+    public void UpdateFactoryMenu(Factory selectedFactory, Func<int, bool> requestUnitBuildMethod/*, Action<int> enterFactoryBuildModeMethod*/)
     {
         ShowFactoryMenu();
 
@@ -183,26 +183,26 @@ public class MenuController : MonoBehaviour
 
         // Factory build buttons
         // register available buttons
-        i = 0;
-        for (; i < selectedFactory.AvailableFactoriesCount; i++)
-        {
-            m_buildFactoryButtons[i].gameObject.SetActive(true);
+        //i = 0;
+        //for (; i < selectedFactory.AvailableFactoriesCount; i++)
+        //{
+        //    m_buildFactoryButtons[i].gameObject.SetActive(true);
 
-            int index = i; // capture index value for event closure
-            m_buildFactoryButtons[i].onClick.AddListener(() =>
-            {
-                enterFactoryBuildModeMethod(index);
-            });
+        //    int index = i; // capture index value for event closure
+        //    m_buildFactoryButtons[i].onClick.AddListener(() =>
+        //    {
+        //        enterFactoryBuildModeMethod(index);
+        //    });
 
-            Text buttonText = m_buildFactoryButtons[i].GetComponentInChildren<Text>();
-            FactoryDataScriptable data = selectedFactory.GetBuildableFactoryData(i);
-            buttonText.text = data.caption + "(" + data.cost + ")";
-        }
-        // hide remaining buttons
-        for (; i < m_buildFactoryButtons.Length; i++)
-        {
-            m_buildFactoryButtons[i].gameObject.SetActive(false);
-        }
+        //    Text buttonText = m_buildFactoryButtons[i].GetComponentInChildren<Text>();
+        //    FactoryDataScriptable data = selectedFactory.GetBuildableFactoryData(i);
+        //    buttonText.text = data.caption + "(" + data.cost + ")";
+        //}
+        //// hide remaining buttons
+        //for (; i < m_buildFactoryButtons.Length; i++)
+        //{
+        //    m_buildFactoryButtons[i].gameObject.SetActive(false);
+        //}
     }
 
     public void UnregisterFormationButtons()

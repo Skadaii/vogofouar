@@ -72,7 +72,7 @@ public class Factory : Building
     {
         base.Update();
 
-        if (!m_isActive) return;
+        if (!m_isCompleted) return;
 
         if(m_isWorking)
         {

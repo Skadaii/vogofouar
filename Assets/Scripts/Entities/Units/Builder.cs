@@ -17,12 +17,13 @@ public class Builder : Unit
 
     private static List<Command> m_builderCommands;
 
+    private Building m_buildingTarget;
+
     //  Properties
     //  ----------
 
     public new static Command[] Commands => m_builderCommands.ToArray().Concat(Unit.Commands).ToArray();
     public override Command[] TypeCommands => Commands;
-
     public override UnitDataScriptable UnitData => m_builderData;
 
     //  Functions
@@ -37,10 +38,31 @@ public class Builder : Unit
 
         //  Initialize builder commands
 
-        m_builderCommands ??= new List<Command>
+        if(m_builderCommands == null)
         {
-            new LocationCommand(newActionName: "Build", newMethod:"Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
-        };
+            m_builderCommands ??= new List<Command>
+            {
+                new TargetCommand("BuildTarget", newMethod: "Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
+            };
+
+            foreach (GameObject building in m_builderData.availableBuildings)
+            {
+                m_builderCommands.Add(new BuildCommand(building.name, newMethod: "RequestBuild", icon: Resources.Load<Sprite>("Textures/T_cross"), toBuild: building));
+            }
+        }
+    }
+
+    protected virtual new void Update()
+    {
+        base.Update();
+
+        if(m_buildingTarget != null)
+        {
+            if(Vector3.SqrMagnitude(m_buildingTarget.transform.position - transform.position) <= m_builderData.buildingDistanceMax * m_builderData.buildingDistanceMax)
+            {
+                m_buildingTarget.Repair(m_builderData.bps * Time.deltaTime);
+            }
+        }
     }
 
     #endregion
@@ -104,6 +126,24 @@ public class Builder : Unit
             m_target = entity;
         }
     }
+
+    public void Build(Entity target)
+    {
+        MoveTo(target);
+        m_buildingTarget = target as Building;
+    }
+    
+
+    public void RequestBuild(GameObject building)
+    {
+        PlayerController pc = TeamController as PlayerController;
+
+        if(pc != null)
+        {
+            pc.EnterFactoryBuildMode(building);
+        }
+    }
+
     public void ComputeRepairing()
     {
         if (CanRepair(m_target) == false)

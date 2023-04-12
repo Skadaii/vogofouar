@@ -7,8 +7,6 @@ public class WheelMenu : MonoBehaviour
 {
     // Variables
 
-    private MenuController m_menuController;
-
     [Header("Display settings")]
     [SerializeField] private float m_radius;
     [SerializeField] private float m_size;
@@ -60,6 +58,7 @@ public class WheelMenu : MonoBehaviour
             foreach (Entity.Command command in unit.TypeCommands)
             {
                 if(command as Entity.VoidCommand != null) TryAddCommand(command);
+                else if(command as Entity.BuildCommand != null) TryAddCommand(command);
                 else if(command as Entity.TargetCommand != null) TryAddCommand(command);
             }
         }
@@ -86,6 +85,7 @@ public class WheelMenu : MonoBehaviour
             foreach (Entity.Command command in unit.TypeCommands)
             {
                 if (command as Entity.VoidCommand != null) TryAddCommand(command);
+                else if (command as Entity.BuildCommand != null) TryAddCommand(command);
                 else if (command as Entity.LocationCommand != null) TryAddCommand(command);
             }
         }

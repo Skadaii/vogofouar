@@ -35,6 +35,8 @@ public abstract class Unit : Entity
     public override Command[] TypeCommands => Commands;
 
     public abstract UnitDataScriptable UnitData { get; }
+    public override EntityDataScriptable EntityData => UnitData;
+
     public int Cost => UnitData ? UnitData.cost : 0;
     public int TypeId => UnitData ? UnitData.typeId : -1;
 
@@ -119,7 +121,7 @@ public abstract class Unit : Entity
 
         base.Init(_team);
         
-        m_HP = m_maxHP = UnitData.maxHP;
+        HealthPoint = MaxHealthPoints = UnitData.maxHP;
         onDeathEvent += Unit_OnDeath;
     }
 
@@ -149,11 +151,10 @@ public abstract class Unit : Entity
 
     #region IRepairable
 
-    override public bool NeedsRepairing() => m_HP < UnitData.maxHP;
+    override public bool NeedsRepairing() => HealthPoint < UnitData.maxHP;
   
-    override public void Repair(int amount)
+    override public void Repair(float amount)
     {
-        m_HP = Mathf.Min(m_HP + amount, UnitData.maxHP);
         base.Repair(amount);
     }
     override public void FullRepair()

@@ -28,17 +28,16 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     //  Damageable variables
 
-    protected int m_HP = 0;
-    protected int m_maxHP = 100;
-    //protected Text m_HPText = null;
-    protected System.Action m_onHpUpdated;
+    private float m_healthPoints = 100f;
+    private float m_maxHealthPoints = 100f;
+
     public System.Action onDeathEvent;
 
     private static List<Command> m_entityCommands;
 
-
     //  Properties
     //  ----------
+    public abstract EntityDataScriptable EntityData { get; }
     public static Command[] Commands => m_entityCommands.ToArray();
     public virtual Command[] TypeCommands => Commands;
 
@@ -48,6 +47,36 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
     public bool IsSelected { get; protected set; }
 
     public EntityVisibility Visibility => m_visibility;
+
+    public UnitController TeamController => GameServices.GetControllerByTeam(Team);
+
+    public float HealthPoint
+    {
+        get => m_healthPoints;
+        protected set
+        {
+            m_healthPoints = Mathf.Clamp(value, 0f, m_maxHealthPoints);
+
+            if (m_hud != null)
+            {
+                m_hud.Health = HealthPercent;
+            }
+        }
+    }
+
+    public float MaxHealthPoints
+    {
+        get => m_maxHealthPoints;
+        
+        protected set
+        {
+            m_maxHealthPoints = value;
+
+            if (m_hud != null) m_hud.Health = HealthPercent;
+        }
+    }
+
+    public float HealthPercent => m_healthPoints / m_maxHealthPoints;
 
     //  Functions
     //  ---------
@@ -65,23 +94,18 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
         m_hud = transform.GetComponentInChildren<EntityHUD>();
         if(m_selectedSprite != null) m_selectedSprite.SetActive(false);
 
-        //m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
-
-        m_onHpUpdated += UpdateHpUI;
-
         //  Initialize commands
         m_entityCommands ??= new List<Command>
         {
             new VoidCommand(newActionName: "Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/T_cross"))
         };
+
+        HealthPoint = MaxHealthPoints = EntityData.maxHP;
     }
 
     protected virtual void Start()
     {
         Init(Team);
-
-        UpdateHpUI();
-
         IsAlive = true;
     }
 
@@ -151,47 +175,42 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     #endregion
 
-
-    void UpdateHpUI()
-    {
-        if(m_hud != null)
-        {
-            m_hud.Health = (float)m_HP / (float)m_maxHP;
-        }
-    }
-
     #region IDamageable
-    public void AddDamage(int damageAmount)
+
+    public void AddDamage(float damageAmount)
     {
         if (IsAlive == false)
             return;
 
-        m_HP -= damageAmount;
+        HealthPoint -= damageAmount;
 
-        m_onHpUpdated?.Invoke();
-
-        if (m_HP <= 0)
-        {
-            IsAlive = false;
-            onDeathEvent?.Invoke();
-            Debug.Log("Entity " + gameObject.name + " died");
-        }
+        if (HealthPoint <= 0) Destroy();
     }
+
     public void Destroy()
     {
-        AddDamage(m_HP);
+        HealthPoint = 0;
+        IsAlive = false;
+        onDeathEvent?.Invoke();
+
+        Debug.Log("Entity " + gameObject.name + " died");
     }
+    
     #endregion
 
+
     #region IRepairable
+
     virtual public bool NeedsRepairing()
     {
         return true;
     }
-    virtual public void Repair(int amount)
+
+    virtual public void Repair(float amount)
     {
-        m_onHpUpdated?.Invoke();
+        HealthPoint = Mathf.Min(HealthPoint + amount, MaxHealthPoints);
     }
+
     virtual public void FullRepair()
     {
     }

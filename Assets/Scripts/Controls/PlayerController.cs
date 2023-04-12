@@ -50,7 +50,8 @@ public sealed class PlayerController : UnitController
     // Factory build
     private InputMode m_currentInputMode = InputMode.Orders;
     private int m_wantedFactoryId = 0;
-    private GameObject m_wantedFactoryPreview = null;
+    private GameObject m_wantedBuildingPreview = null;
+    private GameObject m_wantedbuilding = null;
     private Shader m_previewShader = null;
 
     // Mouse events
@@ -58,9 +59,9 @@ public sealed class PlayerController : UnitController
     private Action m_onMouseLeft = null;
     private Action m_onMouseLeftReleased = null;
 
-    private Action m_onMouseRightPressed = null;
-    private Action m_onMouseRight = null;
-    private Action m_onMouseRightReleased = null;
+    private Action m_onCommandPressed = null;
+    private Action m_onCommandHeldDown = null;
+    private Action m_onCommandButtonReleased = null;
 
     //private Action m_onUnitActionStart = null;
     //private Action m_onUnitActionEnd = null;
@@ -138,9 +139,9 @@ public sealed class PlayerController : UnitController
 
         // right click : Unit actions (move / attack / capture ...)
         //m_onUnitActionEnd += ComputeUnitsAction;
-        m_onMouseRight += HandleRightMouse;
-        m_onMouseRightReleased += HandleRightMouseRelease;
-
+        m_onCommandPressed += ExitFactoryBuildMode;
+        m_onCommandHeldDown += HandleRightMouse;
+        m_onCommandButtonReleased += HandleRightMouseRelease;
         // Camera movement
         // middle click : camera movement
         m_onCameraDragMoveStart += StartMoveCamera;
@@ -158,7 +159,8 @@ public sealed class PlayerController : UnitController
 
         m_onFactoryPositioned += (floorPos) =>
         {
-            if (RequestFactoryBuild(m_wantedFactoryId, floorPos))
+            Builder[] builders = m_selectedUnitList.OfType<Builder>().ToArray();
+            if (RequestBuildingConstruction(m_wantedbuilding, floorPos, builders))
             {
                 ExitFactoryBuildMode();
             }
@@ -208,6 +210,10 @@ public sealed class PlayerController : UnitController
                 break;
         }
 
+        if (Input.GetMouseButtonDown(1)) m_onCommandPressed?.Invoke();
+        if (Input.GetMouseButton(1)) m_onCommandHeldDown?.Invoke();
+        if (Input.GetMouseButtonUp(1)) m_onCommandButtonReleased?.Invoke();
+
         UpdateCameraInput();
 
         // Apply camera movement
@@ -254,11 +260,6 @@ public sealed class PlayerController : UnitController
         if (Input.GetMouseButtonDown(0)) m_onMouseLeftPressed?.Invoke();
         if (Input.GetMouseButton(0)) m_onMouseLeft?.Invoke();
         if (Input.GetMouseButtonUp(0)) m_onMouseLeftReleased?.Invoke();
-
-        if (Input.GetMouseButtonDown(1)) m_onMouseRightPressed?.Invoke();
-        if (Input.GetMouseButton(1)) m_onMouseRight?.Invoke();
-        if (Input.GetMouseButtonUp(1)) m_onMouseRightReleased?.Invoke();
-
     }
     private void UpdateActionInput()
     {
@@ -268,12 +269,6 @@ public sealed class PlayerController : UnitController
         // cancel build
         if (Input.GetKeyDown(KeyCode.C))
             m_onCancelBuildPressed?.Invoke();
-
-        // Contextual unit actions (attack / capture ...)
-        //if (Input.GetMouseButtonDown(1))
-        //    m_onUnitActionStart?.Invoke();
-        //if (Input.GetMouseButtonUp(1))
-        //    m_onUnitActionEnd?.Invoke();
     }
     private void UpdateCameraInput()
     {
@@ -422,7 +417,6 @@ public sealed class PlayerController : UnitController
         }
 
         float width = 2f * m_cameraPlayer.Distance * Mathf.Tan(m_cameraPlayer.FOV * Mathf.Deg2Rad * 0.5f) * (m_selectionLineWidth / Screen.width);
-        Debug.Log(width);
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = width;
         m_selectionLineRenderer.SetPosition(0, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionStart.z));
         m_selectionLineRenderer.SetPosition(1, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionEnd.z));
@@ -499,7 +493,7 @@ public sealed class PlayerController : UnitController
 
         base.SelectFactory(factory);
 
-        m_playerMenuController.UpdateFactoryMenu(m_selectedFactory, RequestUnitBuild, EnterFactoryBuildMode);
+        m_playerMenuController.UpdateFactoryMenu(m_selectedFactory, RequestUnitBuild/*, EnterFactoryBuildMode*/);
     }
     protected override void UnselectCurrentFactory()
     {
@@ -514,31 +508,19 @@ public sealed class PlayerController : UnitController
 
         base.UnselectCurrentFactory();
     }
-    private void EnterFactoryBuildMode(int factoryId)
-    {
-        if (m_selectedFactory.GetFactoryCost(factoryId) > TotalBuildPoints)
-            return;
 
-        //Debug.Log("EnterFactoryBuildMode");
+    public void EnterFactoryBuildMode(GameObject building)
+    {
+        if (m_currentInputMode == InputMode.FactoryPositioning) return;
 
         m_currentInputMode = InputMode.FactoryPositioning;
 
-        m_wantedFactoryId = factoryId;
-
-        // Create factory preview
-
-        // Load factory prefab for preview
-        GameObject factoryPrefab = m_selectedFactory.GetFactoryPrefab(factoryId);
-        if (factoryPrefab == null)
-        {
-            Debug.LogWarning("Invalid factory prefab for factoryId " + factoryId);
-        }
-
-        m_wantedFactoryPreview = Instantiate(factoryPrefab.GetComponent<Entity>().GFX);
-        m_wantedFactoryPreview.name = m_wantedFactoryPreview.name.Replace("(Clone)", "_Preview");
+        m_wantedbuilding = building;
+        m_wantedBuildingPreview = Instantiate(building.GetComponent<Building>().GFX);
+        m_wantedBuildingPreview.name = m_wantedBuildingPreview.name.Replace("(Clone)", "_Preview");
 
         // Set transparency on materials
-        foreach(Renderer rend in m_wantedFactoryPreview.GetComponentsInChildren<MeshRenderer>())
+        foreach (Renderer rend in m_wantedBuildingPreview.GetComponentsInChildren<MeshRenderer>())
         {
             Material mat = rend.material;
             mat.shader = m_previewShader;
@@ -554,7 +536,9 @@ public sealed class PlayerController : UnitController
     private void ExitFactoryBuildMode()
     {
         m_currentInputMode = InputMode.Orders;
-        Destroy(m_wantedFactoryPreview);
+
+        if(m_wantedBuildingPreview != null)
+            Destroy(m_wantedBuildingPreview);
     }
 
     private Vector3 ProjectFactoryPreviewOnFloor()
@@ -572,7 +556,7 @@ public sealed class PlayerController : UnitController
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
         {
             floorPos = raycastInfo.point;
-            m_wantedFactoryPreview.transform.position = floorPos;
+            m_wantedBuildingPreview.transform.position = floorPos;
         }
         return floorPos;
     }
@@ -607,7 +591,7 @@ public sealed class PlayerController : UnitController
         if (m_selectedUnitList.Count == 0)
             return;
 
-        m_onMouseRightReleased += ValidateCommandWheel;
+        m_onCommandButtonReleased += ValidateCommandWheel;
 
         int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
@@ -637,7 +621,7 @@ public sealed class PlayerController : UnitController
     private void ValidateCommandWheel()
     {
         m_wheelMenu.ExecuteCommand();
-        m_onMouseRightReleased -= ValidateCommandWheel;
+        m_onCommandButtonReleased -= ValidateCommandWheel;
     }
 
     private void ComputeUnitsAction()
@@ -668,8 +652,9 @@ public sealed class PlayerController : UnitController
                   // Direct call to reparing task $$$ to be improved by AI behaviour
                   foreach (Builder unit in m_selectedUnitList)
                       if (unit != null)
-                          unit.SetRepairTarget(other);
+                          unit.Build(other);
                 }
+
             }
         }
         // Set unit move target
