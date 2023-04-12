@@ -72,7 +72,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -112.600006, y: -0.000061035156}
+  m_AnchoredPosition: {x: -112.600006, y: -0.0004272461}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &5315959318709410134
@@ -383,7 +383,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -112.600006, y: -0.000061035156}
+  m_AnchoredPosition: {x: -112.600006, y: -0.0004272461}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7079102182660655638
@@ -548,7 +548,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3719559316279946799}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.99999267
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -788,12 +788,16 @@ MonoBehaviour:
     - float
     - Int32
     - Int64
-    prefab: {fileID: 6508805472501292700, guid: 3873f072dd05fda4695bc55c5f8ff8ed,
+    prefab: {fileID: 6508805472501292700, guid: d74e85d88b3d85b4badd510cddddd5e0,
       type: 3}
   - typeNames:
     - Boolean
     - bool
     prefab: {fileID: 6508805472501292700, guid: 62a7b69e61f7114438d8a5bbda627035,
+      type: 3}
+  - typeNames:
+    - Vector3
+    prefab: {fileID: 6508805472501292700, guid: 3873f072dd05fda4695bc55c5f8ff8ed,
       type: 3}
 --- !u!1 &7192322435921627810
 GameObject:
@@ -1139,7 +1143,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 7192322436456159071}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.99999267
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
