@@ -19,7 +19,7 @@ public class FormationEditor : MonoBehaviour
     [SerializeField] private string loadingDirectory = "SavedFormations";
     [SerializeField] private TMP_InputField m_filenameField = null;
 
-    [SerializeField] private float m_zoomMultiplier = 5f;
+    [SerializeField] private float m_zoomMultiplier = 1f;
     [SerializeField] private GameObject m_formationSelectorPrefab = null;
     [SerializeField] private GameObject m_unitIconPrefab = null;
 
@@ -30,20 +30,21 @@ public class FormationEditor : MonoBehaviour
     private FormationRule m_currRule = null;
     private List<GameObject> m_virtualUnits = new List<GameObject>();
 
-    private Transform m_formationDisplayer = null;
+    private Transform m_formationTile = null;
     private Transform m_formationPresetContent = null;
     private Transform m_formationInstanceContent = null;
     private Transform m_formationParamContent = null;
 
     private List<GameObject> m_paramHolders = new List<GameObject>();
 
+    private float m_zoom = 0f;
 
     // Start is called before the first frame update
     private void Start()
     {
-        Transform layoutTransform = transform.Find("FormationPreset_Panel").Find("Layout");
+        Transform layoutTransform = transform.Find("FormationPreset_Panel").Find("Editor Layout");
 
-        m_formationDisplayer = layoutTransform.Find("Formation Displayer");
+        m_formationTile = layoutTransform.Find("Formation Displayer").Find("Formation Tile");
 
         m_formationPresetContent = layoutTransform.Find("Preset Displayer").Find("Viewport").Find("Content");
         m_formationInstanceContent = layoutTransform.Find("Instance Displayer").Find("Viewport").Find("Content");
@@ -128,16 +129,20 @@ public class FormationEditor : MonoBehaviour
 
     private void DisplayUnits()
     {
+        if (m_currRule is null)
+            return;
+
         foreach (GameObject virtualUnit in m_virtualUnits)
             Destroy(virtualUnit);
 
         for (int i = 0; i < 10; i++)
         {
-            Vector3 worldPosition = m_currRule.ComputePosition(Vector3.zero, m_formationDisplayer.rotation, i);
+            Vector3 worldPosition = m_currRule.ComputePosition(Vector3.zero, m_formationTile.rotation, i);
 
-            Vector3 virtualUnitPosition = new Vector3(worldPosition.x, worldPosition.z, 0f) * m_zoomMultiplier + m_formationDisplayer.position;
+            Vector3 virtualUnitPosition = new Vector3(worldPosition.x, worldPosition.z, 0f) * m_zoom + m_formationTile.position;
 
-            GameObject virtualUnitGO = Instantiate(m_unitIconPrefab, virtualUnitPosition, Quaternion.identity, m_formationDisplayer);
+            GameObject virtualUnitGO = Instantiate(m_unitIconPrefab, virtualUnitPosition, Quaternion.identity, m_formationTile);
+            virtualUnitGO.transform.localScale = Vector3.one / m_zoom;
             m_virtualUnits.Add(virtualUnitGO);
         }
     }
@@ -180,5 +185,15 @@ public class FormationEditor : MonoBehaviour
 
         if (!m_instancedRules.Contains(m_currRule))
             m_instancedRules.Add(m_currRule);
+    }
+
+    public void OnZoom(float zoom)
+    {
+        m_zoom = 1f + zoom * m_zoomMultiplier;
+
+        if (m_formationTile is not null)
+            m_formationTile.localScale = Vector3.one * m_zoom;
+
+        DisplayUnits();
     }
 }
