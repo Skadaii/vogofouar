@@ -37,7 +37,7 @@ public class FormationEditor : MonoBehaviour
 
     private List<GameObject> m_paramHolders = new List<GameObject>();
 
-    private float m_zoom = 0f;
+    private float m_zoom = 1f;
 
     // Start is called before the first frame update
     private void Start()
@@ -191,7 +191,7 @@ public class FormationEditor : MonoBehaviour
     {
         m_zoom = 1f + zoom * m_zoomMultiplier;
 
-        if (m_formationTile is not null)
+        if (m_formationTile)
             m_formationTile.localScale = Vector3.one * m_zoom;
 
         DisplayUnits();
