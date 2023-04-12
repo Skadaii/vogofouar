@@ -26,7 +26,7 @@ public class FormationEditor : MonoBehaviour
     [SerializeField] private TypedPrefab[] m_placeholderPrefabs = null;
 
     private FormationRule[] m_presetRules = null;
-    private Dictionary<string, FormationRule> m_instancedRules = new Dictionary<string, FormationRule>();
+    private List<FormationRule> m_instancedRules = new List<FormationRule>();
     private FormationRule m_currRule = null;
     private List<GameObject> m_virtualUnits = new List<GameObject>();
 
@@ -39,7 +39,7 @@ public class FormationEditor : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         Transform layoutTransform = transform.Find("FormationPreset_Panel").Find("Layout");
 
@@ -56,38 +56,38 @@ public class FormationEditor : MonoBehaviour
         InitializeInstanceViewport();
     }
 
-    void InitializePresetViewport()
+    private void InitializePresetViewport()
     {
         foreach (FormationRule rule in m_presetRules)
         {
             GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationPresetContent);
             Button buttonComp = buttonGO.GetComponent<Button>();
-            buttonComp.onClick.AddListener(() => SetSelectedFormation(rule));
+            buttonComp.onClick.AddListener(() => SetSelectedPresetFormation(rule));
 
             TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
             textComp.text = rule.name;
         }
     }
 
-    void InitializeInstanceViewport()
+    private void InitializeInstanceViewport()
     {
-        foreach (var (ruleName, rule) in m_instancedRules)
+        foreach (FormationRule rule in m_instancedRules)
         {
             GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationInstanceContent);
             Button buttonComp = buttonGO.GetComponent<Button>();
-            buttonComp.onClick.AddListener(() => SetSelectedFormation(rule));
+            buttonComp.onClick.AddListener(() => SetSelectedInstanceFormation(rule));
 
             TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = ruleName;
+            textComp.text = rule.name;
         }
     }
 
-    void LoadPreset()
+    private void LoadPreset()
     {
         m_presetRules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
     }
 
-    void LoadInstancedRules()
+    private void LoadInstancedRules()
     {
         string dirpath = loadingDirectory;
 
@@ -101,21 +101,32 @@ public class FormationEditor : MonoBehaviour
             string ruleStr = File.ReadAllText(filepath);
 
             FormationRule loadedRule = JsonConvert.DeserializeObject<LineFormation>(ruleStr);
+            loadedRule.name = Path.GetFileNameWithoutExtension(filepath);
 
             if (loadedRule is not null)
-                m_instancedRules.Add(Path.GetFileNameWithoutExtension(filepath), loadedRule);
+                m_instancedRules.Add(loadedRule);
         }
     }
 
-    void SetSelectedFormation(FormationRule newFormation)
+    private void SetSelectedPresetFormation(FormationRule newFormation)
     {
-        m_currRule = ScriptableObject.CreateInstance(newFormation.GetType()) as FormationRule;
+        FormationRule presetInstance = ScriptableObject.CreateInstance(newFormation.GetType()) as FormationRule;
+        presetInstance.name = newFormation.name;
+
+        SetSelectedInstanceFormation(presetInstance);
+    }
+
+    private void SetSelectedInstanceFormation(FormationRule newFormation)
+    {
+        m_currRule = newFormation;
 
         DisplayUnits();
         DisplayParams();
+
+        m_filenameField.text = m_currRule.name;
     }
 
-    void DisplayUnits()
+    private void DisplayUnits()
     {
         foreach (GameObject virtualUnit in m_virtualUnits)
             Destroy(virtualUnit);
@@ -131,7 +142,7 @@ public class FormationEditor : MonoBehaviour
         }
     }
 
-    void DisplayParams()
+    private void DisplayParams()
     {
         foreach (GameObject paramHolder in m_paramHolders)
             Destroy(paramHolder);
@@ -167,7 +178,7 @@ public class FormationEditor : MonoBehaviour
 
         File.WriteAllText(filePath, ruleAsJSON);
 
-        if (!m_instancedRules.ContainsKey(fileName))
-            m_instancedRules.Add(fileName, m_currRule);
+        if (!m_instancedRules.Contains(m_currRule))
+            m_instancedRules.Add(m_currRule);
     }
 }
