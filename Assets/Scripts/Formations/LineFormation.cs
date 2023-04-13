@@ -1,25 +1,22 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "LineFormation", menuName = "FormationRules/Line", order = 2)]
+[Serializable, CreateAssetMenu(fileName = "LineFormation", menuName = "FormationRules/Line", order = 2)]
 public class LineFormation : FormationRule
 {
-    [SerializeField]
-    private int m_unitsPerLine = 2;
+    [SerializeField, JsonProperty] private int m_unitsPerLine = 2;
 
-    [SerializeField]
-    private float m_lineSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_lineSpacing = 1.5f;
 
-    [SerializeField]
-    private float m_columnSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_columnSpacing = 1.5f;
 
-    [SerializeField]
-    private Vector3 m_localOffset = Vector3.zero;
+    [SerializeField, JsonProperty] private Vector3 m_localOffset = Vector3.zero;
 
-    [SerializeField]
-    private bool m_followRotation = false;
+    [SerializeField, JsonProperty] private bool m_followRotation = false;
+
     override public Vector3 ComputePosition(Vector3 center, Quaternion rotation, int index)
     {
         int verticalIndex = Mathf.FloorToInt(index / m_unitsPerLine);

@@ -39,6 +39,12 @@ public class FormationEditor : MonoBehaviour
 
     private float m_zoom = 1f;
 
+    private JsonSerializerSettings m_serializationSettings = new JsonSerializerSettings
+    {
+        TypeNameHandling = TypeNameHandling.All,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -101,7 +107,7 @@ public class FormationEditor : MonoBehaviour
         {
             string ruleStr = File.ReadAllText(filepath);
 
-            FormationRule loadedRule = JsonConvert.DeserializeObject<LineFormation>(ruleStr);
+            FormationRule loadedRule = JsonConvert.DeserializeObject<FormationRule>(ruleStr, m_serializationSettings);
             loadedRule.name = Path.GetFileNameWithoutExtension(filepath);
 
             if (loadedRule is not null)
@@ -175,7 +181,7 @@ public class FormationEditor : MonoBehaviour
         if (!Directory.Exists(dirpath))
             Directory.CreateDirectory(dirpath);
 
-        string ruleAsJSON = JsonConvert.SerializeObject(m_currRule);
+        string ruleAsJSON = JsonConvert.SerializeObject(m_currRule, m_serializationSettings);
 
         string fileName = m_filenameField.text;
 
