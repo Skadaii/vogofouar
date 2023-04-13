@@ -8,10 +8,11 @@ public class WheelMenu : MonoBehaviour
     // Variables
 
     [Header("Display settings")]
-    [SerializeField] private float m_radius;
-    [SerializeField] private float m_size;
+    [SerializeField] private float m_radius = 50f;
+    [SerializeField] private float m_size = 1f;
     [SerializeField] private GameObject m_commandButton;
     [SerializeField] private Transform m_canvas;
+    [SerializeField] private Transform m_disk;
 
     private List<Button> m_buttons = new List<Button>();
     private List<Entity.Command> m_commands = new List<Entity.Command>();
@@ -25,6 +26,16 @@ public class WheelMenu : MonoBehaviour
     //Functions
 
     #region MonoBehaviour methods
+
+    private void OnValidate()
+    {
+        if(m_disk) m_disk.localScale = Vector3.one * (m_size + m_radius * 2f);
+    }
+
+    private void Awake()
+    {
+        if (m_disk) m_disk.localScale = Vector3.one * (m_size + m_radius * 2f);
+    }
 
     private void Update()
     {
@@ -44,7 +55,7 @@ public class WheelMenu : MonoBehaviour
 
 
     //  Show allowed actions 
-    public void SetWheel(List<Unit> selectedUnits, Entity entity)
+    public void SetUnitWheel(List<Unit> selectedUnits, Entity entity)
     {
         Appear();
 
@@ -70,7 +81,7 @@ public class WheelMenu : MonoBehaviour
         ConstructWheel();
     }
 
-    public void SetWheel(List<Unit> selectedUnits, Vector3 position)
+    public void SetUnitWheel(List<Unit> selectedUnits, Vector3 position)
     {
         Appear();
 
@@ -104,16 +115,29 @@ public class WheelMenu : MonoBehaviour
         {
             m_commands[m_selectedIndex].ExecuteCommand(entity, m_clickedObject);
         }
-
-        Disappear();
     }
 
-    public void UpdateWheel(Factory[] selectedFactories)
+    public void SetBuildingWheel(Building building)
     {
-        //  Update transform of the wheel
+        transform.position = building.transform.position;
 
 
-        //  Update actions
+        Appear();
+
+        //  Clear current wheel
+        Clear();
+
+        m_entities.Add(building);
+
+        foreach (Entity.Command command in building.TypeCommands)
+        {
+            if (command as Entity.VoidCommand != null) TryAddCommand(command);
+            else if (command as Entity.BuildCommand != null) TryAddCommand(command);
+            else if (command as Entity.LocationCommand != null) TryAddCommand(command);
+        }
+
+        m_clickedObject = null;
+        ConstructWheel();
     }
 
     public void Clear()
@@ -140,6 +164,9 @@ public class WheelMenu : MonoBehaviour
             button.image.sprite = command.Icon;
 
             button.transform.localPosition = pos;
+            RectTransform rt = button.GetComponent(typeof(RectTransform)) as RectTransform;
+            if(rt != null) rt.sizeDelta = new Vector2(m_size, m_size);
+
             m_buttons.Add(button);
         }
     }

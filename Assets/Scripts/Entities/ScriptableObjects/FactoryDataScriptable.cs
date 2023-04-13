@@ -10,5 +10,5 @@ public class FactoryDataScriptable : BuildingDataScriptable
 
     [Header("Available Entities")]
     public GameObject[] availableUnits = null;
-    public GameObject[] availableFactories = null;
+    //public GameObject[] availableFactories = null;
 }

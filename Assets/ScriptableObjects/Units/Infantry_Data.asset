@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dae6db7ffb9caee4d8a8b5479e09e96f, type: 3}
   m_Name: Infantry_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 1e06eef861f0332469b94c3af7d22964, type: 3}
   typeId: 0
   caption: Trooper
   cost: 1

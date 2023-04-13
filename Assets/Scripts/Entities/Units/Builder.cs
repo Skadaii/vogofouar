@@ -22,7 +22,7 @@ public class Builder : Unit
     //  Properties
     //  ----------
 
-    public new static Command[] Commands => m_builderCommands.ToArray().Concat(Unit.Commands).ToArray();
+    public new static Command[] Commands => Unit.Commands.Concat(m_builderCommands).ToArray();
     public override Command[] TypeCommands => Commands;
     public override UnitDataScriptable UnitData => m_builderData;
 
@@ -45,9 +45,12 @@ public class Builder : Unit
                 new TargetCommand("BuildTarget", newMethod: "Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
             };
 
-            foreach (GameObject building in m_builderData.availableBuildings)
+            foreach (GameObject buildingPrefab in m_builderData.availableBuildings)
             {
-                m_builderCommands.Add(new BuildCommand(building.name, newMethod: "RequestBuild", icon: Resources.Load<Sprite>("Textures/T_cross"), toBuild: building));
+                if(buildingPrefab.TryGetComponent(out Building building))
+                {
+                    m_builderCommands.Add(new BuildCommand(buildingPrefab.name, newMethod: "RequestBuild", icon: building.BuildingData.icon, toBuild: buildingPrefab));
+                }
             }
         }
     }
@@ -140,7 +143,7 @@ public class Builder : Unit
 
         if(pc != null)
         {
-            pc.EnterFactoryBuildMode(building);
+            pc.BuildPreview(building);
         }
     }
 

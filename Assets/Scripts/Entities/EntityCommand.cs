@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public partial class  Entity
@@ -27,19 +24,10 @@ public partial class  Entity
             m_icon = icon;
         }
 
-        public virtual bool ExecuteCommand(Entity entity, object param = null)
+        public virtual void ExecuteCommand(Entity entity, object param = null)
         {
-            try
-            {
-                if (param == null) entity.SendMessage(m_method);
-                else entity.SendMessage(m_method, param);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.Log($"Command could not be executed in entity {entity}");
-                return false;
-            }
+            if (param == null) entity.SendMessage(m_method, SendMessageOptions.DontRequireReceiver);
+            else entity.SendMessage(m_method, param, SendMessageOptions.DontRequireReceiver);
         }
     }
 
@@ -77,18 +65,9 @@ public partial class  Entity
             m_toBuild = toBuild;
         }
 
-        public override bool ExecuteCommand(Entity entity, object param = null)
+        public override void ExecuteCommand(Entity entity, object param = null)
         {
-            try
-            {
-                entity.SendMessage(m_method, m_toBuild);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.Log($"Command could not be executed in entity {entity}");
-                return false;
-            }
+            entity.SendMessage(m_method, m_toBuild, SendMessageOptions.DontRequireReceiver);
         }
     }
 }

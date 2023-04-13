@@ -109,16 +109,16 @@ public class MenuController : MonoBehaviour
     {
         if (selectedFactory == null)
             return;
-        int queueCount = selectedFactory.GetQueuedCount(i);
-        if (queueCount > 0)
-        {
-            m_buildQueueTexts[i].text = "+" + queueCount;
-            m_buildQueueTexts[i].enabled = true;
-        }
-        else
-        {
-            m_buildQueueTexts[i].enabled = false;
-        }
+        //int queueCount = selectedFactory.GetQueuedCount(i);
+        //if (queueCount > 0)
+        //{
+        //    m_buildQueueTexts[i].text = "+" + queueCount;
+        //    m_buildQueueTexts[i].enabled = true;
+        //}
+        //else
+        //{
+        //    m_buildQueueTexts[i].enabled = false;
+        //}
     }
     public void HideAllFactoryBuildQueue()
     {
@@ -128,20 +128,20 @@ public class MenuController : MonoBehaviour
                 text.enabled = false;
         }
     }
-    public void UnregisterBuildButtons(int availableUnitsCount, int availableFactoriesCount)
+    public void UnregisterBuildButtons(int availableUnitsCount)
     {
         // unregister build buttons
         for (int i = 0; i < availableUnitsCount; i++)
         {
             m_buildUnitButtons[i].onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < availableFactoriesCount; i++)
-        {
-            m_buildFactoryButtons[i].onClick.RemoveAllListeners();
-        }
+        //for (int i = 0; i < availableFactoriesCount; i++)
+        //{
+        //    m_buildFactoryButtons[i].onClick.RemoveAllListeners();
+        //}
     }
 
-    public void UpdateFactoryMenu(Factory selectedFactory, Func<int, bool> requestUnitBuildMethod/*, Action<int> enterFactoryBuildModeMethod*/)
+    public void UpdateFactoryMenu(Factory selectedFactory, Func<GameObject, bool> requestUnitBuildMethod/*, Action<int> enterFactoryBuildModeMethod*/)
     {
         ShowFactoryMenu();
 
@@ -155,13 +155,15 @@ public class MenuController : MonoBehaviour
             int index = i; // capture index value for event closure
             m_buildUnitButtons[i].onClick.AddListener(() =>
             {
-                if (requestUnitBuildMethod(index))
-                    UpdateFactoryBuildQueueUI(index, selectedFactory);
+                requestUnitBuildMethod(selectedFactory.FactoryData.availableUnits[index]);
+                //if (requestUnitBuildMethod(index))
+                    //UpdateFactoryBuildQueueUI(index, selectedFactory);
             });
 
             Text[] buttonTextArray = m_buildUnitButtons[i].GetComponentsInChildren<Text>();
             Text buttonText = buttonTextArray[0];//BuildUnitButtons[i].GetComponentInChildren<Text>();
-            UnitDataScriptable data = selectedFactory.GetBuildableUnitData(i);
+            
+            UnitDataScriptable data = selectedFactory.FactoryData.availableUnits[i].GetComponent<Unit>().UnitData;
             buttonText.text = data.caption + "(" + data.cost + ")";
 
             // Update queue count UI

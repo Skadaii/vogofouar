@@ -199,6 +199,7 @@ MonoBehaviour:
   m_selectedSprite: {fileID: 6128687716963668940}
   m_icon: {fileID: 1936195086047789898}
   m_GFX: {fileID: 3304952943332741534}
+  m_isCompleted: 0
   m_factoryData: {fileID: 11400000, guid: 0d9f0c0baf00e0e45b1c28cf2dacb6a7, type: 2}
   m_maxBuildingQueueSize: 25
 --- !u!1 &6128687716963668940 stripped

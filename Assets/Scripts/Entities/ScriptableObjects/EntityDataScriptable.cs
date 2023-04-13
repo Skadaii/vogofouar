@@ -2,6 +2,8 @@
 
 public class EntityDataScriptable : ScriptableObject
 {
+    public Sprite icon;
+
     [Header("Build Data")]
     public int typeId = 0;
     public string caption = "Unknown Unit";

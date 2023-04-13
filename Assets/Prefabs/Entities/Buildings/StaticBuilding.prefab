@@ -208,6 +208,7 @@ MonoBehaviour:
   m_selectedSprite: {fileID: 4340928840157488889}
   m_icon: {fileID: 8353568085168551551}
   m_GFX: {fileID: 4967162487188513963}
+  m_isCompleted: 0
   m_buildingDatas: {fileID: 11400000, guid: 800c599cfa876564f86c71c4c9f8eb39, type: 2}
   m_captureGaugeStart: 100
   m_captureGaugeSpeed: 1

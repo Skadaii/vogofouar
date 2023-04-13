@@ -27,7 +27,7 @@ public abstract class Building : Entity
     //  Properties
     //  ----------
 
-    public new static Command[] Commands => m_buildingCommands.ToArray().Concat(Entity.Commands) as Command[];
+    public new static Command[] Commands => Entity.Commands.Concat(m_buildingCommands).ToArray();
     public override Command[] TypeCommands => Commands;
 
     public abstract BuildingDataScriptable BuildingData { get; }

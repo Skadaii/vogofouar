@@ -21,7 +21,7 @@ public class Fighter : Unit
     //  Properties
     //  ----------
 
-    public new static Command[] Commands => m_fighterCommands.ToArray().Concat(Unit.Commands).ToArray();
+    public new static Command[] Commands => Unit.Commands.Concat(m_fighterCommands).ToArray();
     public override Command[] TypeCommands => Commands;
 
     public override UnitDataScriptable UnitData => m_fighterData;

@@ -31,7 +31,7 @@ public abstract class Unit : Entity
     //  Properties
     //  ----------
 
-    public new static Command[] Commands => m_unitCommands.ToArray().Concat(Entity.Commands).ToArray();
+    public new static Command[] Commands => Entity.Commands.Concat(m_unitCommands).ToArray();
     public override Command[] TypeCommands => Commands;
 
     public abstract UnitDataScriptable UnitData { get; }
@@ -93,7 +93,7 @@ public abstract class Unit : Entity
         {
             new LocationCommand(newActionName: "Move", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
             new TargetCommand(newActionName: "Move", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
-            new LocationCommand(newActionName: "Patrol", newMethod:"AddPatrolPoint", icon: Resources.Load<Sprite>("Textures/T_Move"))
+            new LocationCommand(newActionName: "Patrol", newMethod:"AddPatrolPoint", icon: Resources.Load<Sprite>("Textures/T_Patrol"))
         };
 
     }
