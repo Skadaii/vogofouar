@@ -138,9 +138,9 @@ public abstract class Unit : Entity
 
     override public bool NeedsRepairing() => HealthPoint < UnitData.maxHP;
   
-    override public void Repair(float amount)
+    override public float Repair(float amount)
     {
-        base.Repair(amount);
+        return base.Repair(amount);
     }
     override public void FullRepair()
     {

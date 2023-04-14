@@ -21,9 +21,9 @@ public class FighterDataScriptable : UnitDataScriptable
     {
         base.OnValidate();
 
-        m_fighterCommands ??= new List<Command>
+        m_fighterCommands = new List<Command>
         {
-            new TargetCommand("Attacj", newMethod: "Attack", icon: Resources.Load<Sprite>("Textures/T_cross"))
+            new TargetCommand("Fighter_Attack", newMethod: "Attack", icon: Resources.Load<Sprite>("Textures/T_cross"))
         };
     }
 }

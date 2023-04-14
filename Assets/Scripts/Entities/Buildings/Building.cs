@@ -83,15 +83,15 @@ public abstract class Building : Entity
 
     public override bool NeedsRepairing() => HealthPoint < MaxHealthPoints;
 
-    public override void Repair(float amount)
+    public override float Repair(float amount)
     {
         if(m_isCompleted)
         {
-            base.Repair(amount);
+            return base.Repair(amount);
         }
         else
         {
-            ReceiveResources(amount);
+            return ReceiveResources(amount);
         }
     }
 
@@ -99,20 +99,14 @@ public abstract class Building : Entity
 
     #endregion
 
-    protected void StartSelfConstruction()
-    {
-        m_isActive = m_isCompleted = false;
-        m_endBuildDate = Time.time + BuildingData.buildDuration;
-    }
-
     public float ReceiveResources(float resourceValue)
     {
-        float remainingCost = BuildingData.constructionCost - m_buildResources;
-        float change = Mathf.Max(0f, resourceValue - remainingCost);
+        float remainingCost = BuildingData.cost - m_buildResources;
+        float extra = Mathf.Max(0f, resourceValue - remainingCost);
 
-        m_buildResources = Mathf.Min(m_buildResources + resourceValue - change, BuildingData.constructionCost);
+        m_buildResources = Mathf.Min(m_buildResources + resourceValue, BuildingData.cost);
 
-        float percent = m_buildResources / BuildingData.constructionCost;
+        float percent = m_buildResources / BuildingData.cost;
         HealthPoint = MaxHealthPoints * percent;
 
         if (m_hud != null)
@@ -125,7 +119,7 @@ public abstract class Building : Entity
             ConstructionCompleted();
         }
 
-        return change;
+        return extra;
     }
 
     protected void ConstructionCompleted()
@@ -133,7 +127,7 @@ public abstract class Building : Entity
         m_isActive = true;
 
         m_isCompleted = true;
-        m_buildResources = BuildingData.constructionCost;
+        m_buildResources = BuildingData.cost;
         HealthPoint = MaxHealthPoints;
     }
 }

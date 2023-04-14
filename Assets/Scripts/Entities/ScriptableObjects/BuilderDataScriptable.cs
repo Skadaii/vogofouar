@@ -7,9 +7,7 @@ using static Entity;
 public class BuilderDataScriptable : UnitDataScriptable
 {
     [Header("Building")]
-    public bool canBuild = false;
     public float bps = 10f;
-    public float buildingFrequency = 1f;
     public float buildingDistanceMax = 10f;
 
     [Header("Repairing")]
@@ -28,16 +26,13 @@ public class BuilderDataScriptable : UnitDataScriptable
     {
         base.OnValidate();
 
-        m_builderCommands ??= new List<Command>
-            {
-                new TargetCommand("BuildTarget", newMethod: "Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
-            };
+        m_builderCommands = new List<Command>();
 
         foreach (GameObject buildingPrefab in availableBuildings)
         {
             if (buildingPrefab.TryGetComponent(out Building building))
             {
-                m_builderCommands.Add(new BuildCommand(buildingPrefab.name, newMethod: "RequestBuild", icon: building.EntityData.icon, toBuild: buildingPrefab));
+                m_builderCommands.Add(new BuildCommand($"Builder_Build_{buildingPrefab.name}", newMethod: "RequestBuild", icon: building.EntityData.icon, toBuild: buildingPrefab));
             }
         }
     }

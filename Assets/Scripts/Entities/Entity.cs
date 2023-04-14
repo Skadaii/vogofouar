@@ -197,9 +197,14 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
         return true;
     }
 
-    virtual public void Repair(float amount)
+    virtual public float Repair(float amount)
     {
+        float remainingMissingHealth = MaxHealthPoints - HealthPoint;
+        float extra = Mathf.Max(0f, amount - remainingMissingHealth);
+
         HealthPoint = Mathf.Min(HealthPoint + amount, MaxHealthPoints);
+
+        return extra;
     }
 
     virtual public void FullRepair()

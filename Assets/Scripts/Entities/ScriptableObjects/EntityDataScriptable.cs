@@ -11,7 +11,6 @@ public class EntityDataScriptable : ScriptableObject
     public int typeId = 0;
     public string caption = "Unknown Unit";
     public int cost = 1;
-    public float buildDuration = 1f;
 
     [Header("Health Points")]
     public int maxHP = 100;
@@ -25,7 +24,7 @@ public class EntityDataScriptable : ScriptableObject
     {
         m_entityCommands = new List<Command>
         {
-            new VoidCommand(newActionName: "Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/T_cross"))
+            new VoidCommand(newActionName: "Entity_Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/T_cross"))
         };
     }
 }
