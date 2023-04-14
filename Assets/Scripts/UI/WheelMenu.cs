@@ -174,6 +174,8 @@ public class WheelMenu : MonoBehaviour
     private void TryAddCommand(Entity.Command command)
     {
         if (m_commands.Contains(command)) return;
+        if (m_commands.Find((c) => c.Name == command.Name) != null) return;
+
         m_commands.Add(command);
     }
 

@@ -29,7 +29,7 @@ public class FactoryDataScriptable : BuildingDataScriptable
         {
             if (unitPrefab.TryGetComponent(out Unit unit))
             {
-                m_factoryCommand.Add(new BuildCommand(unitPrefab.name, newMethod: "RequestUnitProduction", icon: unit.EntityData.icon, toBuild: unitPrefab));
+                m_factoryCommand.Add(new BuildCommand($"Factory_Produce_{unitPrefab.name}", newMethod: "RequestUnitProduction", icon: unit.EntityData.icon, toBuild: unitPrefab));
             }
         }
     }

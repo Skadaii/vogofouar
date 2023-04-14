@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine;
 using System.Linq;
-using System.Collections.ObjectModel;
 using TMPro;
 
 public class MenuController : MonoBehaviour
@@ -84,9 +81,6 @@ public class MenuController : MonoBehaviour
 
     #endregion
 
-
-    //public void HideFactoryMenu() => m_factoryMenuPanel?.SetActive(false);
-    //public void ShowFactoryMenu() => m_factoryMenuPanel?.SetActive(true);
     public void UpdateBuildPointsUI()
     {
         if (m_buildPointsText != null)
@@ -97,107 +91,6 @@ public class MenuController : MonoBehaviour
         if (m_capturedTargetsText != null)
             m_capturedTargetsText.text = "Captured Targets : " + m_controller.CapturedTargets;
     }
-    //public void UpdateFactoryBuildQueueUI(int i, Factory selectedFactory)
-    //{
-    //    if (selectedFactory == null) return;
-    //    //int queueCount = selectedFactory.GetQueuedCount(i);
-    //    //if (queueCount > 0)
-    //    //{
-    //    //    m_buildQueueTexts[i].text = "+" + queueCount;
-    //    //    m_buildQueueTexts[i].enabled = true;
-    //    //}
-    //    //else
-    //    //{
-    //    //    m_buildQueueTexts[i].enabled = false;
-    //    //}
-    //}
-
-    //public void HideAllFactoryBuildQueue()
-    //{
-    //    foreach (Text text in m_buildQueueTexts)
-    //    {
-    //        if (text)
-    //            text.enabled = false;
-    //    }
-    //}
-    //public void UnregisterBuildButtons(int availableUnitsCount)
-    //{
-    //    // unregister build buttons
-    //    for (int i = 0; i < availableUnitsCount; i++)
-    //    {
-    //        m_buildUnitButtons[i].onClick.RemoveAllListeners();
-    //    }
-    //    //for (int i = 0; i < availableFactoriesCount; i++)
-    //    //{
-    //    //    m_buildFactoryButtons[i].onClick.RemoveAllListeners();
-    //    //}
-    //}
-
-    //public void UpdateFactoryMenu(Factory selectedFactory, Func<GameObject, bool> requestUnitBuildMethod/*, Action<int> enterFactoryBuildModeMethod*/)
-    //{
-    //    ShowFactoryMenu();
-
-    //    // Unit build buttons
-    //    // register available buttons
-    //    int i = 0;
-    //    for (; i < selectedFactory.AvailableUnitsCount; i++)
-    //    {
-    //        m_buildUnitButtons[i].gameObject.SetActive(true);
-
-    //        int index = i; // capture index value for event closure
-    //        m_buildUnitButtons[i].onClick.AddListener(() =>
-    //        {
-    //            requestUnitBuildMethod(selectedFactory.FactoryData.availableUnits[index]);
-    //            //if (requestUnitBuildMethod(index))
-    //                //UpdateFactoryBuildQueueUI(index, selectedFactory);
-    //        });
-
-    //        Text[] buttonTextArray = m_buildUnitButtons[i].GetComponentsInChildren<Text>();
-    //        Text buttonText = buttonTextArray[0];//BuildUnitButtons[i].GetComponentInChildren<Text>();
-            
-    //        UnitDataScriptable data = selectedFactory.FactoryData.availableUnits[i].GetComponent<Unit>().UnitData;
-    //        buttonText.text = data.caption + "(" + data.cost + ")";
-
-    //        // Update queue count UI
-    //        m_buildQueueTexts[i] = buttonTextArray[1];
-    //        UpdateFactoryBuildQueueUI(i, selectedFactory);
-    //    }
-    //    // hide remaining buttons
-    //    for (; i < m_buildUnitButtons.Length; i++)
-    //    {
-    //        m_buildUnitButtons[i].gameObject.SetActive(false);
-    //    }
-
-    //    // activate Cancel button
-    //    m_cancelBuildButton.onClick.AddListener(  () =>
-    //                                            {
-    //                                                selectedFactory?.CancelCurrentUnitProduction();
-    //                                                HideAllFactoryBuildQueue();
-    //                                            });
-
-    //    // Factory build buttons
-    //    // register available buttons
-    //    //i = 0;
-    //    //for (; i < selectedFactory.AvailableFactoriesCount; i++)
-    //    //{
-    //    //    m_buildFactoryButtons[i].gameObject.SetActive(true);
-
-    //    //    int index = i; // capture index value for event closure
-    //    //    m_buildFactoryButtons[i].onClick.AddListener(() =>
-    //    //    {
-    //    //        enterFactoryBuildModeMethod(index);
-    //    //    });
-
-    //    //    Text buttonText = m_buildFactoryButtons[i].GetComponentInChildren<Text>();
-    //    //    FactoryDataScriptable data = selectedFactory.GetBuildableFactoryData(i);
-    //    //    buttonText.text = data.caption + "(" + data.cost + ")";
-    //    //}
-    //    //// hide remaining buttons
-    //    //for (; i < m_buildFactoryButtons.Length; i++)
-    //    //{
-    //    //    m_buildFactoryButtons[i].gameObject.SetActive(false);
-    //    //}
-    //}
 
     public void UnregisterFormationButtons()
     {
