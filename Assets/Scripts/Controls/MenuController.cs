@@ -11,7 +11,9 @@ using TMPro;
 public class MenuController : MonoBehaviour
 {
     [SerializeField]
-    private FormationRule[] m_availableFormations = null;
+    private string[] m_instancedFormationDirectories = null;
+
+    private List<FormationRule> m_instancedRules = new List<FormationRule>();
 
     [SerializeField]
     private GameObject m_buttonFormationSelectionPrefab = null;
@@ -170,7 +172,7 @@ public class MenuController : MonoBehaviour
         for (int i = 0; i < m_formationButtons.Length; i++)
         {
             Button button = m_formationButtons[i];
-            FormationRule currentFormation = m_availableFormations[i];
+            FormationRule currentFormation = m_instancedRules[i];
             button.onClick.AddListener(() => setSquadMethod(selectedUnit, currentFormation));
         }
     }
@@ -210,10 +212,27 @@ public class MenuController : MonoBehaviour
         m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
         m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
 
+        LoadAvailableRules();
+        InitializeInstanceViewport();
+    }
+
+    void LoadAvailableRules()
+    {
+        foreach (string formationDir in m_instancedFormationDirectories)
+        {
+            List<FormationRule> instancedRulesRange = FormationEditor.LoadInstancedRules(formationDir);
+
+            if (instancedRulesRange is not null)
+                m_instancedRules.AddRange(instancedRulesRange);
+        }
+    }
+
+    private void InitializeInstanceViewport()
+    {
         Transform ContentTransform = m_factoryMenuCanvas.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
 
-        m_formationButtons = new Button[m_availableFormations.Length];
-        for (int i = 0; i < m_availableFormations.Length; i++)
+        m_formationButtons = new Button[m_instancedRules.Count];
+        for (int i = 0; i < m_instancedRules.Count; i++)
         {
             GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
 
@@ -221,7 +240,7 @@ public class MenuController : MonoBehaviour
             m_formationButtons[i] = buttonComp;
 
             TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = m_availableFormations[i].name;
+            textComp.text = m_instancedRules[i].name;
         }
     }
 }

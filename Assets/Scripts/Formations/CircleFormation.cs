@@ -5,13 +5,13 @@ using Newtonsoft.Json;
 [Serializable, CreateAssetMenu(fileName = "CircleFormation", menuName = "FormationRules/Circle", order = 2)]
 public class CircleFormation : FormationRule
 {
-    [SerializeField, JsonProperty] private int m_unitsPerCircle = 2;
+    [SerializeField, JsonProperty] private int m_unitsPerCircle = 5;
 
     [SerializeField, JsonProperty] private bool m_followRotation = true;
 
-    [SerializeField, JsonProperty] private float m_circleSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_circleSpacing = 4f;
 
-    [SerializeField, JsonProperty] private float m_baseSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_baseSpacing = 5f;
 
     [SerializeField, JsonProperty] private Vector3 m_worldOffset = Vector3.zero;
 

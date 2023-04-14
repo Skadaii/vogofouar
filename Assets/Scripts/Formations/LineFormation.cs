@@ -7,11 +7,11 @@ using UnityEngine;
 [Serializable, CreateAssetMenu(fileName = "LineFormation", menuName = "FormationRules/Line", order = 2)]
 public class LineFormation : FormationRule
 {
-    [SerializeField, JsonProperty] private int m_unitsPerLine = 2;
+    [SerializeField, JsonProperty] private int m_unitsPerLine = 3;
 
-    [SerializeField, JsonProperty] private float m_lineSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_lineSpacing = 5f;
 
-    [SerializeField, JsonProperty] private float m_columnSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_columnSpacing = 5f;
 
     [SerializeField, JsonProperty] private Vector3 m_localOffset = Vector3.zero;
 

@@ -39,7 +39,7 @@ public class FormationEditor : MonoBehaviour
 
     private float m_zoom = 1f;
 
-    private JsonSerializerSettings m_serializationSettings = new JsonSerializerSettings
+    static private JsonSerializerSettings m_serializationSettings = new JsonSerializerSettings
     {
         TypeNameHandling = TypeNameHandling.All,
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -59,7 +59,7 @@ public class FormationEditor : MonoBehaviour
         LoadPreset();
         InitializePresetViewport();
 
-        LoadInstancedRules();
+        m_instancedRules = LoadInstancedRules(loadingDirectory);
         InitializeInstanceViewport();
     }
 
@@ -91,17 +91,17 @@ public class FormationEditor : MonoBehaviour
 
     private void LoadPreset()
     {
-        m_presetRules = Resources.FindObjectsOfTypeAll(typeof(FormationRule)) as FormationRule[];
+        m_presetRules = Resources.LoadAll<FormationRule>("ScriptableObjects/Formations");
     }
 
-    private void LoadInstancedRules()
+    static public List<FormationRule> LoadInstancedRules(string dirPath)
     {
-        string dirpath = loadingDirectory;
+        if (!Directory.Exists(dirPath))
+            return null;
 
-        if (!Directory.Exists(dirpath))
-            return;
+        string[] filePathes = Directory.GetFiles(dirPath, "*.json");
 
-        string[] filePathes = Directory.GetFiles(dirpath, "*.json");
+        List<FormationRule> instancedRules = new List<FormationRule>();
 
         foreach (string filepath in filePathes)
         {
@@ -111,8 +111,10 @@ public class FormationEditor : MonoBehaviour
             loadedRule.name = Path.GetFileNameWithoutExtension(filepath);
 
             if (loadedRule is not null)
-                m_instancedRules.Add(loadedRule);
+                instancedRules.Add(loadedRule);
         }
+
+        return instancedRules;
     }
 
     private void SetSelectedPresetFormation(FormationRule newFormation)
