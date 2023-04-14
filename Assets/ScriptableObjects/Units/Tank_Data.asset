@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dae6db7ffb9caee4d8a8b5479e09e96f, type: 3}
   m_Name: Tank_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 57141eeb47ab1954599f60ef13898ea4, type: 3}
   typeId: 3
   caption: Tank
   cost: 4

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e72fd6405fa72d349909348445a09055, type: 3}
   m_Name: Builder_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 0}
   typeId: 0
   caption: Builder
   cost: 1
@@ -23,8 +24,15 @@ MonoBehaviour:
   isFlying: 0
   deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
     type: 3}
+  canBuild: 0
+  bps: 1
+  buildingFrequency: 1
+  buildingDistanceMax: 10
   canRepair: 0
   rps: 10
   repairFrequency: 1
   repairDistanceMax: 10
   captureDistanceMax: 10
+  availableBuildings:
+  - {fileID: 4757519944541837824, guid: b042f885d587ca14c805a6c98c5c47ee, type: 3}
+  - {fileID: 4416625676177685912, guid: fc932f2017f853a4f8b5119a43102719, type: 3}

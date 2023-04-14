@@ -1,6 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
+using static UnityEditor.PlayerSettings;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -19,10 +23,14 @@ public abstract class Unit : Entity
     protected float m_lastAttackedTime = 0f;
     protected Unit m_agressor;
 
+    private List<Vector3> m_patrolPoint = new List<Vector3>();
+    private int m_patrolIndex = 0;
+
     //  Properties
     //  ----------
-
     public abstract UnitDataScriptable UnitData { get; }
+    public override EntityDataScriptable EntityData => UnitData;
+
     public int Cost => UnitData ? UnitData.cost : 0;
     public int TypeId => UnitData ? UnitData.typeId : -1;
 
@@ -78,6 +86,15 @@ public abstract class Unit : Entity
     protected virtual new void Update()
     {
         base.Update();
+
+        if(m_patrolPoint.Count > 0 && m_navMeshAgent)
+        {
+            if(m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance)
+            {
+                m_patrolIndex = (m_patrolIndex +1)% m_patrolPoint.Count;
+            }
+            m_navMeshAgent.SetDestination(m_patrolPoint[m_patrolIndex]);
+        }
     }
 
     #endregion
@@ -89,7 +106,7 @@ public abstract class Unit : Entity
 
         base.Init(_team);
         
-        m_HP = m_maxHP = UnitData.maxHP;
+        HealthPoint = MaxHealthPoints = UnitData.maxHP;
         onDeathEvent += Unit_OnDeath;
     }
 
@@ -119,11 +136,10 @@ public abstract class Unit : Entity
 
     #region IRepairable
 
-    override public bool NeedsRepairing() => m_HP < UnitData.maxHP;
+    override public bool NeedsRepairing() => HealthPoint < UnitData.maxHP;
   
-    override public void Repair(int amount)
+    override public void Repair(float amount)
     {
-        m_HP = Mathf.Min(m_HP + amount, UnitData.maxHP);
         base.Repair(amount);
     }
     override public void FullRepair()
@@ -145,6 +161,7 @@ public abstract class Unit : Entity
     // Moving Task
     public virtual void MoveTo(Vector3 pos)
     {
+        Stop();
         m_target = null;
 
         //if (m_target != null)
@@ -157,7 +174,20 @@ public abstract class Unit : Entity
         }
     }
 
+    public void AddPatrolPoint(Vector3 pos)
+    {
+        m_patrolPoint.Add(pos);
+    }
+
+    public override void Stop()
+    {
+        base.Stop();
+
+        m_patrolPoint.Clear();
+    }
+
     public virtual void MoveTo(Transform target) => MoveTo(target.position);
+    public virtual void MoveTo(Entity target) => MoveTo(target.transform.position);
 
     public virtual void MoveToward(Vector3 velocity) => m_navMeshAgent.Move(velocity);
 }

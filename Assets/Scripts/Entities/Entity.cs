@@ -1,9 +1,10 @@
+using AIPlanner.GOAP;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(EntityVisibility))]
-public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
+public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
 {
     //  Variables
     //  ---------
@@ -11,11 +12,15 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     [SerializeField]
     protected ETeam m_team;
 
+    [SerializeField]
+    protected GameObject m_selectedSprite = null;
+
+    [SerializeField]
+    protected SpriteRenderer m_icon;
+
     protected EntityVisibility m_visibility;
 
     protected bool m_isInitialized = false;
-    protected GameObject m_selectedSprite = null;
-    protected SpriteRenderer m_icon;
 
     [SerializeField]
     protected GameObject m_GFX;
@@ -23,15 +28,15 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     //  Damageable variables
 
-    protected int m_HP = 0;
-    protected int m_maxHP = 100;
-    //protected Text m_HPText = null;
-    protected Action m_onHpUpdated;
-    public Action onDeathEvent;
+    private float m_healthPoints = 100f;
+    private float m_maxHealthPoints = 100f;
 
+    public System.Action onDeathEvent;
 
     //  Properties
     //  ----------
+    public abstract EntityDataScriptable EntityData { get; }
+    public Command[] Commands => EntityData.Commands;
 
     public GameObject GFX => m_GFX;
     public bool IsAlive { get; protected set; }
@@ -39,6 +44,36 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     public bool IsSelected { get; protected set; }
 
     public EntityVisibility Visibility => m_visibility;
+
+    public UnitController TeamController => GameServices.GetControllerByTeam(Team);
+
+    public float HealthPoint
+    {
+        get => m_healthPoints;
+        protected set
+        {
+            m_healthPoints = Mathf.Clamp(value, 0f, m_maxHealthPoints);
+
+            if (m_hud != null)
+            {
+                m_hud.Health = HealthPercent;
+            }
+        }
+    }
+
+    public float MaxHealthPoints
+    {
+        get => m_maxHealthPoints;
+        
+        protected set
+        {
+            m_maxHealthPoints = value;
+
+            if (m_hud != null) m_hud.Health = HealthPercent;
+        }
+    }
+
+    public float HealthPercent => m_healthPoints / m_maxHealthPoints;
 
     //  Functions
     //  ---------
@@ -54,20 +89,14 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
     {
         m_visibility = GetComponent<EntityVisibility>();
         m_hud = transform.GetComponentInChildren<EntityHUD>();
+        if(m_selectedSprite != null) m_selectedSprite.SetActive(false);
 
-        m_selectedSprite = transform.Find("SelectedSprite")?.gameObject;
-        m_selectedSprite?.SetActive(false);
-
-        //m_HPText = transform.Find("Canvas/HPText")?.GetComponent<Text>();
-
-        m_onHpUpdated += UpdateHpUI;
+        HealthPoint = MaxHealthPoints = EntityData.maxHP;
     }
 
     protected virtual void Start()
     {
         Init(Team);
-        UpdateHpUI();
-
         IsAlive = true;
     }
 
@@ -75,7 +104,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
     #endregion
 
-    virtual public void Init(ETeam _team)
+    public virtual void Init(ETeam _team)
     {
         if (m_isInitialized)
             return;
@@ -84,12 +113,7 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
 
         if (Visibility) { Visibility.Team = _team; }
 
-        Transform iconTransform = transform.Find("Icon");
-        if (iconTransform != null)
-        {
-            m_icon = iconTransform.GetComponentInChildren<SpriteRenderer>();
-            m_icon.color = GameServices.GetTeamColor(m_team);
-        }
+        if(m_icon != null) m_icon.color = GameServices.GetTeamColor(m_team);
 
         SetTeamColor();
 
@@ -117,58 +141,67 @@ public abstract class Entity : MonoBehaviour, ISelectable, IDamageable, IRepaira
         }
     }
 
+    public virtual void Stop()
+    {
+
+    }
+
     #region ISelectable
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
         m_selectedSprite?.SetActive(IsSelected);
+
+        if(IsSelected)
+        {
+            m_icon.color = Color.white;
+        }
+        else
+        {
+            m_icon.color = GameServices.GetTeamColor(m_team);
+        }
     }
 
     public ETeam Team => m_team;
 
     #endregion
 
-
-    void UpdateHpUI()
-    {
-        if(m_hud != null)
-        {
-            m_hud.Health = (float)m_HP / (float)m_maxHP;
-        }
-    }
-
     #region IDamageable
-    public void AddDamage(int damageAmount)
+
+    public void AddDamage(float damageAmount)
     {
         if (IsAlive == false)
             return;
 
-        m_HP -= damageAmount;
+        HealthPoint -= damageAmount;
 
-        m_onHpUpdated?.Invoke();
-
-        if (m_HP <= 0)
-        {
-            IsAlive = false;
-            onDeathEvent?.Invoke();
-            Debug.Log("Entity " + gameObject.name + " died");
-        }
+        if (HealthPoint <= 0) Destroy();
     }
+
     public void Destroy()
     {
-        AddDamage(m_HP);
+        HealthPoint = 0;
+        IsAlive = false;
+        onDeathEvent?.Invoke();
+
+        Debug.Log("Entity " + gameObject.name + " died");
     }
+    
     #endregion
 
+
     #region IRepairable
+
     virtual public bool NeedsRepairing()
     {
         return true;
     }
-    virtual public void Repair(int amount)
+
+    virtual public void Repair(float amount)
     {
-        m_onHpUpdated?.Invoke();
+        HealthPoint = Mathf.Min(HealthPoint + amount, MaxHealthPoints);
     }
+
     virtual public void FullRepair()
     {
     }

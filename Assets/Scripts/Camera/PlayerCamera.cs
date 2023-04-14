@@ -146,14 +146,13 @@ public class PlayerCamera : MonoBehaviour
         m_targetPosition.z += value * m_speed * m_zoomSpeedModifier * Time.deltaTime;
     }
 
-    // Direct focus on one entity (no smooth)
-    public void FocusEntity(Entity entity)
+    public void FocusEntity(Entity entity, bool smooth = true)
     {
         if (entity == null)
             return;
 
-        Vector3 newPos = entity.transform.position;
-        transform.position = newPos;
+        m_targetPosition = entity.transform.position;
+        if (!smooth) transform.position = m_targetPosition + new Vector3(m_offset.x, m_offset.y + m_zoom, m_offset.z);
     }
     #endregion
 }

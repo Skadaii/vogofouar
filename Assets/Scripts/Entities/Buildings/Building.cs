@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,20 +10,23 @@ public abstract class Building : Entity
     //  Variables
     //  ---------
 
+    private float m_buildResources = 0f;
+
     //protected Image m_buildGaugeImage;
     protected float m_currentBuildDuration = 0f;
     protected float m_endBuildDate = 0f;
 
     protected bool m_isActive;
-    protected bool m_isCompleted;
+    [SerializeField] protected bool m_isCompleted;
 
     public Action<Building> OnBuildingBuilt;
     public Action OnBuildCanceled;
 
     //  Properties
     //  ----------
-
     public abstract BuildingDataScriptable BuildingData { get; }
+    public override EntityDataScriptable EntityData => BuildingData;
+
     public int Cost { get { return BuildingData.cost; } }
     public bool IsUnderConstruction { get { return !m_isCompleted; } }
 
@@ -41,19 +45,10 @@ public abstract class Building : Entity
             Debug.LogWarning("Missing Building data in " + gameObject.name);
         }
 
-        //m_buildGaugeImage = transform.Find("HUD/ProgressImage").GetComponent<Image>();
+        if (!m_isCompleted) HealthPoint = 0f;
 
-        //if (m_buildGaugeImage)
-        //{
-        //    m_buildGaugeImage.fillAmount = 0f;
-        //    m_buildGaugeImage.color = GameServices.GetTeamColor(Team);
-        //}
-        if (m_hud != null)
-        {
-            m_hud.Progression = 0f;
-        }
+        if (m_hud != null) m_hud.Progression = 0f;
         
-        m_HP = m_maxHP = BuildingData.maxHP;
         onDeathEvent += Building_OnDestruction;
     }
 
@@ -66,29 +61,7 @@ public abstract class Building : Entity
 
     protected virtual new void Update()
     {
-        if(IsUnderConstruction)
-        {
-            float progression = 0f;
-            // $$$ TODO : improve construction progress rendering
-            if (Time.time > m_endBuildDate)
-            {
-                m_isCompleted = true;
-                m_isActive = true;
-
-                gameObject.isStatic = true;
-            }
-            else
-            {
-                progression = 1f - (m_endBuildDate - Time.time) / BuildingData.buildDuration;
-            }
-
-            //m_buildGaugeImage.fillAmount = progression;
-
-            if (m_hud != null)
-            {
-                m_hud.Progression = progression;
-            }
-        }
+        base.Update();
     }
 
     #endregion
@@ -107,12 +80,19 @@ public abstract class Building : Entity
     }
 
     #region IRepairable
-    public override bool NeedsRepairing() => m_HP < BuildingData.maxHP;
 
-    public override void Repair(int amount)
+    public override bool NeedsRepairing() => HealthPoint < MaxHealthPoints;
+
+    public override void Repair(float amount)
     {
-        m_HP = Mathf.Min(m_HP + amount, BuildingData.maxHP);
-        base.Repair(amount);
+        if(m_isCompleted)
+        {
+            base.Repair(amount);
+        }
+        else
+        {
+            ReceiveResources(amount);
+        }
     }
 
     public override void FullRepair() => Repair(BuildingData.maxHP);
@@ -123,5 +103,37 @@ public abstract class Building : Entity
     {
         m_isActive = m_isCompleted = false;
         m_endBuildDate = Time.time + BuildingData.buildDuration;
+    }
+
+    public float ReceiveResources(float resourceValue)
+    {
+        float remainingCost = BuildingData.constructionCost - m_buildResources;
+        float change = Mathf.Max(0f, resourceValue - remainingCost);
+
+        m_buildResources = Mathf.Min(m_buildResources + resourceValue - change, BuildingData.constructionCost);
+
+        float percent = m_buildResources / BuildingData.constructionCost;
+        HealthPoint = MaxHealthPoints * percent;
+
+        if (m_hud != null)
+        {
+            m_hud.Progression = percent;
+        }
+
+        if (percent >= 1f)
+        {
+            ConstructionCompleted();
+        }
+
+        return change;
+    }
+
+    protected void ConstructionCompleted()
+    {
+        m_isActive = true;
+
+        m_isCompleted = true;
+        m_buildResources = BuildingData.constructionCost;
+        HealthPoint = MaxHealthPoints;
     }
 }

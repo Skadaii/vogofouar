@@ -19,7 +19,7 @@ public class EntityHUD : MonoBehaviour
 
     private float m_healthValueSaved = 0f;
     private float m_healthTargetValue = 0f;
-    private float m_lastHealthUpdate = 0f;
+    private float m_elapsedTimeSinceUpdate = 0f;
 
     [Header("ProgressBar")]
     [SerializeField]
@@ -33,10 +33,11 @@ public class EntityHUD : MonoBehaviour
 
     public float Health
     {
+        get => m_healthTargetValue;
         set
         {
             m_healthTargetValue = Mathf.Clamp(value, 0f, 1f);
-            m_lastHealthUpdate = Time.time;
+            m_elapsedTimeSinceUpdate = Time.time;
             m_healthValueSaved = m_healthBar.value;
         }
     }
@@ -75,12 +76,15 @@ public class EntityHUD : MonoBehaviour
 
     protected void Update()
     {
-        if(m_healthBar.isActiveAndEnabled)
+        if(m_healthBar.isActiveAndEnabled && m_elapsedTimeSinceUpdate >= 0)
         {
-            float delta = Mathf.Min((Time.time - m_lastHealthUpdate)/ m_healthDurationUpdate, 1f);
+            m_elapsedTimeSinceUpdate += Time.deltaTime;
+            float delta = Mathf.Min(m_elapsedTimeSinceUpdate / m_healthDurationUpdate, 1f);
             m_healthBar.value = Mathf.Lerp(m_healthValueSaved, m_healthTargetValue, delta);
 
-            if(m_healthFill != null)
+            if (delta >= 1f) m_elapsedTimeSinceUpdate = -1f;
+
+            if (m_healthFill != null)
             {
                 SetHealthBarColor();
             }

@@ -216,6 +216,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0c08802a2e52614e8ea02c249230a0f, type: 3}
+--- !u!1 &862411876700166203 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2066177972974192964, guid: a0c08802a2e52614e8ea02c249230a0f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1683060807007965567}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2088690731326722551 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 839899084175622280, guid: a0c08802a2e52614e8ea02c249230a0f,
@@ -248,8 +254,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 0
+  m_selectedSprite: {fileID: 862411876700166203}
+  m_icon: {fileID: 4910085939283200189}
   m_GFX: {fileID: 8297621972756142697}
   m_builderData: {fileID: 11400000, guid: 332299c498ae78e4080ec5c3c172b5da, type: 2}
+--- !u!212 &4910085939283200189 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6016615341739350466, guid: a0c08802a2e52614e8ea02c249230a0f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1683060807007965567}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6412673903734317338 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5739004379249766501, guid: a0c08802a2e52614e8ea02c249230a0f,

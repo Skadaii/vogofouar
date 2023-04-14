@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static UnityEngine.UI.CanvasScaler;
 
 // points system for units creation (Ex : light units = 1 pt, medium = 2pts, heavy = 3 pts)
 // max points can be increased by capturing TargetBuilding entities
@@ -21,8 +23,8 @@ public class UnitController : MonoBehaviour
     protected List<UnitSquad> m_squadList = new List<UnitSquad>();
 
     protected List<Unit> m_selectedUnitList = new List<Unit>();
-    protected List<Factory> m_factoryList = new List<Factory>();
-    protected Factory m_selectedFactory = null;
+    protected List<Factory> m_buildingList = new List<Factory>();
+    protected Factory m_selectedBuildings = null;
 
     // events
     protected Action m_onBuildPointsUpdated;
@@ -58,12 +60,16 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    public List<Factory> GetFactoryList { get { return m_factoryList; } }
+    public List<Factory> GetFactoryList { get { return m_buildingList; } }
     public List<Unit> UnitList
     {
         get;
         protected set;
     }
+
+    public bool HasSelectedUnits => m_selectedUnitList.Count > 0;
+    public bool HasSelectedBuildings => m_selectedBuildings != null;
+
 
     #region Unit methods
     protected void UnselectAllUnits()
@@ -119,7 +125,7 @@ public class UnitController : MonoBehaviour
 
         OnUnitSelected();
     }
-    protected void SelectUnit(Unit unit)
+    protected virtual void SelectUnit(Unit unit)
     {
         unit.SetSelected(true);
         m_selectedUnitList.Add(unit);
@@ -221,51 +227,87 @@ public class UnitController : MonoBehaviour
         {
             TotalBuildPoints += factory.Cost;
             if (factory.IsSelected)
-                m_selectedFactory = null;
-            m_factoryList.Remove(factory);
+                m_selectedBuildings = null;
+            m_buildingList.Remove(factory);
         };
-        m_factoryList.Add(factory);
+        m_buildingList.Add(factory);
     }
     virtual protected void SelectFactory(Factory factory)
     {
         if (factory == null || factory.IsUnderConstruction)
             return;
 
-        m_selectedFactory = factory;
-        m_selectedFactory.SetSelected(true);
+        m_selectedBuildings = factory;
+        m_selectedBuildings.SetSelected(true);
         UnselectAllUnits();
     }
     virtual protected void UnselectCurrentFactory()
     {
-        if (m_selectedFactory != null)
-            m_selectedFactory.SetSelected(false);
-        m_selectedFactory = null;
+        if (m_selectedBuildings != null)
+            m_selectedBuildings.SetSelected(false);
+        m_selectedBuildings = null;
     }
-    protected bool RequestUnitBuild(int unitMenuIndex)
+
+
+    protected bool RequestUnitBuild(GameObject unit)
     {
-        if (m_selectedFactory == null)
+        if (m_selectedBuildings == null)
+            return false;
+        return m_selectedBuildings.RequestUnitBuild(unit);
+    }
+
+
+    protected virtual bool ConstructBuilding(GameObject building, Vector3 position)
+    {
+        Builder[] builders = m_selectedUnitList.OfType<Builder>().ToArray();
+        return RequestBuildingConstruction(building, position, builders);
+    }
+
+
+    private static bool CanPlaceBuilding(GameObject buildingPrefab, Vector3 position)
+    {
+        if (GameServices.IsPosInPlayableBounds(position) == false)
             return false;
 
-        return m_selectedFactory.RequestUnitBuild(unitMenuIndex);
-    }
-    protected bool RequestFactoryBuild(int factoryIndex, Vector3 buildPos)
-    {
-        if (m_selectedFactory == null)
-            return false;
+        Vector3 extent = buildingPrefab.GetComponent<BoxCollider>().size / 2f;
 
-        int cost = m_selectedFactory.GetFactoryCost(factoryIndex);
-        if (TotalBuildPoints < cost)
+        float overlapYOffset = 0.1f;
+        position += Vector3.up * (extent.y + overlapYOffset);
+
+        if (Physics.CheckBox(position, extent))
+        {
             return false;
+        }
+
+        return true;
+    }
+
+    protected bool RequestBuildingConstruction(GameObject buildingPrefab, Vector3 buildPos, Builder[] builders)
+    {
+        Building building = buildingPrefab.GetComponent<Building>();
+
+        if(building == null) return false;
+
+        int cost = building.Cost;
+        if (TotalBuildPoints < cost) return false;
 
         // Check if positon is valid
-        if (m_selectedFactory.CanPositionFactory(factoryIndex, buildPos) == false)
+        if (CanPlaceBuilding(buildingPrefab, buildPos) == false)
             return false;
 
-        Factory newFactory = m_selectedFactory.StartBuildFactory(factoryIndex, buildPos);
-        if (newFactory != null)
+        Transform teamRoot = GameServices.GetControllerByTeam(Team)?.TeamRoot;
+        Building createdBuilding = Instantiate(buildingPrefab, buildPos, Quaternion.identity, teamRoot).GetComponent<Building>();
+        createdBuilding.Init(Team);
+
+        if (createdBuilding != null)
         {
-            AddFactory(newFactory);
+            if(createdBuilding as Factory != null) AddFactory(createdBuilding as Factory);
             TotalBuildPoints -= cost;
+
+            foreach(Builder builder in builders)
+            {
+                builder.Build(createdBuilding);
+            }
 
             return true;
         }
@@ -297,7 +339,7 @@ public class UnitController : MonoBehaviour
             }
         }
 
-        Debug.Log("found " + m_factoryList.Count + " factory for team " + Team.ToString());
+        Debug.Log("found " + m_buildingList.Count + " factory for team " + Team.ToString());
     }
     virtual protected void Update ()
     {

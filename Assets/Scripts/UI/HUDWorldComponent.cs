@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class HUDWorldComponent : MonoBehaviour
 {
@@ -49,7 +50,9 @@ public class HUDWorldComponent : MonoBehaviour
         else
         {
             float halfFOV = camera.fieldOfView * 0.5f * Mathf.Deg2Rad;
-            float distance = Vector3.Distance(transform.position, camera.transform.position);
+
+            Vector3 dir = transform.position - camera.transform.position;
+            float distance = Mathf.Abs(Vector3.Dot(camera.transform.forward, dir));
             size = distance * Mathf.Tan(halfFOV) * camera.aspect;
         }
 

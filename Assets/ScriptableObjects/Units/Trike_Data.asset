@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dae6db7ffb9caee4d8a8b5479e09e96f, type: 3}
   m_Name: Trike_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: c1644abcc4b51514b91df0acb5abd6c9, type: 3}
   typeId: 1
   caption: Trike
   cost: 2

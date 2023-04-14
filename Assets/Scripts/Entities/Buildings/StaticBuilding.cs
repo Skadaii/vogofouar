@@ -40,6 +40,13 @@ public class StaticBuilding : Building
 
     #region MonoBehaviour methods
 
+
+    protected virtual new void Awake()
+    {
+        base.Awake();
+        ConstructionCompleted();
+    }
+
     protected virtual new void Start()
     {
         base.Start();

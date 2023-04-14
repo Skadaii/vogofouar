@@ -1,8 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using static Entity;
 
 [CreateAssetMenu(fileName = "Builder_Data", menuName = "RTS/Units/Builder Data", order = 0)]
 public class BuilderDataScriptable : UnitDataScriptable
 {
+    [Header("Building")]
+    public bool canBuild = false;
+    public float bps = 10f;
+    public float buildingFrequency = 1f;
+    public float buildingDistanceMax = 10f;
+
     [Header("Repairing")]
     public bool canRepair = false;
     public int rps = 10;
@@ -10,4 +19,26 @@ public class BuilderDataScriptable : UnitDataScriptable
     public float repairDistanceMax = 10f;
 
     public float captureDistanceMax = 10f;
+    public GameObject[] availableBuildings = null;
+
+    private List<Command> m_builderCommands;
+    public override Command[] Commands => base.Commands.Concat(m_builderCommands).ToArray();
+
+    protected new void OnValidate()
+    {
+        base.OnValidate();
+
+        m_builderCommands ??= new List<Command>
+            {
+                new TargetCommand("BuildTarget", newMethod: "Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
+            };
+
+        foreach (GameObject buildingPrefab in availableBuildings)
+        {
+            if (buildingPrefab.TryGetComponent(out Building building))
+            {
+                m_builderCommands.Add(new BuildCommand(buildingPrefab.name, newMethod: "RequestBuild", icon: building.EntityData.icon, toBuild: buildingPrefab));
+            }
+        }
+    }
 }

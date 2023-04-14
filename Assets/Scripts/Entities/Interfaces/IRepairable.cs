@@ -2,6 +2,6 @@
 public interface IRepairable
 {
     bool NeedsRepairing();
-    void Repair(int amount);
+    void Repair(float amount);
     void FullRepair();
 }

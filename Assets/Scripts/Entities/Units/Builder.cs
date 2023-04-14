@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -14,13 +15,38 @@ public class Builder : Unit
     [SerializeField]
     private BuilderDataScriptable m_builderData = null;
 
+    private Building m_buildingTarget;
+
     //  Properties
     //  ----------
-
     public override UnitDataScriptable UnitData => m_builderData;
 
     //  Functions
     //  ---------
+
+
+    #region MonoBehaviour methods
+
+    protected virtual new void Awake()
+    {
+        base.Awake();
+    }
+
+    protected virtual new void Update()
+    {
+        base.Update();
+
+        if(m_buildingTarget != null)
+        {
+            if(Vector3.SqrMagnitude(m_buildingTarget.transform.position - transform.position) <= m_builderData.buildingDistanceMax * m_builderData.buildingDistanceMax)
+            {
+                m_buildingTarget.Repair(m_builderData.bps * Time.deltaTime);
+            }
+        }
+    }
+
+    #endregion
+
 
     // Targetting Task - capture
     public void SetCaptureTarget(Entity target)
@@ -82,6 +108,24 @@ public class Builder : Unit
             m_target = entity;
         }
     }
+
+    public void Build(Entity target)
+    {
+        MoveTo(target);
+        m_buildingTarget = target as Building;
+    }
+    
+
+    public void RequestBuild(GameObject building)
+    {
+        PlayerController pc = TeamController as PlayerController;
+
+        if(pc != null)
+        {
+            pc.BuildPreview(building);
+        }
+    }
+
     public void ComputeRepairing()
     {
         if (CanRepair(m_target) == false)

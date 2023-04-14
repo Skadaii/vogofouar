@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33438ee65fe702c40a35a4dc7d603393, type: 3}
   m_Name: AdvancedFactory_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 2dc594298279eb14f8c2a060aedfa72b, type: 3}
   typeId: 0
   caption: Heavy Factory
   cost: 15
   buildDuration: 30
   maxHP: 10000
+  constructionCost: 5
   deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
     type: 3}
   nbSpawnSlots: 10
@@ -27,6 +29,3 @@ MonoBehaviour:
   - {fileID: 4127249019806727215, guid: 158bd108482f0db408d9812e8eda624b, type: 3}
   - {fileID: 4127249019806727215, guid: b3b0030b5a3eddb49a23902242c7b085, type: 3}
   - {fileID: 4127249019806727215, guid: 90f2744314821cb4984b982a5247db6a, type: 3}
-  availableFactories:
-  - {fileID: 4757519944541837824, guid: b042f885d587ca14c805a6c98c5c47ee, type: 3}
-  - {fileID: 4416625676177685912, guid: fc932f2017f853a4f8b5119a43102719, type: 3}

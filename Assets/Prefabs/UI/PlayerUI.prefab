@@ -2378,7 +2378,7 @@ GameObject:
   - component: {fileID: 3297987965787243823}
   - component: {fileID: 3297987965787243822}
   m_Layer: 5
-  m_Name: FactoryMenuCanvas
+  m_Name: PlayerUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

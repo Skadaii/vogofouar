@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33438ee65fe702c40a35a4dc7d603393, type: 3}
   m_Name: BasicFactory_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 3401554619974664da65e1cbb6258dfe, type: 3}
   typeId: 0
   caption: Light Factory
   cost: 10
   buildDuration: 20
   maxHP: 500
+  constructionCost: 5
   deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
     type: 3}
   nbSpawnSlots: 10
@@ -27,6 +29,3 @@ MonoBehaviour:
   - {fileID: 4127249019806727215, guid: 4b4b4b087a9833d4ebd11b779171c5ff, type: 3}
   - {fileID: 4127249019806727215, guid: 7a61585dfe042ed4b973040f57efca11, type: 3}
   - {fileID: 4127249019806727215, guid: c0e27b7630aeacd4981aa3f8cd0fa675, type: 3}
-  availableFactories:
-  - {fileID: 4757519944541837824, guid: b042f885d587ca14c805a6c98c5c47ee, type: 3}
-  - {fileID: 4416625676177685912, guid: fc932f2017f853a4f8b5119a43102719, type: 3}
