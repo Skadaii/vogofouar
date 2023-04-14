@@ -1,7 +1,5 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable, CreateAssetMenu(fileName = "LineFormation", menuName = "FormationRules/Line", order = 2)]

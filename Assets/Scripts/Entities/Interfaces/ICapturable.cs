@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public interface ICapturable
 {
     void Capture(int amount, ETeam team);

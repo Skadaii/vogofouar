@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.UI.CanvasScaler;
 
 // points system for units creation (Ex : light units = 1 pt, medium = 2pts, heavy = 3 pts)
 // max points can be increased by capturing TargetBuilding entities

@@ -1,10 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.PlayerLoop;
-using static UnityEditor.PlayerSettings;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]

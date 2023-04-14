@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
 
 public class FogOfWarManager : MonoBehaviour
 {
