@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
+using System.Data;
+using UnityEngine.Events;
 
 public class FormationEditor : MonoBehaviour
 {
@@ -63,30 +65,29 @@ public class FormationEditor : MonoBehaviour
         InitializeInstanceViewport();
     }
 
+    private void CreatePresetRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationPresetContent, () => SetSelectedPresetFormation(rule));
+    private void CreateInstanceRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationInstanceContent, () => SetSelectedInstanceFormation(rule));
+
+    private void CreateRuleButton(FormationRule rule, Transform contentListTransform, UnityAction action)
+    {
+        GameObject buttonGO = Instantiate(m_formationSelectorPrefab, contentListTransform);
+        Button buttonComp = buttonGO.GetComponent<Button>();
+        buttonComp.onClick.AddListener(action);
+
+        TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+        textComp.text = rule.name;
+    }
+
     private void InitializePresetViewport()
     {
         foreach (FormationRule rule in m_presetRules)
-        {
-            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationPresetContent);
-            Button buttonComp = buttonGO.GetComponent<Button>();
-            buttonComp.onClick.AddListener(() => SetSelectedPresetFormation(rule));
-
-            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = rule.name;
-        }
+            CreatePresetRuleButton(rule);
     }
 
     private void InitializeInstanceViewport()
     {
         foreach (FormationRule rule in m_instancedRules)
-        {
-            GameObject buttonGO = Instantiate(m_formationSelectorPrefab, m_formationInstanceContent);
-            Button buttonComp = buttonGO.GetComponent<Button>();
-            buttonComp.onClick.AddListener(() => SetSelectedInstanceFormation(rule));
-
-            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = rule.name;
-        }
+            CreateInstanceRuleButton(rule);
     }
 
     private void LoadPreset()
@@ -183,16 +184,19 @@ public class FormationEditor : MonoBehaviour
         if (!Directory.Exists(dirpath))
             Directory.CreateDirectory(dirpath);
 
+        string filename = m_currRule.name = m_filenameField.text;
+
         string ruleAsJSON = JsonConvert.SerializeObject(m_currRule, m_serializationSettings);
 
-        string fileName = m_filenameField.text;
-
-        string filePath = dirpath + '/' + fileName + ".json";
+        string filePath = dirpath + '/' + filename + ".json";
 
         File.WriteAllText(filePath, ruleAsJSON);
 
         if (!m_instancedRules.Contains(m_currRule))
+        {
             m_instancedRules.Add(m_currRule);
+            CreateInstanceRuleButton(m_currRule);
+        }
     }
 
     public void OnZoom(float zoom)
