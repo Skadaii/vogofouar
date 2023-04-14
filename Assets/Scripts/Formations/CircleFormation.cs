@@ -1,32 +1,25 @@
 using UnityEngine;
 using System;
+using Newtonsoft.Json;
 
-[CreateAssetMenu(fileName = "CircleFormation", menuName = "FormationRules/Circle", order = 2)]
+[Serializable, CreateAssetMenu(fileName = "CircleFormation", menuName = "FormationRules/Circle", order = 2)]
 public class CircleFormation : FormationRule
 {
-    [SerializeField]
-    private int m_unitsPerCircle = 2;
+    [SerializeField, JsonProperty] private int m_unitsPerCircle = 5;
 
-    [SerializeField]
-    private bool m_followRotation = true;
+    [SerializeField, JsonProperty] private bool m_followRotation = true;
 
-    [SerializeField]
-    private float m_circleSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_circleSpacing = 4f;
 
-    [SerializeField]
-    private float m_baseSpacing = 1.5f;
+    [SerializeField, JsonProperty] private float m_baseSpacing = 5f;
 
-    [SerializeField]
-    private Vector3 m_worldOffset = Vector3.zero;
+    [SerializeField, JsonProperty] private Vector3 m_worldOffset = Vector3.zero;
 
-    [SerializeField]
-    private Vector3 m_localOffset = Vector3.zero;
+    [SerializeField, JsonProperty] private Vector3 m_localOffset = Vector3.zero;
 
-    [SerializeField]
-    private float m_baseAngleOffset = 0f;
+    [SerializeField, JsonProperty] private float m_baseAngleOffset = 0f;
 
-    [SerializeField]
-    private float m_lineAngleOffset = Mathf.PI * 0.5f;
+    [SerializeField, JsonProperty] private float m_lineAngleOffset = Mathf.PI * 0.5f;
 
     override public Vector3 ComputePosition(Vector3 center, Quaternion rotation, int index)
     {

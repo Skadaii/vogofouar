@@ -10,8 +10,10 @@ using TMPro;
 
 public class MenuController : MonoBehaviour
 {
-    //  Variables
-    //  ---------
+    [SerializeField]
+    private string[] m_instancedFormationDirectories = null;
+
+    private List<FormationRule> m_instancedRules = new List<FormationRule>();
 
     [SerializeField] private Transform m_playerUI = null;
 
@@ -68,6 +70,7 @@ public class MenuController : MonoBehaviour
             m_capturedTargetsText = CapturedTargetsTextTransform.GetComponent<Text>();
         }
     }
+
     void Start()
     {
         m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
@@ -75,19 +78,8 @@ public class MenuController : MonoBehaviour
         m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
         m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
 
-        Transform ContentTransform = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
-
-        m_formationButtons = new Button[m_availableFormations.Length];
-        for (int i = 0; i < m_availableFormations.Length; i++)
-        {
-            GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
-
-            Button buttonComp = buttonGO.GetComponent<Button>();
-            m_formationButtons[i] = buttonComp;
-
-            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = m_availableFormations[i].name;
-        }
+        LoadAvailableRules();
+        InitializeInstanceViewport();
     }
 
     #endregion
@@ -227,8 +219,37 @@ public class MenuController : MonoBehaviour
         for (int i = 0; i < m_formationButtons.Length; i++)
         {
             Button button = m_formationButtons[i];
-            FormationRule currentFormation = m_availableFormations[i];
+            FormationRule currentFormation = m_instancedRules[i];
             button.onClick.AddListener(() => setSquadMethod(selectedUnit, currentFormation));
+        }
+    }
+
+
+    void LoadAvailableRules()
+    {
+        foreach (string formationDir in m_instancedFormationDirectories)
+        {
+            List<FormationRule> instancedRulesRange = FormationEditor.LoadInstancedRules(formationDir);
+
+            if (instancedRulesRange is not null)
+                m_instancedRules.AddRange(instancedRulesRange);
+        }
+    }
+
+    private void InitializeInstanceViewport()
+    {
+        Transform ContentTransform = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
+
+        m_formationButtons = new Button[m_instancedRules.Count];
+        for (int i = 0; i < m_instancedRules.Count; i++)
+        {
+            GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
+
+            Button buttonComp = buttonGO.GetComponent<Button>();
+            m_formationButtons[i] = buttonComp;
+
+            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+            textComp.text = m_instancedRules[i].name;
         }
     }
 }
