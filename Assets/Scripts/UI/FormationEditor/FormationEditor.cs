@@ -8,6 +8,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Data;
 using UnityEngine.Events;
+using AIPlanner.GOAP;
 
 public class FormationEditor : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class FormationEditor : MonoBehaviour
     private Transform m_formationParamContent = null;
 
     private List<GameObject> m_paramHolders = new List<GameObject>();
+
+    public UnityEvent<FormationRule> OnNewRuleCreated = new UnityEvent<FormationRule>();
 
     private float m_zoom = 1f;
 
@@ -196,6 +199,7 @@ public class FormationEditor : MonoBehaviour
         {
             m_instancedRules.Add(m_currRule);
             CreateInstanceRuleButton(m_currRule);
+            OnNewRuleCreated.Invoke(m_currRule);
         }
     }
 
