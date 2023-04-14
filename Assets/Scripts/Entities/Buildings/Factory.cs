@@ -1,14 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Factory : Building
 {
-    //  Internal objects
-    //  ----------------
-
     //  Variables
     //  ---------
 
@@ -25,8 +20,6 @@ public class Factory : Building
 
     //private const int MaxAvailableFactories = 3;
 
-    private UnitController m_controller = null;
-
     [SerializeField]
     private int m_maxBuildingQueueSize = 5;
     //private Queue<int> m_buildingQueue = new Queue<int>();
@@ -34,6 +27,8 @@ public class Factory : Building
 
     public Action<Unit> OnUnitFormed;
     private bool m_isWorking = false;
+
+    private float m_currentUsedResources = 0f;
 
     //  Properties
     //  ----------
@@ -55,7 +50,6 @@ public class Factory : Building
     protected override void Start()
     {
         base.Start();
-        m_controller = GameServices.GetControllerByTeam(m_team);
     }
 
     protected override void Update()
@@ -66,9 +60,11 @@ public class Factory : Building
 
         if(m_isWorking)
         {
-            if (Time.time > m_endBuildDate)
+            //if (Time.time > m_endBuildDate)
+
+            if(m_currentUsedResources >= m_requestedUnit.UnitData.cost)
             {
-                OnUnitFormed?.Invoke(BuildUnit());
+                OnUnitFormed?.Invoke(ProduceUnit());
                 OnUnitFormed = null; // remove registered methods
                 m_isWorking = false;
 
@@ -76,36 +72,46 @@ public class Factory : Building
                 if (m_unitQueue.Count != 0)
                 {
                     Unit unit = m_unitQueue.Dequeue();
-                    StartBuildUnit(unit);
+                    StartUnitProduction(unit);
                 }
             }
-            else if (m_hud != null)
-                m_hud.Progression = 1f - (m_endBuildDate - Time.time) / m_currentBuildDuration;
+            else
+            {
+                float resourceCosumption = Mathf.Min(FactoryData.resourceConsumptionPerSecond * Time.deltaTime, TeamController.CurrentResources);
+                TeamController.CurrentResources -= resourceCosumption;
+
+                m_currentUsedResources += resourceCosumption;
+
+                if (m_hud != null) 
+                    m_hud.Progression = m_currentUsedResources / m_requestedUnit.UnitData.cost;
+            }
         }
     }
 
     #endregion
 
-    #region Unit building methods
+    #region Unit production methods
 
-    public bool RequestUnitBuild(GameObject unitPrefab)
+    public bool RequestUnitProduction(GameObject unitPrefab)
     {
         Unit unit = unitPrefab.GetComponent<Unit>();
         if (unit == null) return false;
 
-        int cost = unit.Cost;
-        if (m_controller.TotalBuildPoints < cost || m_unitQueue.Count >= m_maxBuildingQueueSize)
-            return false;
+        //int cost = unit.Cost;
+        //if (TeamController.CurrentResources < cost || m_unitQueue.Count >= m_maxBuildingQueueSize)
+        //    return false;
 
-        m_controller.TotalBuildPoints -= cost;
+        //TeamController.CurrentResources -= cost;
 
-        StartBuildUnit(unit);
+        StartUnitProduction(unit);
 
         return true;
     }
 
-    private void StartBuildUnit(Unit unit)
+    private void StartUnitProduction(Unit unit)
     {
+        m_currentUsedResources = 0f;
+
         // Build queue
         if (m_isWorking)
         {
@@ -115,22 +121,23 @@ public class Factory : Building
         }
 
         m_requestedUnit = unit;
-        m_currentBuildDuration = unit.UnitData.buildDuration;
+        //m_currentBuildDuration = unit.UnitData.buildDuration;
 
         m_isWorking = true;
-        m_endBuildDate = Time.time + m_currentBuildDuration;
+        //m_endBuildDate = Time.time + m_currentBuildDuration;
 
         OnUnitFormed += (Unit unit) =>
         {
             if (unit != null)
             {
-                m_controller.AddUnit(unit);
-                //(m_controller as PlayerController)?.UpdateFactoryBuildQueueUI(m_requestedEntityBuildIndex);
+                TeamController.AddUnit(unit);
+                //(TeamController as PlayerController)?.UpdateFactoryBuildQueueUI(m_requestedEntityBuildIndex);
             }
         };
     }
+
     // Finally spawn requested unit
-    private Unit BuildUnit()
+    private Unit ProduceUnit()
     {
         //if (IsUnitIndexValid(m_requestedEntityBuildIndex) == false)
         //    return null;
@@ -172,35 +179,43 @@ public class Factory : Building
 
         return newUnit;
     }
-    public void CancelCurrentBuild()
+    public void CancelCurrentUnitProduction()
     {
         if (!m_isWorking) return;
 
         m_isWorking = false;
 
         // refund build points
-        m_controller.TotalBuildPoints += m_requestedUnit.Cost;
+        TeamController.CurrentResources += m_currentUsedResources;
         //foreach(int unitIndex in m_buildingQueue)
         //{
-        //    m_controller.TotalBuildPoints += GetUnitCost(unitIndex);
+        //    TeamController.TotalBuildPoints += GetUnitCost(unitIndex);
         //}
         //m_buildingQueue.Clear();
 
         //WIP
         foreach (Unit unit in m_unitQueue)
         {
-            m_controller.TotalBuildPoints += unit.Cost;
+            TeamController.CurrentResources += unit.Cost;
         }
         m_unitQueue.Clear();
 
         if (m_hud != null) m_hud.Progression = 0f;
 
-        m_currentBuildDuration = 0f;
+        //m_currentBuildDuration = 0f;
         m_requestedUnit = null;
 
         OnBuildCanceled?.Invoke();
         OnBuildCanceled = null;
     }
+
     #endregion
 
+
+    public override void Stop()
+    {
+        base.Stop();
+
+        if (m_isWorking) CancelCurrentUnitProduction();
+    }
 }

@@ -16,14 +16,13 @@ MonoBehaviour:
   typeId: 0
   caption: Light Factory
   cost: 10
-  buildDuration: 20
   maxHP: 500
-  constructionCost: 5
   deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
     type: 3}
   nbSpawnSlots: 10
   spawnRadius: 12
   radiusOffset: 4
+  resourceConsumptionPerSecond: 5
   availableUnits:
   - {fileID: 2088690731326722551, guid: 755c016812e6a584fb6de6ad7863fedd, type: 3}
   - {fileID: 4127249019806727215, guid: 4b4b4b087a9833d4ebd11b779171c5ff, type: 3}

@@ -82,7 +82,7 @@ public sealed class PlayerController : UnitController
         if (m_playerMenuController == null)
             Debug.LogWarning("could not find MenuController component !");
 
-        m_onBuildPointsUpdated += m_playerMenuController.UpdateBuildPointsUI;
+        m_onResourceUpdated += m_playerMenuController.UpdateBuildPointsUI;
         m_onCaptureTarget += m_playerMenuController.UpdateCapturedTargetsUI;
 
         m_cameraPlayer = Camera.main.GetComponent<PlayerCamera>();
@@ -157,21 +157,13 @@ public sealed class PlayerController : UnitController
     private void CheckInputModeStates()
     {
         if(m_wantedbuilding != null && HasSelectedUnits)
-        {
             ChangeMode(InputMode.BuildMode);
-        }
         else if (HasSelectedUnits)
-        {
             ChangeMode(InputMode.UnitSelected);
-        }
         else if (HasSelectedBuildings)
-        {
             ChangeMode(InputMode.BuildingSelected);
-        }
         else
-        {
             ChangeMode(InputMode.None);
-        }
     }
 
     #endregion
@@ -201,7 +193,7 @@ public sealed class PlayerController : UnitController
         }
 
         // cancel build
-        if (Input.GetKeyDown(KeyCode.C)) CancelCurrentBuild();
+        //if (Input.GetKeyDown(KeyCode.C)) CancelCurrentBuild();
     }
 
     private void SetTargetCursorPosition(Vector3 pos)
@@ -221,11 +213,11 @@ public sealed class PlayerController : UnitController
             m_cameraPlayer.FocusEntity(m_buildingList[0], smooth);
         }
     }
-    private void CancelCurrentBuild()
-    {
-        m_selectedBuildings?.CancelCurrentBuild();
-        m_playerMenuController.HideAllFactoryBuildQueue();
-    }
+    //private void CancelCurrentBuild()
+    //{
+    //    m_selectedBuildings?.CancelCurrentUnitProduction();
+    //    //m_playerMenuController.HideAllFactoryBuildQueue();
+    //}
 
 
     #region Selection methods
@@ -459,12 +451,12 @@ public sealed class PlayerController : UnitController
 
     protected override void UnselectCurrentFactory()
     {
-        if (m_selectedBuildings)
-        {
-            m_playerMenuController.UnregisterBuildButtons(m_selectedBuildings.AvailableUnitsCount);
-        }
+        //if (m_selectedBuildings)
+        //{
+        //    m_playerMenuController.UnregisterBuildButtons(m_selectedBuildings.AvailableUnitsCount);
+        //}
 
-        m_playerMenuController.HideFactoryMenu();
+        //m_playerMenuController.HideFactoryMenu();
 
         base.UnselectCurrentFactory();
     }
@@ -474,7 +466,6 @@ public sealed class PlayerController : UnitController
     }
 
     #endregion
-
 
 
     #region Unit Selected Mode
@@ -624,8 +615,6 @@ public sealed class PlayerController : UnitController
     #endregion
 
 
-
-
     #region Build Mode
 
     private void BuildModeUpdate()
@@ -702,16 +691,13 @@ public sealed class PlayerController : UnitController
             floorPos = raycastInfo.point;
             m_wantedBuildingPreview.transform.position = floorPos;
         }
-
-        Debug.Log($"{floorPos} -- {GameServices.PlayableBounds.size}");
         return floorPos;
     }
 
     #endregion
 
 
-
-        #region Camera methods
+    #region Camera methods
 
     private void CameraUpdate()
     {

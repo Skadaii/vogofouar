@@ -40,7 +40,17 @@ public class Builder : Unit
         {
             if(Vector3.SqrMagnitude(m_buildingTarget.transform.position - transform.position) <= m_builderData.buildingDistanceMax * m_builderData.buildingDistanceMax)
             {
-                m_buildingTarget.Repair(m_builderData.bps * Time.deltaTime);
+                float resource = Mathf.Min(m_builderData.bps * Time.deltaTime, TeamController.CurrentResources);
+
+                TeamController.CurrentResources -= resource;
+
+                float extra = m_buildingTarget.Repair(resource);
+
+                if(extra > 0)
+                {
+                    TeamController.CurrentResources += extra;
+                    m_buildingTarget = null;
+                }
             }
         }
     }

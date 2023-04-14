@@ -11,10 +11,10 @@ public class FactoryDataScriptable : BuildingDataScriptable
     public int spawnRadius = 12;
     public int radiusOffset = 4;
 
+    public float resourceConsumptionPerSecond = 10f;
+
     [Header("Available Entities")]
     public GameObject[] availableUnits = null;
-    //public GameObject[] availableFactories = null;
-
 
     private List<Command> m_factoryCommand;
     public override Command[] Commands => base.Commands.Concat(m_factoryCommand).ToArray();
@@ -29,7 +29,7 @@ public class FactoryDataScriptable : BuildingDataScriptable
         {
             if (unitPrefab.TryGetComponent(out Unit unit))
             {
-                m_factoryCommand.Add(new BuildCommand(unitPrefab.name, newMethod: "RequestUnitBuild", icon: unit.EntityData.icon, toBuild: unitPrefab));
+                m_factoryCommand.Add(new BuildCommand(unitPrefab.name, newMethod: "RequestUnitProduction", icon: unit.EntityData.icon, toBuild: unitPrefab));
             }
         }
     }

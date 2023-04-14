@@ -13,9 +13,9 @@ public class UnitController : MonoBehaviour
     protected ETeam m_team;
 
     [SerializeField]
-    protected int m_startingBuildPoints = 15;
+    protected float m_startingResources = 15f;
 
-    protected int m_totalBuildPoints = 0;
+    protected float m_currentResources = 0f;
 
     protected int m_capturedTargets = 0;
     protected Transform m_teamRoot = null;
@@ -27,7 +27,7 @@ public class UnitController : MonoBehaviour
     protected Factory m_selectedBuildings = null;
 
     // events
-    protected Action m_onBuildPointsUpdated;
+    protected Action m_onResourceUpdated;
     protected Action m_onCaptureTarget;
 
     [SerializeField] private GameObject m_virtualLeaderPrefab = null;
@@ -36,14 +36,13 @@ public class UnitController : MonoBehaviour
 
     //  Properties
 
-    public int TotalBuildPoints
+    public float CurrentResources
     {
-        get { return m_totalBuildPoints; }
+        get { return m_currentResources; }
         set
         {
-            Debug.Log("TotalBuildPoints updated");
-            m_totalBuildPoints = value;
-            m_onBuildPointsUpdated?.Invoke();
+            m_currentResources = value;
+            m_onResourceUpdated?.Invoke();
         }
     }
 
@@ -143,7 +142,7 @@ public class UnitController : MonoBehaviour
     {
         unit.onDeathEvent += () =>
         {
-            TotalBuildPoints += unit.Cost;
+            //CurrentResources += unit.Cost;
             if (unit.IsSelected)
                 m_selectedUnitList.Remove(unit);
             UnitList.Remove(unit);
@@ -153,12 +152,12 @@ public class UnitController : MonoBehaviour
     public void CaptureTarget(int points)
     {
         Debug.Log("CaptureTarget");
-        TotalBuildPoints += points;
+        //CurrentResources += points;
         CapturedTargets++;
     }
     public void LoseTarget(int points)
     {
-        TotalBuildPoints -= points;
+        //CurrentResources -= points;
         CapturedTargets--;
     }
 
@@ -225,7 +224,7 @@ public class UnitController : MonoBehaviour
 
         factory.onDeathEvent += () =>
         {
-            TotalBuildPoints += factory.Cost;
+            //CurrentResources += factory.Cost;
             if (factory.IsSelected)
                 m_selectedBuildings = null;
             m_buildingList.Remove(factory);
@@ -249,13 +248,7 @@ public class UnitController : MonoBehaviour
     }
 
 
-    protected bool RequestUnitBuild(GameObject unit)
-    {
-        if (m_selectedBuildings == null)
-            return false;
-        return m_selectedBuildings.RequestUnitBuild(unit);
-    }
-
+    protected bool RequestUnitProduction(GameObject unit) => m_selectedBuildings != null ? m_selectedBuildings.RequestUnitProduction(unit) : false;
 
     protected virtual bool ConstructBuilding(GameObject building, Vector3 position)
     {
@@ -289,7 +282,7 @@ public class UnitController : MonoBehaviour
         if(building == null) return false;
 
         int cost = building.Cost;
-        if (TotalBuildPoints < cost) return false;
+        //if (CurrentResources < cost) return false;
 
         // Check if positon is valid
         if (CanPlaceBuilding(buildingPrefab, buildPos) == false)
@@ -302,7 +295,7 @@ public class UnitController : MonoBehaviour
         if (createdBuilding != null)
         {
             if(createdBuilding as Factory != null) AddFactory(createdBuilding as Factory);
-            TotalBuildPoints -= cost;
+            //CurrentResources -= cost;
 
             foreach(Builder builder in builders)
             {
@@ -327,7 +320,7 @@ public class UnitController : MonoBehaviour
     virtual protected void Start ()
     {
         CapturedTargets = 0;
-        TotalBuildPoints = m_startingBuildPoints;
+        CurrentResources = m_startingResources;
 
         // get all team factory already in scene
         Factory [] allFactories = FindObjectsOfType<Factory>();

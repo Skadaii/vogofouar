@@ -7,9 +7,7 @@ using static Entity;
 public class BuilderDataScriptable : UnitDataScriptable
 {
     [Header("Building")]
-    public bool canBuild = false;
     public float bps = 10f;
-    public float buildingFrequency = 1f;
     public float buildingDistanceMax = 10f;
 
     [Header("Repairing")]
