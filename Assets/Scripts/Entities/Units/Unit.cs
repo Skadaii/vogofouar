@@ -26,14 +26,8 @@ public abstract class Unit : Entity
     private List<Vector3> m_patrolPoint = new List<Vector3>();
     private int m_patrolIndex = 0;
 
-    private static List<Command> m_unitCommands;
-
     //  Properties
     //  ----------
-
-    public new static Command[] Commands => Entity.Commands.Concat(m_unitCommands).ToArray();
-    public override Command[] TypeCommands => Commands;
-
     public abstract UnitDataScriptable UnitData { get; }
     public override EntityDataScriptable EntityData => UnitData;
 
@@ -87,15 +81,6 @@ public abstract class Unit : Entity
         base.Awake();
 
         InitializeNavMeshAgent();
-
-        //  Initialize unit commands
-        m_unitCommands ??= new List<Command>
-        {
-            new LocationCommand(newActionName: "Move", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
-            new TargetCommand(newActionName: "Move", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
-            new LocationCommand(newActionName: "Patrol", newMethod:"AddPatrolPoint", icon: Resources.Load<Sprite>("Textures/T_Patrol"))
-        };
-
     }
 
     protected virtual new void Update()

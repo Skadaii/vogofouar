@@ -15,15 +15,10 @@ public class Builder : Unit
     [SerializeField]
     private BuilderDataScriptable m_builderData = null;
 
-    private static List<Command> m_builderCommands;
-
     private Building m_buildingTarget;
 
     //  Properties
     //  ----------
-
-    public new static Command[] Commands => Unit.Commands.Concat(m_builderCommands).ToArray();
-    public override Command[] TypeCommands => Commands;
     public override UnitDataScriptable UnitData => m_builderData;
 
     //  Functions
@@ -35,24 +30,6 @@ public class Builder : Unit
     protected virtual new void Awake()
     {
         base.Awake();
-
-        //  Initialize builder commands
-
-        if(m_builderCommands == null)
-        {
-            m_builderCommands ??= new List<Command>
-            {
-                new TargetCommand("BuildTarget", newMethod: "Build", icon: Resources.Load<Sprite>("Textures/T_cross"))
-            };
-
-            foreach (GameObject buildingPrefab in m_builderData.availableBuildings)
-            {
-                if(buildingPrefab.TryGetComponent(out Building building))
-                {
-                    m_builderCommands.Add(new BuildCommand(buildingPrefab.name, newMethod: "RequestBuild", icon: building.BuildingData.icon, toBuild: buildingPrefab));
-                }
-            }
-        }
     }
 
     protected virtual new void Update()
@@ -69,6 +46,8 @@ public class Builder : Unit
     }
 
     #endregion
+
+
     // Targetting Task - capture
     public void SetCaptureTarget(Entity target)
     {

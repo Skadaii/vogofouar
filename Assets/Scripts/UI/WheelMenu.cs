@@ -66,7 +66,7 @@ public class WheelMenu : MonoBehaviour
         {
             //centerPosition += unit.transform.position;
             m_entities.Add(unit);
-            foreach (Entity.Command command in unit.TypeCommands)
+            foreach (Entity.Command command in unit.Commands)
             {
                 if(command as Entity.VoidCommand != null) TryAddCommand(command);
                 else if(command as Entity.BuildCommand != null) TryAddCommand(command);
@@ -93,7 +93,7 @@ public class WheelMenu : MonoBehaviour
             m_entities.Add(unit);
             //centerPosition += unit.transform.position;
 
-            foreach (Entity.Command command in unit.TypeCommands)
+            foreach (Entity.Command command in unit.Commands)
             {
                 if (command as Entity.VoidCommand != null) TryAddCommand(command);
                 else if (command as Entity.BuildCommand != null) TryAddCommand(command);
@@ -129,7 +129,7 @@ public class WheelMenu : MonoBehaviour
 
         m_entities.Add(building);
 
-        foreach (Entity.Command command in building.TypeCommands)
+        foreach (Entity.Command command in building.Commands)
         {
             if (command as Entity.VoidCommand != null) TryAddCommand(command);
             else if (command as Entity.BuildCommand != null) TryAddCommand(command);

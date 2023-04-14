@@ -22,14 +22,8 @@ public abstract class Building : Entity
     public Action<Building> OnBuildingBuilt;
     public Action OnBuildCanceled;
 
-    private static List<Command> m_buildingCommands;
-
     //  Properties
     //  ----------
-
-    public new static Command[] Commands => Entity.Commands.Concat(m_buildingCommands).ToArray();
-    public override Command[] TypeCommands => Commands;
-
     public abstract BuildingDataScriptable BuildingData { get; }
     public override EntityDataScriptable EntityData => BuildingData;
 
@@ -56,11 +50,6 @@ public abstract class Building : Entity
         if (m_hud != null) m_hud.Progression = 0f;
         
         onDeathEvent += Building_OnDestruction;
-
-        //  Initialize building commands
-        m_buildingCommands ??= new List<Command>
-        {
-        };
     }
 
     protected virtual new void Start()

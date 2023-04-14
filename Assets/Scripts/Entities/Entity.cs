@@ -33,13 +33,10 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     public System.Action onDeathEvent;
 
-    private static List<Command> m_entityCommands;
-
     //  Properties
     //  ----------
     public abstract EntityDataScriptable EntityData { get; }
-    public static Command[] Commands => m_entityCommands.ToArray();
-    public virtual Command[] TypeCommands => Commands;
+    public Command[] Commands => EntityData.Commands;
 
     public GameObject GFX => m_GFX;
     public bool IsAlive { get; protected set; }
@@ -93,12 +90,6 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
         m_visibility = GetComponent<EntityVisibility>();
         m_hud = transform.GetComponentInChildren<EntityHUD>();
         if(m_selectedSprite != null) m_selectedSprite.SetActive(false);
-
-        //  Initialize commands
-        m_entityCommands ??= new List<Command>
-        {
-            new VoidCommand(newActionName: "Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/T_cross"))
-        };
 
         HealthPoint = MaxHealthPoints = EntityData.maxHP;
     }

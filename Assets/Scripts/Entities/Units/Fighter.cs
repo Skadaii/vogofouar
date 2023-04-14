@@ -16,13 +16,8 @@ public class Fighter : Unit
 
     private Transform m_bulletSlot;
 
-    private static List<Command> m_fighterCommands;
-
     //  Properties
     //  ----------
-
-    public new static Command[] Commands => Unit.Commands.Concat(m_fighterCommands).ToArray();
-    public override Command[] TypeCommands => Commands;
 
     public override UnitDataScriptable UnitData => m_fighterData;
 
@@ -36,11 +31,6 @@ public class Fighter : Unit
         base.Awake();
 
         m_bulletSlot = transform.Find("BulletSlot");
-
-        //  Initialize fighter commands
-        m_fighterCommands ??= new List<Command>
-        {
-        };
     }
 
     protected virtual new void Update()

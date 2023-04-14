@@ -35,14 +35,8 @@ public class Factory : Building
     public Action<Unit> OnUnitFormed;
     private bool m_isWorking = false;
 
-    private static List<Command> m_factoryCommands;
-
     //  Properties
     //  ----------
-
-    public new static Command[] Commands => Building.Commands.Concat(m_factoryCommands).ToArray();
-    public override Command[] TypeCommands => Commands;
-
     public override BuildingDataScriptable BuildingData => m_factoryData;
     public FactoryDataScriptable FactoryData { get { return m_factoryData; } }
     public int AvailableUnitsCount { get { return Mathf.Min(MAX_AVAILABLE_UNITS, m_factoryData.availableUnits.Length); } }
@@ -56,21 +50,6 @@ public class Factory : Building
     protected override void Awake()
     {
         base.Awake();
-
-        //  Initialize factory commands
-
-        if (m_factoryCommands == null)
-        {
-            m_factoryCommands = new List<Command>();
-
-            foreach (GameObject unitPrefabs in m_factoryData.availableUnits)
-            {
-                if (unitPrefabs.TryGetComponent(out Unit unit))
-                {
-                    m_factoryCommands.Add(new BuildCommand(unitPrefabs.name, newMethod: "RequestUnitBuild", icon: unit.UnitData.icon, toBuild: unitPrefabs));
-                }
-            }
-        }
     }
 
     protected override void Start()
