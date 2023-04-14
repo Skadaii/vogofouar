@@ -13,6 +13,10 @@ public class UnitDataScriptable : EntityDataScriptable
     public float acceleration = 20f;
     public bool isFlying = false;
 
+    [Header("Capture")]
+    public float captureDistance = 5f;
+    public float capturePointPerSecond = 5f;
+
     [Header("Death FX")]
     public GameObject deathFXPrefab = null;
 

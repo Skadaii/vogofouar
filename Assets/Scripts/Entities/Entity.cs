@@ -186,7 +186,6 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
     
     #endregion
 
-
     #region IRepairable
 
     virtual public bool NeedsRepairing()

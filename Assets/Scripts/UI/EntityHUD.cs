@@ -24,10 +24,8 @@ public class EntityHUD : MonoBehaviour
     private Slider m_progressBar;
     [SerializeField]
     private Image m_progressFill;
-    [SerializeField]
-    private Color m_highProgressColor;
-    [SerializeField]
-    private Color m_lowProgressColor;
+    public Color highProgressColor;
+    public Color lowProgressColor;
 
     public float Health
     {
@@ -91,5 +89,5 @@ public class EntityHUD : MonoBehaviour
 
     private void SetHealthBarColor() => m_healthFill.color = Color.Lerp(m_lowHealthColor, m_highHealthColor, m_healthBar.value / m_healthBar.maxValue);
 
-    private void SetProgressBarColor() => m_progressFill.color = Color.Lerp(m_lowProgressColor, m_highProgressColor, m_progressBar.value / m_progressBar.maxValue);
+    private void SetProgressBarColor() => m_progressFill.color = Color.Lerp(lowProgressColor, highProgressColor, m_progressBar.value / m_progressBar.maxValue);
 }

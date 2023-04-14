@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.CanvasScaler;
 
 public class StaticBuilding : Building
 {
@@ -10,30 +11,24 @@ public class StaticBuilding : Building
     private BuildingDataScriptable m_buildingDatas;
 
     [SerializeField]
-    private float m_captureGaugeStart = 100f;
-    [SerializeField]
-    private float m_captureGaugeSpeed = 1f;
-    [SerializeField]
-    private int m_buildPoints = 5;
-    [SerializeField]
-    private Material m_blueTeamMaterial = null;
-    [SerializeField]
-    private Material m_redTeamMaterial = null;
+    private float m_requiredCapturePoint = 100f;
 
     private Material m_neutralMaterial = null;
     private MeshRenderer m_buildingMeshRenderer = null;
-    private Image m_gaugeImage;
-    //private Image m_minimapImage;
 
-    private int[] m_teamScore;
-    private float m_captureGaugeValue;
-    private ETeam m_owningTeam = ETeam.Neutral;
-    private ETeam m_capturingTeam = ETeam.Neutral;
+    private float[] m_teamCaptureScore = { 0, 0 };
+
+    //  TODO : Create scriptable object for static buildingss ?
+    private float m_resourcePerSecond = 1f;
+    private float m_capturePointDecreasePerSecond = 1f;
+    private float m_capturePoints = 1f;
     //  Properties
     //  ----------
 
     public override BuildingDataScriptable BuildingData => m_buildingDatas;
 
+    private ETeam CapturingTeam => m_teamCaptureScore[(int)ETeam.Blue] > m_teamCaptureScore[(int)ETeam.Red] ? ETeam.Blue : 
+        (m_teamCaptureScore[(int)ETeam.Blue] < m_teamCaptureScore[(int)ETeam.Red] ? ETeam.Red : ETeam.Neutral);
 
     //  Functions
     //  ---------
@@ -57,13 +52,6 @@ public class StaticBuilding : Building
         m_buildingMeshRenderer = GetComponentInChildren<MeshRenderer>();
         m_neutralMaterial = m_buildingMeshRenderer.material;
 
-        m_gaugeImage = GetComponentInChildren<Image>();
-        if (m_gaugeImage)
-            m_gaugeImage.fillAmount = 0f;
-        m_captureGaugeValue = m_captureGaugeStart;
-        m_teamScore = new int[2];
-        m_teamScore[0] = 0;
-        m_teamScore[1] = 0;
 
         Transform iconTransform = transform.Find("Icon");
         if (iconTransform != null)
@@ -74,17 +62,24 @@ public class StaticBuilding : Building
     {
         base.Update();
 
-        if (m_capturingTeam == m_owningTeam || m_capturingTeam == ETeam.Neutral)
-            return;
-
-        m_captureGaugeValue -= m_teamScore[(int)m_capturingTeam] * m_captureGaugeSpeed * Time.deltaTime;
-
-        m_gaugeImage.fillAmount = 1f - m_captureGaugeValue / m_captureGaugeStart;
-
-        if (m_captureGaugeValue <= 0f)
+        if(Team != ETeam.Neutral)
         {
-            m_captureGaugeValue = 0f;
-            OnCaptured(m_capturingTeam);
+            TeamController.CurrentResources += m_resourcePerSecond * Time.deltaTime;
+        }
+
+        if(CapturingTeam == Team)
+        {
+            m_hud.Progression = 0f;
+        }
+        else
+        {
+            m_hud.highProgressColor = GameServices.GetTeamColor(CapturingTeam);
+            m_capturePoints = m_teamCaptureScore[(int)CapturingTeam];
+            float percent = m_capturePoints / m_requiredCapturePoint;
+            m_hud.Progression = percent;
+
+            if(percent >= 1f)
+                OnCaptured(CapturingTeam);
         }
     }
 
@@ -93,79 +88,34 @@ public class StaticBuilding : Building
 
     #region Capture methods
 
-    public void StartCapture(Unit unit)
+
+    public bool ComputeCapture(Unit unit)
     {
-        if (unit == null)
-            return;
+        if (unit.Team == Team) return false;
 
-        m_teamScore[(int)unit.Team] += unit.Cost;
+        m_teamCaptureScore[(int)unit.Team] = Mathf.Min(m_teamCaptureScore[(int)unit.Team] + unit.UnitData.capturePointPerSecond * Time.deltaTime, m_requiredCapturePoint);
 
-        if (m_capturingTeam == ETeam.Neutral)
-        {
-            if (m_teamScore[(int)GameServices.GetOpponent(unit.Team)] == 0)
-            {
-                m_capturingTeam = unit.Team;
-                m_gaugeImage.color = GameServices.GetTeamColor(m_capturingTeam);
-            }
-        }
-        else
-        {
-            if (m_teamScore[(int)GameServices.GetOpponent(unit.Team)] > 0)
-                ResetCapture();
-        }
-    }
-
-    public void StopCapture(Unit unit)
-    {
-        if (unit == null)
-            return;
-
-        m_teamScore[(int)unit.Team] -= unit.Cost;
-        if (m_teamScore[(int)unit.Team] == 0)
-        {
-            ETeam opponentTeam = GameServices.GetOpponent(unit.Team);
-            if (m_teamScore[(int)opponentTeam] == 0)
-            {
-                ResetCapture();
-            }
-            else
-            {
-                m_capturingTeam = opponentTeam;
-                m_gaugeImage.color = GameServices.GetTeamColor(m_capturingTeam);
-            }
-        }
-    }
-
-    void ResetCapture()
-    {
-        m_captureGaugeValue = m_captureGaugeStart;
-        m_capturingTeam = ETeam.Neutral;
-        m_gaugeImage.fillAmount = 0f;
+        return true;
     }
 
     void OnCaptured(ETeam newTeam)
     {
         Debug.Log("target captured by " + newTeam.ToString());
-        if (m_owningTeam != newTeam)
+        if (Team != newTeam)
         {
             UnitController teamController = GameServices.GetControllerByTeam(newTeam);
-            if (teamController != null)
-                teamController.CaptureTarget(m_buildPoints);
 
-            if (m_owningTeam != ETeam.Neutral)
+            if (Team != ETeam.Neutral)
             {
                 // remove points to previously owning team
-                teamController = GameServices.GetControllerByTeam(m_owningTeam);
-                if (teamController != null)
-                    teamController.LoseTarget(m_buildPoints);
+                teamController = GameServices.GetControllerByTeam(Team);
             }
         }
 
-        ResetCapture();
-        m_owningTeam = newTeam;
-        if (Visibility) { Visibility.Team = m_owningTeam; }
-        if (m_icon) { m_icon.color = GameServices.GetTeamColor(m_owningTeam); }
-        m_buildingMeshRenderer.material = newTeam == ETeam.Blue ? m_blueTeamMaterial : m_redTeamMaterial;
+        m_team = newTeam;
+        if (Visibility) { Visibility.Team = Team; }
+        if (m_icon) { m_icon.color = GameServices.GetTeamColor(Team); }
+        m_buildingMeshRenderer.material = GameServices.GetDefaultTeamMaterial(newTeam);
     }
 
     #endregion

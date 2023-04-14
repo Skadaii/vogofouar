@@ -572,10 +572,20 @@ public sealed class PlayerController : UnitController
 
                 if (other.Team != Team)
                 {
-                  // Direct call to attacking task $$$ to be improved by AI behaviour
-                  foreach (Fighter unit in m_selectedUnitList)
-                      if(unit != null)
-                          unit.SetAttackTarget(other);
+                    if(other is StaticBuilding)
+                    {
+                        // Direct call to attacking task $$$ to be improved by AI behaviour
+                        foreach (Unit unit in m_selectedUnitList)
+                            if (unit != null)
+                                unit.SetCaptureTarget(other);
+                    }
+                    else
+                    {
+                        // Direct call to attacking task $$$ to be improved by AI behaviour
+                        foreach (Fighter fighter in m_selectedUnitList)
+                            if (fighter != null)
+                                fighter.SetAttackTarget(other);
+                    }
                 }
                 else if (other.NeedsRepairing())
                 {

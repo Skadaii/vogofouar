@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -12,7 +14,6 @@ public abstract class Unit : Entity
     protected float m_lastActionDate = 0f;
     protected NavMeshAgent m_navMeshAgent;
     protected Entity m_target = null;
-
     //  Squad system variables
 
     protected UnitSquad m_squad = null;
@@ -91,6 +92,15 @@ public abstract class Unit : Entity
             }
             m_navMeshAgent.SetDestination(m_patrolPoint[m_patrolIndex]);
         }
+
+
+        if (m_target != null)
+        {
+            if (m_target.Team != Team)
+            {
+                if (m_target is StaticBuilding && CanCapture(m_target)) ComputeCapture();
+            }
+        }
     }
 
     #endregion
@@ -141,6 +151,83 @@ public abstract class Unit : Entity
     override public void FullRepair()
     {
         Repair(UnitData.maxHP);
+    }
+
+    #endregion
+
+
+    #region Capture methods
+    
+    //  Capture Task
+
+
+    public void SetCaptureTarget(Entity target)
+    {
+        StaticBuilding buildingToCapture = target as StaticBuilding;
+        if (buildingToCapture == null) return;
+
+        m_target = buildingToCapture;
+
+        if (CanCapture(target)) return;
+
+        if (m_navMeshAgent)
+        {
+            m_navMeshAgent.SetDestination(target.transform.position);
+            m_navMeshAgent.isStopped = false;
+        }
+    }
+
+    //public void StartCapture(Entity target)
+    //{
+    //    StaticBuilding buildingToCapture = target as StaticBuilding;
+    //    if (buildingToCapture == null) return;
+
+    //    if (Vector3.SqrMagnitude(buildingToCapture.transform.position - transform.position) > UnitData.captureDistance * UnitData.captureDistance)
+    //        return;
+
+    //    if (m_navMeshAgent) m_navMeshAgent.isStopped = true;
+
+    //    buildingToCapture.StartCapture(this);
+    //}
+
+    private void ComputeCapture()
+    {
+        StaticBuilding buildingToCapture = m_target as StaticBuilding;
+        if (buildingToCapture == null) return;
+
+        if (m_navMeshAgent) m_navMeshAgent.isStopped = true;
+
+        if(!buildingToCapture.ComputeCapture(this))
+        {
+            m_target = null;
+        }
+    }
+
+    //public void StopCapture()
+    //{
+    //    StaticBuilding buildingToCapture = m_target as StaticBuilding;
+    //    if (buildingToCapture == null) return;
+
+    //    buildingToCapture.StopCapture(this);
+    //    m_target = null;
+    //}
+
+    public bool CanCapture(Entity target)
+    {
+        if (target == null || target is not StaticBuilding) return false;
+
+        // distance check
+        if ((target.transform.position - transform.position).sqrMagnitude > UnitData.captureDistance * UnitData.captureDistance)
+            return false;
+
+        return true;
+    }
+
+
+    public bool IsCapturing()
+    {
+        StaticBuilding buildingToCapture = m_target as StaticBuilding;
+        return buildingToCapture != null;
     }
 
     #endregion

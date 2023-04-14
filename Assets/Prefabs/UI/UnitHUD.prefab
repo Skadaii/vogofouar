@@ -349,8 +349,8 @@ MonoBehaviour:
   m_healthDurationUpdate: 0.1
   m_progressBar: {fileID: 1892555783842418720}
   m_progressFill: {fileID: 1792119081660139770}
-  m_highProgressColor: {r: 0.5176471, g: 0.91764706, b: 1, a: 1}
-  m_lowProgressColor: {r: 0.2432212, g: 0.21644709, b: 0.5377358, a: 1}
+  highProgressColor: {r: 0.35671055, g: 0.53996897, b: 0.6792453, a: 1}
+  lowProgressColor: {r: 0.5251572, g: 0.9368935, b: 1, a: 1}
 --- !u!114 &5845609200263581665
 MonoBehaviour:
   m_ObjectHideFlags: 0

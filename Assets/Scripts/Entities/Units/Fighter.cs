@@ -1,4 +1,6 @@
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Fighters can only destroy enemies
@@ -36,7 +38,10 @@ public class Fighter : Unit
 
         if (m_target != null)
         {
-            if (m_target.Team != Team && m_target.Team != ETeam.Neutral) ComputeAttack();
+            if (m_target.Team != Team && m_target.Team != ETeam.Neutral)
+            {
+                if(m_target is not StaticBuilding) ComputeAttack();
+            }
         }
     }
 
@@ -46,8 +51,17 @@ public class Fighter : Unit
     // Targetting Task - attack
     public void SetAttackTarget(Entity target)
     {
-        if (CanAttack(target) && target.Team != Team)
-            StartAttacking(target);
+        if (target.Team == Team) return;
+
+        m_target = target;
+
+        if (CanAttack(target)) return;
+
+        if (m_navMeshAgent)
+        {
+            m_navMeshAgent.SetDestination(target.transform.position);
+            m_navMeshAgent.isStopped = false;
+        }
     }
 
     public bool CanAttack(Entity target)

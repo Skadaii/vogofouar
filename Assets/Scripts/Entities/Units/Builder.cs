@@ -37,6 +37,8 @@ public class Builder : Unit
         {
             if(Vector3.SqrMagnitude(m_buildingTarget.transform.position - transform.position) <= m_builderData.buildingDistanceMax * m_builderData.buildingDistanceMax)
             {
+                if (m_navMeshAgent) m_navMeshAgent.isStopped = true;
+
                 float resource = Mathf.Min(m_builderData.bps * Time.deltaTime, TeamController.CurrentResources);
 
                 TeamController.CurrentResources -= resource;
@@ -53,48 +55,6 @@ public class Builder : Unit
     }
 
     #endregion
-
-
-    // Targetting Task - capture
-    public void SetCaptureTarget(Entity target)
-    {
-        if (CanCapture(target) == false)
-            return;
-
-        if (m_target != null)
-            m_target = null;
-
-        //if (IsCapturing())
-        //    StopCapture();
-
-        //if (target.Team != Team)
-        //    StartCapture(target);
-    }
-
-    // Targetting Task - repairing
-    public void SetRepairTarget(Entity entity)
-    {
-        if (CanRepair(entity) == false)
-            return;
-
-        //if (m_captureTarget != null)
-        //    StopCapture();
-
-        if (entity.Team == Team)
-            StartRepairing(entity);
-    }
-
-    public bool CanCapture(Entity target)
-    {
-        if (target == null)
-            return false;
-
-        // distance check
-        if ((target.transform.position - transform.position).sqrMagnitude > m_builderData.captureDistanceMax * m_builderData.captureDistanceMax)
-            return false;
-
-        return true;
-    }
 
     // Repairing Task
     public bool CanRepair(Entity target)
