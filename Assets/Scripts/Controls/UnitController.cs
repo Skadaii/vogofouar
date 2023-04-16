@@ -332,9 +332,10 @@ public class UnitController : MonoBehaviour
 
         Debug.Log("found " + m_buildingList.Count + " factory for team " + Team.ToString());
     }
+
     virtual protected void Update ()
     {
-		
-	}
+
+    }
     #endregion
 }

@@ -602,12 +602,12 @@ public sealed class PlayerController : UnitController
         {
             Vector3 newPos = raycastInfo.point;
             SetTargetCursorPosition(newPos);
-            MoveUnits(m_selectedUnitList, newPos);
+            MoveUnits(newPos);
         }
     }
 
 
-    private void MoveUnits(List<Unit> units, Vector3 squadTarget)
+    private void MoveUnits(Vector3 squadTarget)
     {
         if (m_selectedUnitList.Count == 1)
         {
@@ -619,7 +619,7 @@ public sealed class PlayerController : UnitController
 
         UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
 
-        newSquad.m_leaderComponent.MoveTo(squadTarget);
+        newSquad.m_leaderComponent.SetTargetPosition(squadTarget);
     }
 
     #endregion

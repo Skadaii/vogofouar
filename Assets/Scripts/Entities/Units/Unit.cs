@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -17,8 +15,6 @@ public abstract class Unit : Entity
     //  Squad system variables
 
     protected UnitSquad m_squad = null;
-    protected float m_lastAttackedTime = 0f;
-    protected Unit m_agressor;
 
     private List<Vector3> m_patrolPoint = new List<Vector3>();
     private int m_patrolIndex = 0;
@@ -48,18 +44,6 @@ public abstract class Unit : Entity
 
             if (m_squad is not null)
                 m_squad.Units.Add(this);
-        }
-    }
-    public Unit Agressor
-    {
-        get => m_agressor;
-
-        set
-        {
-            m_agressor = value;
-
-            if (m_agressor)
-                m_lastAttackedTime = Time.time;
         }
     }
 
@@ -155,7 +139,6 @@ public abstract class Unit : Entity
 
     #endregion
 
-
     #region Capture methods
     
     //  Capture Task
@@ -234,11 +217,7 @@ public abstract class Unit : Entity
 
 
     #region Squad methods : Alert
-    private void Alert()
-    {
-        m_squad.ReceiveAlert(this);
-    }
-
+  
     #endregion
 
     // Moving Task

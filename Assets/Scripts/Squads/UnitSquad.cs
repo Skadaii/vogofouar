@@ -20,10 +20,6 @@ public class UnitSquad
     public UnitLeader m_leaderComponent = null;
 
     private List<Unit> m_units = new List<Unit>();
-
-    public float m_defendRange = 2f;
-    public float m_alertMaxDistance = 10f;
-
     #endregion
 
     #region Properties
@@ -58,6 +54,7 @@ public class UnitSquad
     {
         UnityEngine.Object.Destroy(m_leaderComponent.gameObject);
     }
+
     public void InitializeLeader(GameObject leaderPrefab, Vector3 squadMiddle)
     {
         // If leader is null, set a virtual one
@@ -66,16 +63,6 @@ public class UnitSquad
         m_leaderComponent.Squad = this;
 
         //m_leaderComponent.m_onMoveChange += UpdatePositions;
-    }
-
-    public void ReceiveAlert(Unit fromUnit)
-    {
-        foreach (Unit unit in m_units)
-        {
-            //  One for all, all for one
-            if (Vector3.SqrMagnitude(unit.transform.position - fromUnit.transform.position) <= m_alertMaxDistance * m_alertMaxDistance)
-                unit.Agressor ??= fromUnit.Agressor;
-        }
     }
 
     public void UpdatePositions()
@@ -106,6 +93,5 @@ public class UnitSquad
 
         return leader.GetComponent<UnitLeader>();
     }
-
     #endregion
 }

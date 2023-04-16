@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -9016266341179929428}
   - component: {fileID: 7912077643285499108}
   - component: {fileID: 1981893886112161292}
+  - component: {fileID: 5858002665697639906}
   m_Layer: 0
   m_Name: Unit_Leader
   m_TagString: Untagged
@@ -109,3 +110,170 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5858002665697639906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7114013581813105076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56871a0b1e2d3344b2b0c5fb668f0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_worldState:
+    show: 0
+    states:
+    - show: 0
+      name: HasTargetPosition
+      stateValue:
+        m_value:
+          rid: 1854990848190316544
+      m_stateMethod:
+        m_methodName: HasTargetPosition
+        m_componentName: UnitLeader
+    - show: 0
+      name: IsMoving
+      stateValue:
+        m_value:
+          rid: 1854990848190316560
+      m_stateMethod:
+        m_methodName: 
+        m_componentName: 
+  m_actionSet:
+  - m_methodName: MoveToTarget
+    m_componentName: UnitLeader
+    name: MoveToTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 1
+      stateValue:
+        m_value:
+          rid: 1854990848190316563
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990848190316564
+      cost: 0
+  - m_methodName: CheckHasReachedTarget
+    m_componentName: UnitLeader
+    name: CheckHasReachedTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 0
+      stateValue:
+        m_value:
+          rid: 1854990848190316567
+    - show: 0
+      id: 1
+      stateValue:
+        m_value:
+          rid: 1854990848190316568
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 1
+        stateValue:
+          m_value:
+            rid: 1854990848190316569
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990848190316570
+      cost: 0
+  m_goals:
+  - name: MoveToTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 0
+      stateValue:
+        m_value:
+          rid: 1854990848190316554
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: MoveToTargetGoal
+      m_componentName: UnitLeader
+  m_useDebugLog: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 1854990848190316544
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990848190316554
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990848190316560
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990848190316563
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990848190316564
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990848190316567
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990848190316568
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990848190316569
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990848190316570
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
