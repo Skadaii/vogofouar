@@ -210,11 +210,7 @@ MonoBehaviour:
   m_GFX: {fileID: 4967162487188513963}
   m_isCompleted: 0
   m_buildingDatas: {fileID: 11400000, guid: 800c599cfa876564f86c71c4c9f8eb39, type: 2}
-  m_captureGaugeStart: 100
-  m_captureGaugeSpeed: 1
-  m_buildPoints: 5
-  m_blueTeamMaterial: {fileID: 0}
-  m_redTeamMaterial: {fileID: 0}
+  m_requiredCapturePoint: 100
 --- !u!1 &4340928840157488889 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8560768956081207014, guid: 1d7bcc6db18a0b1449bfb9f7ae904370,

@@ -12,22 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70c53fdf09515d64d9c0162b6d69219c, type: 3}
   m_Name: Leader_Data
   m_EditorClassIdentifier: 
+  icon: {fileID: 0}
   typeId: 0
   caption: Leader
   cost: 0
-  buildDuration: 0
   maxHP: 0
-  dps: 0
-  attackFrequency: 0
-  attackDistanceMax: 0
-  captureDistanceMax: 0
-  canRepair: 0
-  rps: 0
-  repairFrequency: 0
-  repairDistanceMax: 0
   speed: 10
   angularSpeed: 200
   acceleration: 20
   isFlying: 0
-  bulletPrefab: {fileID: 0}
+  captureDistance: 10
+  capturePointPerSecond: 5
   deathFXPrefab: {fileID: 0}

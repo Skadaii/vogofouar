@@ -16,17 +16,16 @@ MonoBehaviour:
   typeId: 0
   caption: Builder
   cost: 1
-  buildDuration: 1
   maxHP: 100
   speed: 10
   angularSpeed: 200
   acceleration: 20
   isFlying: 0
+  captureDistance: 10
+  capturePointPerSecond: 5
   deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
     type: 3}
-  canBuild: 0
   bps: 1
-  buildingFrequency: 1
   buildingDistanceMax: 10
   canRepair: 0
   rps: 10

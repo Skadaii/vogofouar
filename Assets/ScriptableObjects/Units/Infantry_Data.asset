@@ -16,12 +16,13 @@ MonoBehaviour:
   typeId: 0
   caption: Trooper
   cost: 1
-  buildDuration: 1
   maxHP: 50
   speed: 10
   angularSpeed: 300
   acceleration: 20
   isFlying: 0
+  captureDistance: 10
+  capturePointPerSecond: 5
   deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
     type: 3}
   dps: 10

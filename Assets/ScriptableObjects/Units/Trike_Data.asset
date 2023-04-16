@@ -16,12 +16,13 @@ MonoBehaviour:
   typeId: 1
   caption: Trike
   cost: 2
-  buildDuration: 2
   maxHP: 75
   speed: 10
   angularSpeed: 250
   acceleration: 20
   isFlying: 0
+  captureDistance: 10
+  capturePointPerSecond: 5
   deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
     type: 3}
   dps: 15

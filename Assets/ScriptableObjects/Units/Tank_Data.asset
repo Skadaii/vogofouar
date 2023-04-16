@@ -16,12 +16,13 @@ MonoBehaviour:
   typeId: 3
   caption: Tank
   cost: 4
-  buildDuration: 5
   maxHP: 150
   speed: 4
   angularSpeed: 130
   acceleration: 10
   isFlying: 0
+  captureDistance: 10
+  capturePointPerSecond: 5
   deathFXPrefab: {fileID: 1742013225946848, guid: b3d8264aa7d2d824a8a503e45291ddf4,
     type: 3}
   dps: 30
