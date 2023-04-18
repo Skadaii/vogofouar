@@ -338,6 +338,8 @@ public sealed class PlayerController : UnitController
         Collider[] colliders = Physics.OverlapBox(center, size / 2f, Quaternion.identity, unitLayerMask | factoryLayerMask, QueryTriggerInteraction.Ignore);
 
         List<Unit> multiSelectedUnits = new List<Unit>();
+        Factory selectedFactory = null;
+
         foreach (Collider col in colliders)
         {
             //Debug.Log("collider name = " + col.gameObject.name);
@@ -353,17 +355,17 @@ public sealed class PlayerController : UnitController
                 else if (selectedEntity is Factory && multiSelectedUnits.Count == 0)
                 {
                     // Select only one factory at a time
-                    if (m_selectedBuildings == null)
-                        SelectFactory(selectedEntity as Factory);
+                    if (selectedFactory == null) selectedFactory = selectedEntity as Factory;
                 }
             }
         }
 
-        if(multiSelectedUnits.Count > 0)
+        if (multiSelectedUnits.Count > 0)
         {
             SelectUnitList(multiSelectedUnits);
             UnselectCurrentFactory();
         }
+        else m_selectedBuildings = selectedFactory;
 
         m_selectionStarted = false;
         m_selectionStart = Vector3.zero;

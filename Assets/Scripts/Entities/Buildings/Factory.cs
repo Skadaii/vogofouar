@@ -110,8 +110,6 @@ public class Factory : Building
 
     private void StartUnitProduction(Unit unit)
     {
-        m_currentUsedResources = 0f;
-
         // Build queue
         if (m_isWorking)
         {
@@ -119,6 +117,8 @@ public class Factory : Building
                 m_unitQueue.Enqueue(unit);
             return;
         }
+
+        m_currentUsedResources = 0f;
 
         m_requestedUnit = unit;
         //m_currentBuildDuration = unit.UnitData.buildDuration;
