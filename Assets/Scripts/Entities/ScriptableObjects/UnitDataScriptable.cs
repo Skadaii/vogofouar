@@ -30,9 +30,9 @@ public class UnitDataScriptable : EntityDataScriptable
 
         m_unitCommands = new List<Command>
         {
-            new LocationCommand(newActionName: "Unit_MoveToLocation", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
-            new TargetCommand(newActionName: "Unit_MoveMoveToTarget", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/T_Move")),
-            new LocationCommand(newActionName: "Unit_PatrolToLocation", newMethod:"AddPatrolPoint", icon: Resources.Load<Sprite>("Textures/T_Patrol"))
+            new LocationCommand(newActionName: "Unit_MoveToLocation", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/move_here_icon")),
+            new TargetCommand(newActionName: "Unit_MoveMoveToTarget", newMethod:"MoveTo", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/move_here_icon")),
+            new LocationCommand(newActionName: "Unit_PatrolToLocation", newMethod:"AddPatrolPoint", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/patrol_icon"))
         };
     }
 }
