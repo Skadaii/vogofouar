@@ -273,4 +273,28 @@ public abstract class Unit : Entity
     public virtual void MoveTo(Entity target) => MoveTo(target.transform.position);
 
     public virtual void MoveToward(Vector3 velocity) => m_navMeshAgent.Move(velocity);
+
+    #region Commands
+
+    public static void Command_MoveTo(Entity entity, Entity target)
+    {
+        ((Unit)entity)?.MoveTo(target);
+    }
+
+    public static void Command_MoveTo(Entity entity, Vector3 pos)
+    {
+        ((Unit)entity)?.MoveTo(pos);
+    }
+
+    public static void Command_AddPatrolPoint(Entity entity, Vector3 pos)
+    {
+        ((Unit)entity)?.AddPatrolPoint(pos);
+    }
+
+    public static void Command_Capture(Entity entity, Entity target)
+    {
+        ((Unit)entity)?.SetCaptureTarget(target);
+    }
+
+    #endregion
 }

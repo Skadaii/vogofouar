@@ -70,7 +70,7 @@ public class MenuController : MonoBehaviour
 
     void Start()
     {
-        m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
+        //m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
         m_formationContent = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
 
         LoadAvailableRules();
@@ -85,7 +85,7 @@ public class MenuController : MonoBehaviour
     public void UpdateBuildPointsUI()
     {
         if (m_buildPointsText != null)
-            m_buildPointsText.text = "Build Points : " + m_controller.CurrentResources;
+            m_buildPointsText.text = "Build Points : " + m_controller.CurrentResources.ToString("0.00"); ;
     }
     public void UpdateCapturedTargetsUI()
     {

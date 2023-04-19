@@ -23,7 +23,7 @@ public class FighterDataScriptable : UnitDataScriptable
 
         m_fighterCommands = new List<Command>
         {
-            new TargetCommand("Fighter_Attack", newMethod: "Attack", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/attachk_here_icon"))
+            new TargetCommand("Fighter_Attack", Resources.Load<Sprite>("Textures/Sprites/Commands/attack_icon"), Fighter.Command_Attack)
         };
     }
 }

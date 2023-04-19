@@ -23,7 +23,8 @@ public class EntityDataScriptable : ScriptableObject
     {
         m_entityCommands = new List<Command>
         {
-            new VoidCommand(newActionName: "Entity_Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/stop_icon"))
+            //new VoidCommand(newActionName: "Entity_Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/stop_icon"))
+            new VoidCommand("Entity_Stop", Resources.Load<Sprite>("Textures/Sprites/Commands/stop_icon"), Entity.Command_Stop)
         };
     }
 }

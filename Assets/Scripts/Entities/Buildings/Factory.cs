@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class Factory : Building
@@ -18,7 +19,7 @@ public class Factory : Building
     /* !! max available unit count in menu is set to 9, available factories count to 3 !! */
     private const int MAX_AVAILABLE_UNITS = 9;
 
-    //private const int MaxAvailableFactories = 3;
+    //private const int MAX_AVAILABLE_FACTORIES = 3;
 
     [SerializeField]
     private int m_maxBuildingQueueSize = 5;
@@ -35,7 +36,7 @@ public class Factory : Building
     public override BuildingDataScriptable BuildingData => m_factoryData;
     public FactoryDataScriptable FactoryData { get { return m_factoryData; } }
     public int AvailableUnitsCount { get { return Mathf.Min(MAX_AVAILABLE_UNITS, m_factoryData.availableUnits.Length); } }
-    //public int AvailableFactoriesCount { get { return Mathf.Min(MaxAvailableFactories, m_factoryData.availableFactories.Length); } }
+    //public int AvailableFactoriesCount { get { return Mathf.Min(MAX_AVAILABLE_FACTORIES, m_factoryData.availableFactories.Length); } }
 
     //  Functions
     //  ---------
@@ -68,6 +69,7 @@ public class Factory : Building
                 OnUnitFormed = null; // remove registered methods
                 m_isWorking = false;
 
+                m_requestedUnit = null;
                 // manage build queue : chain with new unit build if necessary
                 if (m_unitQueue.Count != 0)
                 {
@@ -92,16 +94,41 @@ public class Factory : Building
 
     #region Unit production methods
 
+    public bool CancelUnitProduction(GameObject unitPrefab)
+    {
+        Unit unit = unitPrefab.GetComponent<Unit>();
+        if (unit == null) return false;
+        
+        Queue<Unit> tempQueue = new Queue<Unit>();
+        bool canceled = false;
+
+        foreach (Unit u in m_unitQueue)
+        {
+            if (unit == u && !canceled)
+            {
+                canceled = true;
+            }
+            else
+            {
+                tempQueue.Enqueue(u);
+            }
+        }
+
+        m_unitQueue = tempQueue;
+
+        if (!canceled && m_requestedUnit == unit)
+        {
+            CancelCurrentUnitProduction();
+            return true;
+        }
+
+        return true;
+    }
+
     public bool RequestUnitProduction(GameObject unitPrefab)
     {
         Unit unit = unitPrefab.GetComponent<Unit>();
         if (unit == null) return false;
-
-        //int cost = unit.Cost;
-        //if (TeamController.CurrentResources < cost || m_unitQueue.Count >= m_maxBuildingQueueSize)
-        //    return false;
-
-        //TeamController.CurrentResources -= cost;
 
         StartUnitProduction(unit);
 
@@ -174,39 +201,37 @@ public class Factory : Building
 
         m_spawnCount++;
 
-        // disable build cancelling callback
-        OnBuildCanceled = null;
-
         return newUnit;
     }
+
+
     public void CancelCurrentUnitProduction()
     {
         if (!m_isWorking) return;
 
         m_isWorking = false;
 
-        // refund build points
-        TeamController.CurrentResources += m_currentUsedResources;
-        //foreach(int unitIndex in m_buildingQueue)
-        //{
-        //    TeamController.TotalBuildPoints += GetUnitCost(unitIndex);
-        //}
-        //m_buildingQueue.Clear();
-
-        //WIP
-        foreach (Unit unit in m_unitQueue)
-        {
-            TeamController.CurrentResources += unit.Cost;
-        }
-        m_unitQueue.Clear();
-
         if (m_hud != null) m_hud.Progression = 0f;
 
-        //m_currentBuildDuration = 0f;
+        // refund build points
+        TeamController.CurrentResources += m_currentUsedResources;
+
         m_requestedUnit = null;
 
-        OnBuildCanceled?.Invoke();
-        OnBuildCanceled = null;
+        if (m_unitQueue.Count != 0)
+        {
+            Unit unit = m_unitQueue.Dequeue();
+            StartUnitProduction(unit);
+        }
+    }
+
+    public void CancelAllProduction()
+    {
+        if (!m_isWorking) return;
+
+        m_unitQueue.Clear();
+
+        CancelCurrentUnitProduction();
     }
 
     #endregion
@@ -216,6 +241,40 @@ public class Factory : Building
     {
         base.Stop();
 
-        if (m_isWorking) CancelCurrentUnitProduction();
+        if (m_isWorking) CancelAllProduction();
     }
+
+    #region Commands
+
+    public static void Command_RequestUnitProduction(Entity entity, GameObject unitPrefab)
+    {
+        ((Factory)entity)?.RequestUnitProduction(unitPrefab);
+    }
+
+    public static void Command_CancelUnitProduction(Entity entity, GameObject unitPrefab)
+    {
+        ((Factory)entity)?.CancelUnitProduction(unitPrefab);
+    }
+
+    public static int Command_GetQueueCountOfUnit(Entity entity, GameObject unitPrefab)
+    {
+        Factory factory = entity as Factory;
+        Unit unit = unitPrefab.GetComponent<Unit>();
+
+        int result = 0;
+
+        if (factory != null && unit != null)
+        {
+            if (factory.m_requestedUnit == unit) result++;
+
+            foreach(Unit u in factory.m_unitQueue)
+            {
+                if (u == unit) result++;
+            }
+        }
+
+        return result;
+    }
+
+    #endregion
 }

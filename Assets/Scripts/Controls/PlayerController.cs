@@ -421,7 +421,8 @@ public sealed class PlayerController : UnitController
 
         if (m_wheelMenu.isActiveAndEnabled && HasSelectedBuildings)
         {
-            if (Input.GetMouseButtonDown(0)) ValidateBuildingCommandWheel();
+            if (Input.GetMouseButtonDown(0)) ValidateBuildingCommandOnWheel();
+            if (Input.GetMouseButtonDown(1)) ValidateBuildingReverseCommandOnWheel();
         }
     }
 
@@ -462,9 +463,13 @@ public sealed class PlayerController : UnitController
 
         base.UnselectCurrentFactory();
     }
-    private void ValidateBuildingCommandWheel()
+    private void ValidateBuildingCommandOnWheel()
     {
         m_wheelMenu.ExecuteCommand();
+    }
+    private void ValidateBuildingReverseCommandOnWheel()
+    {
+        m_wheelMenu.ReverseCommand();
     }
 
     #endregion

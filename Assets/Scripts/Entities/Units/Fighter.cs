@@ -109,4 +109,13 @@ public class Fighter : Unit
             m_target.AddDamage(damages);
         }
     }
+
+    #region Commands
+
+    public static void Command_Attack(Entity entity, Entity target)
+    {
+        ((Fighter)entity)?.StartAttacking(target);
+    }
+
+    #endregion
 }

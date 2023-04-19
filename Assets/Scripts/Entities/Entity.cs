@@ -208,4 +208,13 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
     }
 
     #endregion
+
+    #region Commands
+
+    public static void Command_Stop(Entity entity)
+    {
+        entity.Stop();
+    }
+
+    #endregion
 }

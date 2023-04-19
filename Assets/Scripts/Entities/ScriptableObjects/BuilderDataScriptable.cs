@@ -26,13 +26,16 @@ public class BuilderDataScriptable : UnitDataScriptable
     {
         base.OnValidate();
 
-        m_builderCommands = new List<Command>();
+        m_builderCommands = new List<Command>
+        {
+            new TargetCommand($"Builder_Build", Resources.Load<Sprite>("Textures/Sprites/Commands/build_icon"), Builder.Command_Build)
+        };
 
         foreach (GameObject buildingPrefab in availableBuildings)
         {
             if (buildingPrefab.TryGetComponent(out Building building))
             {
-                m_builderCommands.Add(new BuildCommand($"Builder_Build_{buildingPrefab.name}", newMethod: "RequestBuild", icon: building.EntityData.icon, toBuild: buildingPrefab));
+                m_builderCommands.Add(new BuildCommand($"Builder_Build_{buildingPrefab.name}", building.EntityData.icon, Builder.Command_RequestBuild, toBuild: buildingPrefab));
             }
         }
     }

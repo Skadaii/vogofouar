@@ -14,7 +14,7 @@ public class WheelMenu : MonoBehaviour
     [SerializeField] private Transform m_canvas;
     [SerializeField] private Transform m_disk;
 
-    private List<Button> m_buttons = new List<Button>();
+    private List<ActionButton> m_buttons = new List<ActionButton>();
     private List<Entity.Command> m_commands = new List<Entity.Command>();
     private List<Entity> m_entities = new List<Entity>();
 
@@ -48,6 +48,19 @@ public class WheelMenu : MonoBehaviour
             m_selectedIndex = Mathf.RoundToInt(angle / 360f * m_buttons.Count)%m_buttons.Count;
 
             m_buttons[m_selectedIndex].Select();
+        }
+
+        if (m_entities.Count == 1 && m_entities[0] is Factory)
+        {
+            for (int i = 0; i < m_commands.Count; i++)
+            {
+                Entity.BuildCommand command = m_commands[i] as Entity.BuildCommand;
+
+                if (command != null)
+                {
+                    m_buttons[i].Count = command.GetCount(m_entities[0] as Factory);
+                }
+            }
         }
     }
 
@@ -116,6 +129,13 @@ public class WheelMenu : MonoBehaviour
             m_commands[m_selectedIndex].ExecuteCommand(entity, m_clickedObject);
         }
     }
+    public void ReverseCommand()
+    {
+        foreach (Entity entity in m_entities)
+        {
+            m_commands[m_selectedIndex].ReverseCommand(entity, m_clickedObject);
+        }
+    }
 
     public void SetBuildingWheel(Building building)
     {
@@ -160,12 +180,11 @@ public class WheelMenu : MonoBehaviour
 
             float rad = i / (float)m_commands.Count * Mathf.PI * 2f;
             Vector2 pos = new Vector2(Mathf.Sin(rad), Mathf.Cos(rad)) * m_radius;
-            Button button = Instantiate(m_commandButton, m_canvas).GetComponent<Button>();
-            button.image.sprite = command.Icon;
+            ActionButton button = Instantiate(m_commandButton, m_canvas).GetComponent<ActionButton>();
+            button.Icon = command.Icon;
 
             button.transform.localPosition = pos;
-            RectTransform rt = button.GetComponent(typeof(RectTransform)) as RectTransform;
-            if(rt != null) rt.sizeDelta = new Vector2(m_size, m_size);
+            button.SetSize(m_size);
 
             m_buttons.Add(button);
         }
