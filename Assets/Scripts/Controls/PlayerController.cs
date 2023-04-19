@@ -611,7 +611,7 @@ public sealed class PlayerController : UnitController
 
     private void MoveUnits(List<Unit> units, Vector3 squadTarget)
     {
-        if (m_selectedUnitList.Count == 1)
+        if (!m_lonerUseLeader && m_selectedUnitList.Count == 1)
         {
             Unit unitToMove = m_selectedUnitList.First();
             unitToMove.Squad = null;

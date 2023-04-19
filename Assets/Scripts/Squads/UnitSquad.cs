@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using static UnityEditor.PlayerSettings;
 
 public class UnitSquad
 {
@@ -80,6 +82,12 @@ public class UnitSquad
 
     public void UpdatePositions()
     {
+        if (m_units.Count == 1)
+        {
+            m_units.First().MoveTo(m_leaderComponent.SquadTargetCenter);
+            return;
+        }
+
         for (int i = 0; i < m_units.Count; i++)
         {
             Unit unit = m_units[i];
