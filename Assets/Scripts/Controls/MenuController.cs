@@ -19,9 +19,8 @@ public class MenuController : MonoBehaviour
     private Text m_buildPointsText = null;
     private Text m_capturedTargetsText = null;
     private Button[] m_buildUnitButtons = null;
-    private Button[] m_buildFactoryButtons = null;
-    private Button m_cancelBuildButton = null;
-    private Text[] m_buildQueueTexts = null;
+
+    [SerializeField] private FormationEditor m_formationEditor = null;
 
     //  Formations
 
@@ -29,7 +28,8 @@ public class MenuController : MonoBehaviour
     [SerializeField] private FormationRule[] m_availableFormations = null;
     [SerializeField] private GameObject m_buttonFormationSelectionPrefab = null;
 
-    private Button[] m_formationButtons = null;
+    private List<Button> m_formationButtons = new List<Button>();
+    private Transform m_formationContent = null;
 
     public GraphicRaycaster BuildMenuRaycaster { get; private set; }
 
@@ -71,12 +71,13 @@ public class MenuController : MonoBehaviour
     void Start()
     {
         m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
-        m_buildFactoryButtons = m_factoryMenuPanel.transform.Find("BuildFactoryMenu_Panel").GetComponentsInChildren<Button>();
-        m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
-        m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
+        m_formationContent = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
 
         LoadAvailableRules();
         InitializeInstanceViewport();
+
+        m_formationEditor.OnNewRuleCreated.AddListener(OnNewRule);
+
     }
 
     #endregion
@@ -95,7 +96,7 @@ public class MenuController : MonoBehaviour
     public void UnregisterFormationButtons()
     {
 
-        for (int i = 0; i < m_formationButtons.Length - 1; i++)
+        for (int i = 0; i < m_formationButtons.Count - 1; i++)
         {
             Button button = m_formationButtons[i];
 
@@ -109,7 +110,7 @@ public class MenuController : MonoBehaviour
 
         bool isMixed = selectedUnit.Any(u => u.Squad != firstUnit.Squad);
 
-        for (int i = 0; i < m_formationButtons.Length; i++)
+        for (int i = 0; i < m_formationButtons.Count; i++)
         {
             Button button = m_formationButtons[i];
             FormationRule currentFormation = m_instancedRules[i];
@@ -129,21 +130,26 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    void OnNewRule(FormationRule newRule)
+    {
+        CreateRuleButton(newRule, m_formationContent);
+    }
+
     private void InitializeInstanceViewport()
     {
-        Transform ContentTransform = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
-
-        m_formationButtons = new Button[m_instancedRules.Count];
         for (int i = 0; i < m_instancedRules.Count; i++)
-        {
-            GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
+            CreateRuleButton(m_instancedRules[i], m_formationContent);
+    }
 
-            Button buttonComp = buttonGO.GetComponent<Button>();
-            m_formationButtons[i] = buttonComp;
+    private void CreateRuleButton(FormationRule rule, Transform contentListTransform)
+    {
+        GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, contentListTransform);
 
-            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = m_instancedRules[i].name;
-        }
+        Button buttonComp = buttonGO.GetComponent<Button>();
+        m_formationButtons.Add(buttonComp);
+
+        TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+        textComp.text = rule.name;
     }
 }
 
