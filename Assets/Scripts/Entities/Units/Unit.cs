@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.GraphicsBuffer;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody), typeof(NavMeshAgent))]
 public abstract class Unit : Entity
 {
     //  Variables

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(EntityVisibility))]
 public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
 {
     //  Variables

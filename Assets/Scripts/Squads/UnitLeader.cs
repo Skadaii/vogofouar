@@ -72,6 +72,13 @@ public class UnitLeader : Unit
         return m_navMeshAgent.remainingDistance - m_navMeshAgent.stoppingDistance <= epsilon;
     }
 
+    protected virtual new void Awake()
+    {
+        base.Awake();
+
+        m_visibility = null;
+    }
+
     private new void Update()
     { 
         if (!HasReachedPos(m_targetDistanceEpsilon))
