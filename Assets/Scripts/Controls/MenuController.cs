@@ -25,10 +25,9 @@ public class MenuController : MonoBehaviour
     //  Formations
 
     [Header("Formations")]
-    [SerializeField] private FormationRule[] m_availableFormations = null;
     [SerializeField] private GameObject m_buttonFormationSelectionPrefab = null;
 
-    private List<Button> m_formationButtons = new List<Button>();
+    private Dictionary<FormationRule, Button> m_formationButtons = new Dictionary<FormationRule, Button>();
     private Transform m_formationContent = null;
 
     public GraphicRaycaster BuildMenuRaycaster { get; private set; }
@@ -77,6 +76,7 @@ public class MenuController : MonoBehaviour
         InitializeInstanceViewport();
 
         m_formationEditor.OnNewRuleCreated.AddListener(OnNewRule);
+        m_formationEditor.OnRuleDeleted.AddListener(OnRuleDeleted);
 
     }
 
@@ -87,6 +87,7 @@ public class MenuController : MonoBehaviour
         if (m_buildPointsText != null)
             m_buildPointsText.text = "Build Points : " + m_controller.CurrentResources;
     }
+
     public void UpdateCapturedTargetsUI()
     {
         if (m_capturedTargetsText != null)
@@ -95,13 +96,8 @@ public class MenuController : MonoBehaviour
 
     public void UnregisterFormationButtons()
     {
-
-        for (int i = 0; i < m_formationButtons.Count - 1; i++)
-        {
-            Button button = m_formationButtons[i];
-
+        foreach (var (rule, button) in m_formationButtons)
             button.onClick.RemoveAllListeners();
-        }
     }
 
     public void UpdateFormationMenu(List<Unit> selectedUnit, Action<List<Unit>, FormationRule> setSquadMethod)
@@ -110,14 +106,11 @@ public class MenuController : MonoBehaviour
 
         bool isMixed = selectedUnit.Any(u => u.Squad != firstUnit.Squad);
 
-        for (int i = 0; i < m_formationButtons.Count; i++)
-        {
-            Button button = m_formationButtons[i];
-            FormationRule currentFormation = m_instancedRules[i];
-            button.onClick.AddListener(() => setSquadMethod(selectedUnit, currentFormation));
-        }
-    }
+        int i = 0;
 
+        foreach (var (rule, button) in m_formationButtons)
+            button.onClick.AddListener(() => setSquadMethod(selectedUnit, rule));
+    }
 
     void LoadAvailableRules()
     {
@@ -135,6 +128,19 @@ public class MenuController : MonoBehaviour
         CreateRuleButton(newRule, m_formationContent);
     }
 
+    void OnRuleDeleted(FormationRule newRule)
+    {
+        var formationPairs = m_formationButtons.Where(pair => pair.Key.name == newRule.name).ToList();
+
+        foreach (var (rule, button) in formationPairs)
+        {
+            Destroy(button.gameObject);
+            m_formationButtons.Remove(rule);
+        }
+
+        m_instancedRules.RemoveAll((rule) => rule.name == newRule.name);
+    }
+
     private void InitializeInstanceViewport()
     {
         for (int i = 0; i < m_instancedRules.Count; i++)
@@ -146,7 +152,7 @@ public class MenuController : MonoBehaviour
         GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, contentListTransform);
 
         Button buttonComp = buttonGO.GetComponent<Button>();
-        m_formationButtons.Add(buttonComp);
+        m_formationButtons.Add(rule, buttonComp);
 
         TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
         textComp.text = rule.name;
