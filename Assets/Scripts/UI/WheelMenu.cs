@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class WheelMenu : MonoBehaviour
 {
@@ -29,12 +30,12 @@ public class WheelMenu : MonoBehaviour
 
     private void OnValidate()
     {
-        if(m_disk) m_disk.localScale = Vector3.one * (m_size + m_radius * 2f);
+        if(m_disk) m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
     }
 
     private void Awake()
     {
-        if (m_disk) m_disk.localScale = Vector3.one * (m_size + m_radius * 2f);
+        if (m_disk) m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
     }
 
     private void Update()
@@ -81,7 +82,9 @@ public class WheelMenu : MonoBehaviour
             m_entities.Add(unit);
             foreach (Entity.Command command in unit.Commands)
             {
-                if(command as Entity.VoidCommand != null) TryAddCommand(command);
+                if (!command.VerifyCommand(unit, entity)) continue;
+
+                if (command as Entity.VoidCommand != null) TryAddCommand(command);
                 else if(command as Entity.BuildCommand != null) TryAddCommand(command);
                 else if(command as Entity.TargetCommand != null) TryAddCommand(command);
             }
@@ -108,6 +111,8 @@ public class WheelMenu : MonoBehaviour
 
             foreach (Entity.Command command in unit.Commands)
             {
+                if (!command.VerifyCommand(unit, position)) continue;
+
                 if (command as Entity.VoidCommand != null) TryAddCommand(command);
                 else if (command as Entity.BuildCommand != null) TryAddCommand(command);
                 else if (command as Entity.LocationCommand != null) TryAddCommand(command);
@@ -191,7 +196,7 @@ public class WheelMenu : MonoBehaviour
     }
 
     private void TryAddCommand(Entity.Command command)
-    {
+    {   
         if (m_commands.Contains(command)) return;
         if (m_commands.Find((c) => c.Name == command.Name) != null) return;
 

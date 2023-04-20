@@ -32,7 +32,7 @@ public class UnitDataScriptable : EntityDataScriptable
         {
             new LocationCommand("Unit_MoveToLocation", Resources.Load<Sprite>("Textures/Sprites/Commands/move_here_icon"), Unit.Command_MoveTo),
             new TargetCommand("Unit_MoveMoveToTarget", Resources.Load<Sprite>("Textures/Sprites/Commands/move_here_icon"), Unit.Command_MoveTo),
-            new TargetCommand("Unit_CaptureTarget", Resources.Load<Sprite>("Textures/Sprites/Commands/capture_icon"), Unit.Command_Capture),
+            new TargetCommand("Unit_CaptureTarget", Resources.Load<Sprite>("Textures/Sprites/Commands/capture_icon"), Unit.Command_Capture, Unit.Command_CanCaptureTarget),
             new LocationCommand("Unit_PatrolToLocation", Resources.Load<Sprite>("Textures/Sprites/Commands/patrol_icon"), Unit.Command_AddPatrolPoint)
         };
     }

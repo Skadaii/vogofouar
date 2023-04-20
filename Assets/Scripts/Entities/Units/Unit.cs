@@ -293,5 +293,10 @@ public abstract class Unit : Entity
         ((Unit)entity)?.SetCaptureTarget(target);
     }
 
+    public static bool Command_CanCaptureTarget(Entity entity, Entity target)
+    {
+        return entity && target && (target.Team != entity.Team) && target is StaticBuilding;
+    }
+
     #endregion
 }

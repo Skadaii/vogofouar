@@ -129,5 +129,10 @@ public class Builder : Unit
     {
         ((Builder)entity)?.Build(target);
     }
+    public static bool Command_CanBuildTarget(Entity entity, Entity target)
+    {
+        return entity && target && (target.Team == entity.Team) && target.HealthPercent != 1f;
+    }
+
     #endregion
 }

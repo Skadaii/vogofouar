@@ -28,7 +28,7 @@ public class BuilderDataScriptable : UnitDataScriptable
 
         m_builderCommands = new List<Command>
         {
-            new TargetCommand($"Builder_Build", Resources.Load<Sprite>("Textures/Sprites/Commands/build_icon"), Builder.Command_Build)
+            new TargetCommand($"Builder_Build", Resources.Load<Sprite>("Textures/Sprites/Commands/build_icon"), Builder.Command_Build, Builder.Command_CanBuildTarget)
         };
 
         foreach (GameObject buildingPrefab in availableBuildings)

@@ -117,5 +117,11 @@ public class Fighter : Unit
         ((Fighter)entity)?.StartAttacking(target);
     }
 
+    public static bool Command_CanAttackTarget(Entity entity, Entity target)
+    {
+        return entity && target && (target.Team != entity.Team) && target is not StaticBuilding;
+    }
+
+
     #endregion
 }
