@@ -28,6 +28,8 @@ public class FormationEditor : MonoBehaviour
 
     [SerializeField] private TypedPrefab[] m_placeholderPrefabs = null;
 
+    private Dictionary<FormationRule, GameObject> m_buttonGOs = new Dictionary<FormationRule, GameObject>();
+
     private FormationRule[] m_presetRules = null;
     private List<FormationRule> m_instancedRules = new List<FormationRule>();
     private FormationRule m_currRule = null;
@@ -41,6 +43,7 @@ public class FormationEditor : MonoBehaviour
     private List<GameObject> m_paramHolders = new List<GameObject>();
 
     public UnityEvent<FormationRule> OnNewRuleCreated = new UnityEvent<FormationRule>();
+    public UnityEvent<FormationRule> OnRuleDeleted = new UnityEvent<FormationRule>();
 
     private float m_zoom = 1f;
 
@@ -68,10 +71,10 @@ public class FormationEditor : MonoBehaviour
         InitializeInstanceViewport();
     }
 
-    private void CreatePresetRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationPresetContent, () => SetSelectedPresetFormation(rule));
-    private void CreateInstanceRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationInstanceContent, () => SetSelectedInstanceFormation(rule));
+    private GameObject CreatePresetRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationPresetContent, () => SetSelectedPresetFormation(rule));
+    private GameObject CreateInstanceRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationInstanceContent, () => SetSelectedInstanceFormation(rule));
 
-    private void CreateRuleButton(FormationRule rule, Transform contentListTransform, UnityAction action)
+    private GameObject CreateRuleButton(FormationRule rule, Transform contentListTransform, UnityAction action)
     {
         GameObject buttonGO = Instantiate(m_formationSelectorPrefab, contentListTransform);
         Button buttonComp = buttonGO.GetComponent<Button>();
@@ -79,6 +82,8 @@ public class FormationEditor : MonoBehaviour
 
         TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
         textComp.text = rule.name;
+
+        return buttonGO;
     }
 
     private void InitializePresetViewport()
@@ -90,7 +95,10 @@ public class FormationEditor : MonoBehaviour
     private void InitializeInstanceViewport()
     {
         foreach (FormationRule rule in m_instancedRules)
-            CreateInstanceRuleButton(rule);
+        {
+            GameObject GO = CreateInstanceRuleButton(rule);
+            m_buttonGOs.Add(rule, GO);
+        }
     }
 
     private void LoadPreset()
@@ -198,9 +206,36 @@ public class FormationEditor : MonoBehaviour
         if (!m_instancedRules.Contains(m_currRule))
         {
             m_instancedRules.Add(m_currRule);
-            CreateInstanceRuleButton(m_currRule);
+            GameObject buttonGO = CreateInstanceRuleButton(m_currRule);
+            m_buttonGOs.Add(m_currRule, buttonGO);
             OnNewRuleCreated.Invoke(m_currRule);
         }
+    }
+
+    public void DeleteCurrentRule()
+    {
+        string dirpath = loadingDirectory;
+
+        if (!Directory.Exists(dirpath) || m_currRule is null)
+            return;
+
+        string filename = m_currRule.name;
+
+        string filePath = dirpath + '/' + filename + ".json";
+
+        if (!File.Exists(filePath))
+            return;
+
+        OnRuleDeleted.Invoke(m_currRule);
+
+        Destroy(m_buttonGOs[m_currRule]);
+        m_buttonGOs.Remove(m_currRule);
+
+        File.Delete(filePath);
+
+        m_instancedRules.Remove(m_currRule);
+
+        m_currRule = m_instancedRules.FirstOrDefault();
     }
 
     public void OnZoom(float zoom)
