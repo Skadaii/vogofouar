@@ -83,6 +83,8 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     protected virtual void Awake()
     {
+        SetTeamColor();
+
         m_visibility = GetComponent<EntityVisibility>();
         m_hud = transform.GetComponentInChildren<EntityHUD>();
         if(m_selectedSprite != null) m_selectedSprite.SetActive(false);

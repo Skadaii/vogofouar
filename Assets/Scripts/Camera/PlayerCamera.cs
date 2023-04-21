@@ -45,15 +45,19 @@ public class PlayerCamera : MonoBehaviour
 
     private void OnValidate()
     {
-        transform.position = m_targetPosition + m_offset;
-        transform.forward = Vector3.Normalize(m_targetPosition - transform.position);
+        UpdateTransform();
     }
 
     private void Awake()
     {
+        UpdateTransform();
+
         m_camera = GetComponent<Camera>();
         m_iconLayer = LayerMask.GetMask("Icon");
         m_entityHUDLayer = LayerMask.GetMask("EntityHUD");
+
+        transform.position = m_targetPosition + m_offset;
+        transform.forward = Vector3.Normalize(m_targetPosition - transform.position);
     }
 
     private void Start()
@@ -77,6 +81,11 @@ public class PlayerCamera : MonoBehaviour
 
     #endregion
 
+    private void UpdateTransform()
+    {
+        transform.position = m_targetPosition + m_offset;
+        transform.forward = Vector3.Normalize(m_targetPosition - transform.position);
+    }
     private void ComputeCameraPosition()
     {
         if (m_enableMapRestricion)

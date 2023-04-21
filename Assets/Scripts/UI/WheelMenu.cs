@@ -30,12 +30,12 @@ public class WheelMenu : MonoBehaviour
 
     private void OnValidate()
     {
-        if(m_disk) m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
+        UpdateDiscSize();
     }
 
     private void Awake()
     {
-        if (m_disk) m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
+        UpdateDiscSize();
     }
 
     private void Update()
@@ -67,6 +67,12 @@ public class WheelMenu : MonoBehaviour
 
     #endregion
 
+
+    private void UpdateDiscSize()
+    {
+        if (m_disk)
+            m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
+    }
 
     //  Show allowed actions 
     public void SetUnitWheel(List<Unit> selectedUnits, Entity entity)
