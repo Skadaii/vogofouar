@@ -67,7 +67,7 @@ public class FormationEditor : MonoBehaviour
         LoadPreset();
         InitializePresetViewport();
 
-        m_instancedRules = LoadInstancedRules(loadingDirectory);
+        m_instancedRules = LoadExternalInstancedRules(loadingDirectory);
         InitializeInstanceViewport();
     }
 
@@ -106,14 +106,34 @@ public class FormationEditor : MonoBehaviour
         m_presetRules = Resources.LoadAll<FormationRule>("ScriptableObjects/Formations");
     }
 
-    static public List<FormationRule> LoadInstancedRules(string dirPath)
+    static public List<FormationRule> LoadInternalInstancedRules(string dirPath)
     {
-        if (!Directory.Exists(dirPath))
-            return null;
-
-        string[] filePathes = Directory.GetFiles(dirPath, "*.json");
+        TextAsset[] assets = Resources.LoadAll<TextAsset>(dirPath);
 
         List<FormationRule> instancedRules = new List<FormationRule>();
+
+        foreach (TextAsset asset in assets)
+        {
+            string ruleStr = asset.text;
+
+            FormationRule loadedRule = JsonConvert.DeserializeObject<FormationRule>(ruleStr, m_serializationSettings);
+            loadedRule.name = asset.name;
+
+            if (loadedRule is not null)
+                instancedRules.Add(loadedRule);
+        }
+
+        return instancedRules;
+    }
+
+    static public List<FormationRule> LoadExternalInstancedRules(string dirPath)
+    {
+        List<FormationRule> instancedRules = new List<FormationRule>();
+
+        if (!Directory.Exists(dirPath))
+            return instancedRules;
+
+        string[] filePathes = Directory.GetFiles(dirPath, "*.json");
 
         foreach (string filepath in filePathes)
         {
