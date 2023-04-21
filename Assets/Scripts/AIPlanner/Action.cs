@@ -40,9 +40,11 @@ namespace AIPlanner.GOAP
             Failed,
         }
 
+#if UNITY_EDITOR
         public static Action CreateSampleAction()
         {
             Action sampleAction = new Action();
+
             sampleAction.name = "Test";
             sampleAction.m_stateEffects.Add(new StateId() { id = 0, stateValue = new StateValue() { Value = new BoolType(true) } });
             sampleAction.m_stateEffects.Add(new StateId() { id = 1, stateValue = new StateValue() { Value = new BoolType(true) } });
@@ -55,6 +57,7 @@ namespace AIPlanner.GOAP
             sampleAction.m_preconditions.Add(precondition);
             return sampleAction;
         }
+#endif
 
         public WorldState ApplyEffects(WorldState WorldState)
         {

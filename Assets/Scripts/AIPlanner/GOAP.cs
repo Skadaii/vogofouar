@@ -121,8 +121,10 @@ namespace AIPlanner.GOAP
             {
                 m_currentGoal = bestGoal;
 
+#if UNITY_EDITOR
                 if (m_useDebugLog)
                     Debug.Log($"New Goal ({bestGoalId})");
+#endif
 
                 GeneratePlan();
             }
@@ -146,6 +148,7 @@ namespace AIPlanner.GOAP
 
             stopwatch.Stop();
 
+#if UNITY_EDITOR
             if (m_useDebugLog)
             {
                 string plan = $"{gameObject.name} | Plan: ";
@@ -154,6 +157,7 @@ namespace AIPlanner.GOAP
 
                 Debug.Log(plan + $"Generation duration : {stopwatch.ElapsedMilliseconds}");
             }
+#endif
 
             NextNode();
 
@@ -202,8 +206,10 @@ namespace AIPlanner.GOAP
 
         private void ActionFinished()
         {
+#if UNITY_EDITOR
             if (m_useDebugLog)
                 Debug.Log($"Action Finished: {m_currentNode.action.name}");
+#endif
 
             m_worldState = m_currentNode.action.ApplyEffects(m_worldState);
             m_currentNode = null;
@@ -211,14 +217,15 @@ namespace AIPlanner.GOAP
 
         private void ActionFailed()
         {
+#if UNITY_EDITOR
             if (m_useDebugLog)
                 Debug.Log($"Action Failed: {m_currentNode.action.name}");
+#endif
 
             m_nodes.Clear();
 
             m_currentNode = null;
             m_currentGoal = null;
         }
-
     }
 }

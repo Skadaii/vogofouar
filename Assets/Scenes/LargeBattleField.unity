@@ -848,6 +848,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_formationEditor
+      value: 
+      objectReference: {fileID: 1458350552}
+    - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: m_factoryMenuCanvas
       value: 
       objectReference: {fileID: 0}
@@ -1965,6 +1970,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67effc09ec1950247bdaf2757b2d228d, type: 3}
+--- !u!114 &1458350552 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5530388179527711909, guid: ff215fdabb9168540bd1e50cc210b369,
+    type: 3}
+  m_PrefabInstance: {fileID: 1967584159}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70d558bc220698247aeebbabcc00fb55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1509813179
 PrefabInstance:
   m_ObjectHideFlags: 0
