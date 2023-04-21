@@ -7,8 +7,9 @@ using TMPro;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField]
-    private string[] m_instancedFormationDirectories = null;
+
+    [SerializeField] private string[] m_internalInstancedFormationDirectories = null;
+    [SerializeField] private string[] m_externalInstancedFormationDirectories = null;
 
     private List<FormationRule> m_instancedRules = new List<FormationRule>();
 
@@ -114,9 +115,17 @@ public class MenuController : MonoBehaviour
 
     void LoadAvailableRules()
     {
-        foreach (string formationDir in m_instancedFormationDirectories)
+        foreach (string formationDir in m_internalInstancedFormationDirectories)
         {
-            List<FormationRule> instancedRulesRange = FormationEditor.LoadInstancedRules(formationDir);
+            List<FormationRule> instancedRulesRange = FormationEditor.LoadInternalInstancedRules(formationDir);
+
+            if (instancedRulesRange is not null)
+                m_instancedRules.AddRange(instancedRulesRange);
+        }
+
+        foreach (string formationDir in m_externalInstancedFormationDirectories)
+        {
+            List<FormationRule> instancedRulesRange = FormationEditor.LoadExternalInstancedRules(formationDir);
 
             if (instancedRulesRange is not null)
                 m_instancedRules.AddRange(instancedRulesRange);
