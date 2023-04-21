@@ -26,4 +26,11 @@ public class FighterDataScriptable : UnitDataScriptable
             new TargetCommand("Fighter_Attack", Resources.Load<Sprite>("Textures/Sprites/Commands/attack_icon"), Fighter.Command_Attack,Fighter.Command_CanAttackTarget)
         };
     }
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_fighterCommands.Clear();
+    }
 }

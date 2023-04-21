@@ -14,6 +14,8 @@ public class WheelMenu : MonoBehaviour
     [SerializeField] private GameObject m_commandButton;
     [SerializeField] private Transform m_canvas;
     [SerializeField] private Transform m_disk;
+    [SerializeField] private Camera m_mainCamera;
+
 
     private List<ActionButton> m_buttons = new List<ActionButton>();
     private List<Entity.Command> m_commands = new List<Entity.Command>();
@@ -40,7 +42,7 @@ public class WheelMenu : MonoBehaviour
 
     private void Update()
     {
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+        Vector2 screenPosition = m_mainCamera.WorldToScreenPoint(transform.position);
         clockDirection = (Vector2)Input.mousePosition - screenPosition;
 
         if (m_buttons.Count > 0)

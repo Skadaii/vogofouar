@@ -34,6 +34,7 @@ public sealed class PlayerController : UnitController
     private MenuController m_playerMenuController;
 
     // Camera
+    [SerializeField] private Camera m_mainCamera = null;
     private PlayerCamera m_cameraPlayer = null;
     private bool m_canMoveCamera = false;
     private Vector2 m_cameraInputPos = Vector2.zero;
@@ -85,13 +86,13 @@ public sealed class PlayerController : UnitController
         m_onResourceUpdated += m_playerMenuController.UpdateBuildPointsUI;
         m_onCaptureTarget += m_playerMenuController.UpdateCapturedTargetsUI;
 
-        m_cameraPlayer = Camera.main.GetComponent<PlayerCamera>();
+        m_cameraPlayer = m_mainCamera.GetComponent<PlayerCamera>();
 
         m_selectionLineRenderer = GetComponentInChildren<LineRenderer>();
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = m_selectionLineWidth;
 
         m_playerMenuController = GetComponent<MenuController>();
-       
+
         if (m_sceneEventSystem == null)
         {
             Debug.LogWarning("EventSystem not assigned in PlayerController, searching in current scene...");
@@ -243,7 +244,7 @@ public sealed class PlayerController : UnitController
         // Hide target cursor
         SetTargetCursorVisible(false);
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
 
         int uiMask = 1 << LayerMask.NameToLayer("UI");
         int buildingMask = 1 << LayerMask.NameToLayer("Building");
@@ -324,6 +325,8 @@ public sealed class PlayerController : UnitController
 
         UpdateSelectionRect();
         m_selectionLineRenderer.enabled = false;
+
+
         Vector3 center = (m_selectionStart + m_selectionEnd) / 2f;
         Vector3 size = Vector3.up * m_selectionBoxHeight + m_selectionEnd - m_selectionStart;
         size.x = Mathf.Abs(size.x);
@@ -377,8 +380,9 @@ public sealed class PlayerController : UnitController
         if (m_selectionStarted == false)
             return;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
+
 
         RaycastHit raycastInfo;
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
@@ -387,12 +391,14 @@ public sealed class PlayerController : UnitController
         }
 
         RenderSelectionRect();
+
     }
 
     private void RenderSelectionRect()
     {
         float width = 2f * m_cameraPlayer.Distance * Mathf.Tan(m_cameraPlayer.FOV * Mathf.Deg2Rad * 0.5f) * (m_selectionLineWidth / Screen.width);
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = width;
+
         m_selectionLineRenderer.SetPosition(0, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionStart.z));
         m_selectionLineRenderer.SetPosition(1, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionEnd.z));
         m_selectionLineRenderer.SetPosition(2, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionEnd.z));
@@ -534,7 +540,7 @@ public sealed class PlayerController : UnitController
         int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastInfo;
 
         // Set unit / factory attack target
@@ -568,7 +574,7 @@ public sealed class PlayerController : UnitController
 
         int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastInfo;
 
         // Set unit / factory attack target
@@ -700,7 +706,7 @@ public sealed class PlayerController : UnitController
         }
 
         Vector3 floorPos = Vector3.zero;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
         RaycastHit raycastInfo;
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
