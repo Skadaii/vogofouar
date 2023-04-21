@@ -17,9 +17,9 @@ public class FighterDataScriptable : UnitDataScriptable
     private List<Command> m_fighterCommands;
     public override Command[] Commands => base.Commands.Concat(m_fighterCommands).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
         m_fighterCommands = new List<Command>
         {

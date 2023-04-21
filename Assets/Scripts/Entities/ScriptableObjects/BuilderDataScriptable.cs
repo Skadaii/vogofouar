@@ -22,9 +22,9 @@ public class BuilderDataScriptable : UnitDataScriptable
     private List<Command> m_builderCommands;
     public override Command[] Commands => base.Commands.Concat(m_builderCommands).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
         m_builderCommands = new List<Command>
         {
@@ -38,5 +38,11 @@ public class BuilderDataScriptable : UnitDataScriptable
                 m_builderCommands.Add(new BuildCommand($"Builder_Build_{buildingPrefab.name}", building.EntityData.icon, Builder.Command_RequestBuild, toBuild: buildingPrefab));
             }
         }
+    }
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_builderCommands.Clear();
     }
 }

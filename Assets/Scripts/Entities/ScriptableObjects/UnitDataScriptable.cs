@@ -24,9 +24,9 @@ public class UnitDataScriptable : EntityDataScriptable
 
     public override Command[] Commands => base.Commands.Concat(m_unitCommands).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
         m_unitCommands = new List<Command>
         {
@@ -35,5 +35,12 @@ public class UnitDataScriptable : EntityDataScriptable
             new TargetCommand("Unit_CaptureTarget", Resources.Load<Sprite>("Textures/Sprites/Commands/capture_icon"), Unit.Command_Capture, Unit.Command_CanCaptureTarget),
             new LocationCommand("Unit_PatrolToLocation", Resources.Load<Sprite>("Textures/Sprites/Commands/patrol_icon"), Unit.Command_AddPatrolPoint)
         };
+    }
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_unitCommands.Clear();
     }
 }

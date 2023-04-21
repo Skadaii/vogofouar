@@ -19,12 +19,17 @@ public class EntityDataScriptable : ScriptableObject
 
     public virtual Command[] Commands => m_entityCommands.ToArray();
 
-    protected void OnValidate()
+    protected void OnEnable()
     {
         m_entityCommands = new List<Command>
         {
             //new VoidCommand(newActionName: "Entity_Stop", newMethod:"Stop", icon: Resources.Load<Sprite>("Textures/Sprites/Commands/stop_icon"))
             new VoidCommand("Entity_Stop", Resources.Load<Sprite>("Textures/Sprites/Commands/stop_icon"), Entity.Command_Stop)
         };
+    }
+
+    protected void OnDisable()
+    {
+        m_entityCommands.Clear();
     }
 }

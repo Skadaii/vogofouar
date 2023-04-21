@@ -19,9 +19,9 @@ public class FactoryDataScriptable : BuildingDataScriptable
     private List<Command> m_factoryCommand;
     public override Command[] Commands => base.Commands.Concat(m_factoryCommand).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
         m_factoryCommand ??= new List<Command>();
 
@@ -30,14 +30,21 @@ public class FactoryDataScriptable : BuildingDataScriptable
             if (unitPrefab.TryGetComponent(out Unit unit))
             {
                 m_factoryCommand.Add(new BuildCommand(
-                    $"Factory_Produce_{unitPrefab.name}", 
+                    $"Factory_Produce_{unitPrefab.name}",
                     unit.EntityData.icon,
-                    Factory.Command_RequestUnitProduction, 
-                    Factory.Command_CancelUnitProduction, 
-                    Factory.Command_GetQueueCountOfUnit, 
+                    Factory.Command_RequestUnitProduction,
+                    Factory.Command_CancelUnitProduction,
+                    Factory.Command_GetQueueCountOfUnit,
                     unitPrefab
-                )) ;
+                ));
             }
         }
+    }
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_factoryCommand.Clear();
     }
 }
