@@ -73,8 +73,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e351ef8902e9464c9bb9dc2ca1ab6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_instancedFormationDirectories:
-  - Resources/SavedFormations
+  m_internalInstancedFormationDirectories:
+  - SavedFormations
+  m_externalInstancedFormationDirectories:
   - SavedFormations
   m_playerUI: {fileID: 0}
   m_formationEditor: {fileID: 0}
