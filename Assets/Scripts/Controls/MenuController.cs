@@ -107,8 +107,6 @@ public class MenuController : MonoBehaviour
 
         bool isMixed = selectedUnit.Any(u => u.Squad != firstUnit.Squad);
 
-        int i = 0;
-
         foreach (var (rule, button) in m_formationButtons)
             button.onClick.AddListener(() => setSquadMethod(selectedUnit, rule));
     }

@@ -71,14 +71,14 @@ public class FormationEditor : MonoBehaviour
         InitializeInstanceViewport();
     }
 
-    private GameObject CreatePresetRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationPresetContent, () => SetSelectedPresetFormation(rule));
-    private GameObject CreateInstanceRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationInstanceContent, () => SetSelectedInstanceFormation(rule));
+    private GameObject CreatePresetRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationPresetContent);
+    private GameObject CreateInstanceRuleButton(FormationRule rule) => CreateRuleButton(rule, m_formationInstanceContent);
 
-    private GameObject CreateRuleButton(FormationRule rule, Transform contentListTransform, UnityAction action)
+    private GameObject CreateRuleButton(FormationRule rule, Transform contentListTransform)
     {
         GameObject buttonGO = Instantiate(m_formationSelectorPrefab, contentListTransform);
         Button buttonComp = buttonGO.GetComponent<Button>();
-        buttonComp.onClick.AddListener(action);
+        buttonComp.onClick.AddListener(() => SetSelectedFormation(rule));
 
         TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
         textComp.text = rule.name;
@@ -149,22 +149,27 @@ public class FormationEditor : MonoBehaviour
         return instancedRules;
     }
 
-    private void SetSelectedPresetFormation(FormationRule newFormation)
+    private void SetSelectedFormation(FormationRule newFormation)
     {
-        FormationRule presetInstance = ScriptableObject.CreateInstance(newFormation.GetType()) as FormationRule;
-        presetInstance.name = newFormation.name;
+        if (!newFormation)
+        {
+            m_filenameField.text = string.Empty;
 
-        SetSelectedInstanceFormation(presetInstance);
-    }
+            foreach (GameObject virtualUnit in m_virtualUnits)
+                Destroy(virtualUnit);
 
-    private void SetSelectedInstanceFormation(FormationRule newFormation)
-    {
-        m_currRule = newFormation;
+            foreach (GameObject paramHolder in m_paramHolders)
+                Destroy(paramHolder);
+
+            return;
+        }
+
+        m_currRule = Instantiate(newFormation);
+
+        m_filenameField.text = m_currRule.name = newFormation.name;
 
         DisplayUnits();
         DisplayParams();
-
-        m_filenameField.text = m_currRule.name;
     }
 
     private void DisplayUnits()
@@ -210,52 +215,64 @@ public class FormationEditor : MonoBehaviour
 
     public void SaveCurrentRule()
     {
+        if (!m_currRule)
+            return;
+
         string dirpath = loadingDirectory;
 
         if (!Directory.Exists(dirpath))
             Directory.CreateDirectory(dirpath);
 
-        string filename = m_currRule.name = m_filenameField.text;
+        string filename = m_filenameField.text;
 
-        string ruleAsJSON = JsonConvert.SerializeObject(m_currRule, m_serializationSettings);
+        if (m_currRule.name == m_filenameField.text)
+            DeleteRule(m_currRule);
+
+        FormationRule parentRule = Instantiate(m_currRule);
+        parentRule.name = m_filenameField.text;
+
+        string ruleAsJSON = JsonConvert.SerializeObject(parentRule, m_serializationSettings);
 
         string filePath = dirpath + '/' + filename + ".json";
 
         File.WriteAllText(filePath, ruleAsJSON);
 
-        if (!m_instancedRules.Contains(m_currRule))
-        {
-            m_instancedRules.Add(m_currRule);
-            GameObject buttonGO = CreateInstanceRuleButton(m_currRule);
-            m_buttonGOs.Add(m_currRule, buttonGO);
-            OnNewRuleCreated.Invoke(m_currRule);
-        }
+       m_instancedRules.Add(parentRule);
+       GameObject buttonGO = CreateInstanceRuleButton(parentRule);
+       m_buttonGOs.Add(parentRule, buttonGO);
+       OnNewRuleCreated.Invoke(parentRule);
     }
 
     public void DeleteCurrentRule()
     {
+        DeleteRule(m_currRule);
+        SetSelectedFormation(m_instancedRules.FirstOrDefault());
+    }
+
+    private void DeleteRule(FormationRule ruleInstance)
+    {
         string dirpath = loadingDirectory;
 
-        if (!Directory.Exists(dirpath) || m_currRule is null)
+        FormationRule ruleParent = m_instancedRules.Find(rule => rule.name == ruleInstance.name);
+
+        if (!Directory.Exists(dirpath) || ruleInstance is null)
             return;
 
-        string filename = m_currRule.name;
+        string filename = ruleInstance.name;
 
         string filePath = dirpath + '/' + filename + ".json";
 
         if (!File.Exists(filePath))
             return;
 
-        OnRuleDeleted.Invoke(m_currRule);
+        OnRuleDeleted.Invoke(ruleParent);
 
-        Destroy(m_buttonGOs[m_currRule]);
-        m_buttonGOs.Remove(m_currRule);
+        Destroy(m_buttonGOs[ruleParent]);
+        m_buttonGOs.Remove(ruleParent);
 
         File.Delete(filePath);
 
-        m_instancedRules.Remove(m_currRule);
-
-        m_currRule = m_instancedRules.FirstOrDefault();
+        m_instancedRules.Remove(ruleParent);
     }
 
     public void OnZoom(float zoom)
