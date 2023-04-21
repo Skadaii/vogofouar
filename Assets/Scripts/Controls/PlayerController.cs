@@ -569,23 +569,11 @@ public sealed class PlayerController : UnitController
         {
             if (raycastInfo.transform.TryGetComponent(out Entity other))
             {
-
                 if (other.Team != Team)
                 {
-                    if(other is StaticBuilding)
-                    {
-                        // Direct call to attacking task $$$ to be improved by AI behaviour
-                        foreach (Unit unit in m_selectedUnitList)
-                            if (unit != null)
-                                unit.SetCaptureTarget(other);
-                    }
-                    else
-                    {
-                        // Direct call to attacking task $$$ to be improved by AI behaviour
-                        foreach (Fighter fighter in m_selectedUnitList)
-                            if (fighter != null)
-                                fighter.SetAttackTarget(other);
-                    }
+                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+                    newSquad.m_leaderComponent.SetTargetPosition(null);
+                    newSquad.m_leaderComponent.SetTarget(other);
                 }
                 else if (other.NeedsRepairing())
                 {
@@ -606,20 +594,20 @@ public sealed class PlayerController : UnitController
         }
     }
 
-
     private void MoveUnits(Vector3 squadTarget)
     {
-        if (m_selectedUnitList.Count == 1)
+        /*if (m_selectedUnitList.Count == 1)
         {
             Unit unitToMove = m_selectedUnitList.First();
             unitToMove.Squad = null;
             unitToMove.MoveTo(squadTarget);
             return;
-        }
+        }*/
 
         UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
 
         newSquad.m_leaderComponent.SetTargetPosition(squadTarget);
+        newSquad.m_leaderComponent.SetTarget(null);
     }
 
     #endregion

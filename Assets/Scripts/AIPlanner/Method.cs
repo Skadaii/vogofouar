@@ -12,7 +12,7 @@ namespace AIPlanner.GOAP
         [SerializeField] private string m_componentName = string.Empty;
 
         private Component m_component;
-        private MethodInfo m_methodInfo;
+        protected MethodInfo m_methodInfo;
 
         public static void GetConsiderationMethods(GameObject GameObject, out Dictionary<string, string[]> OutActionMethods)
         {

@@ -77,6 +77,7 @@ MonoBehaviour:
   m_targetDistanceEpsilon: 0.1
   m_usePrediction: 0
   m_leaderData: {fileID: 11400000, guid: b4195662709c8434da403a2bc8923e19, type: 2}
+  m_goap: {fileID: 5858002665697639906}
 --- !u!114 &7912077643285499108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,21 +127,37 @@ MonoBehaviour:
     show: 0
     states:
     - show: 0
-      name: HasTargetPosition
+      name: TargetType
       stateValue:
         m_value:
-          rid: 1854990848190316544
-      m_stateMethod:
-        m_methodName: HasTargetPosition
-        m_componentName: UnitLeader
-    - show: 0
-      name: IsMoving
-      stateValue:
-        m_value:
-          rid: 1854990848190316560
+          rid: 1854990934110634037
       m_stateMethod:
         m_methodName: 
         m_componentName: 
+    - show: 0
+      name: IsNearCaptureTarget
+      stateValue:
+        m_value:
+          rid: 1854990934110634039
+      m_stateMethod:
+        m_methodName: IsNearToCaptureTarget
+        m_componentName: UnitLeader
+    - show: 0
+      name: IsNearAttackTarget
+      stateValue:
+        m_value:
+          rid: 1854990961847304204
+      m_stateMethod:
+        m_methodName: IsNearToAttackTarget
+        m_componentName: UnitLeader
+    - show: 0
+      name: IsEnemiesHurted
+      stateValue:
+        m_value:
+          rid: 1854990961847304259
+      m_stateMethod:
+        m_methodName: ResetIsEnemiesHurted
+        m_componentName: UnitLeader
   m_actionSet:
   - m_methodName: MoveToTarget
     m_componentName: UnitLeader
@@ -148,13 +165,13 @@ MonoBehaviour:
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+PreconditionListEditor
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
     m_stateEffects:
     - show: 0
-      id: 1
+      id: 0
       stateValue:
         m_value:
-          rid: 1854990848190316563
+          rid: 1854990934110634043
     m_preconditions:
     - name: DefaultPrecondition
       show: 0
@@ -164,26 +181,21 @@ MonoBehaviour:
         id: 0
         stateValue:
           m_value:
-            rid: 1854990848190316564
-      cost: 0
-  - m_methodName: CheckHasReachedTarget
+            rid: 1854990934110634042
+      cost: 1
+  - m_methodName: CaptureTarget
     m_componentName: UnitLeader
-    name: CheckHasReachedTarget
+    name: CaptureTarget
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+PreconditionListEditor
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
     m_stateEffects:
     - show: 0
       id: 0
       stateValue:
         m_value:
-          rid: 1854990848190316567
-    - show: 0
-      id: 1
-      stateValue:
-        m_value:
-          rid: 1854990848190316568
+          rid: 1854990934110634046
     m_preconditions:
     - name: DefaultPrecondition
       show: 0
@@ -193,13 +205,114 @@ MonoBehaviour:
         id: 1
         stateValue:
           m_value:
-            rid: 1854990848190316569
+            rid: 1854990934110634044
       - show: 0
         id: 0
         stateValue:
           m_value:
-            rid: 1854990848190316570
-      cost: 0
+            rid: 1854990934110634045
+      cost: 10
+  - m_methodName: MoveToCaptureTarget
+    m_componentName: UnitLeader
+    name: MoveToCaptureTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 1
+      stateValue:
+        m_value:
+          rid: 1854990934110634048
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990934110634047
+      cost: 1
+  - m_methodName: AttackTarget
+    m_componentName: UnitLeader
+    name: AttackTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 0
+      stateValue:
+        m_value:
+          rid: 1854990954948198408
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990954948198409
+      - show: 0
+        id: 2
+        stateValue:
+          m_value:
+            rid: 1854990961847304210
+      cost: 1
+  - m_methodName: MoveToAttackTarget
+    m_componentName: UnitLeader
+    name: MoveToAttackTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 2
+      stateValue:
+        m_value:
+          rid: 1854990961847304209
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990961847304208
+      cost: 1
+  - m_methodName: AutoAttack
+    m_componentName: UnitLeader
+    name: AutoAttack
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 3
+      stateValue:
+        m_value:
+          rid: 1854990961847304342
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990961847304341
+      cost: 1
   m_goals:
   - name: MoveToTarget
     show: 0
@@ -209,7 +322,7 @@ MonoBehaviour:
       id: 0
       stateValue:
         m_value:
-          rid: 1854990848190316554
+          rid: 1854990934110634049
     m_animationCurve:
       serializedVersion: 2
       m_Curve:
@@ -237,43 +350,123 @@ MonoBehaviour:
     m_considerationMethod:
       m_methodName: MoveToTargetGoal
       m_componentName: UnitLeader
-  m_useDebugLog: 0
+  - name: AutoAttack
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 3
+      stateValue:
+        m_value:
+          rid: 1854990961847304340
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.8
+        outSlope: 0.8
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.8
+        inSlope: 0.8
+        outSlope: 0.8
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: IsNearEnemiesGoal
+      m_componentName: UnitLeader
+  m_useDebugLog: 1
   references:
     version: 2
     RefIds:
-    - rid: 1854990848190316544
+    - rid: 1854990934110634037
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990934110634039
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 0
-    - rid: 1854990848190316554
-      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+    - rid: 1854990934110634042
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
         Value: 0
-    - rid: 1854990848190316560
-      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+    - rid: 1854990934110634043
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 0
-    - rid: 1854990848190316563
+        Value: 3
+    - rid: 1854990934110634044
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 1
-    - rid: 1854990848190316564
+    - rid: 1854990934110634045
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990934110634046
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990934110634047
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990934110634048
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 1
-    - rid: 1854990848190316567
+    - rid: 1854990934110634049
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990954948198408
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990954948198409
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 2
+    - rid: 1854990961847304204
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 0
-    - rid: 1854990848190316568
-      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+    - rid: 1854990961847304208
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 0
-    - rid: 1854990848190316569
+        Value: 2
+    - rid: 1854990961847304209
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 1
-    - rid: 1854990848190316570
+    - rid: 1854990961847304210
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990961847304259
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990961847304340
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990961847304341
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990961847304342
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 1

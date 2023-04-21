@@ -40,7 +40,7 @@ public class Fighter : Unit
         {
             if (m_target.Team != Team && m_target.Team != ETeam.Neutral)
             {
-                if(m_target is not StaticBuilding) ComputeAttack();
+                if(m_target is not StaticBuilding) ComputeAttack(m_target);
             }
         }
     }
@@ -76,18 +76,15 @@ public class Fighter : Unit
         return true;
     }
 
-    // Attack Task
-    public void StartAttacking(Entity target) =>  m_target = target;
-
-    public void ComputeAttack()
+    public void ComputeAttack(Entity target)
     {
-        if (CanAttack(m_target) == false)
+        if (CanAttack(target) == false)
             return;
 
         if (m_navMeshAgent)
             m_navMeshAgent.isStopped = true;
 
-        transform.LookAt(m_target.transform);
+        transform.LookAt(target.transform);
 
         // only keep Y axis
         transform.eulerAngles = transform.eulerAngles.y * Vector3.up;
@@ -101,12 +98,12 @@ public class Fighter : Unit
             {
                 GameObject newBullet = Instantiate(m_fighterData.bulletPrefab, m_bulletSlot);
                 newBullet.transform.parent = null;
-                newBullet.GetComponent<Bullet>().ShootToward(m_target.transform.position - transform.position, this);
+                newBullet.GetComponent<Bullet>().ShootToward(target.transform.position - transform.position, this);
             }
 
             // apply damages
             int damages = Mathf.FloorToInt(m_fighterData.dps * m_fighterData.attackFrequency);
-            m_target.AddDamage(damages);
+            target.AddDamage(damages);
         }
     }
 }

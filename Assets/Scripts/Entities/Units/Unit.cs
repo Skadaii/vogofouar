@@ -77,7 +77,6 @@ public abstract class Unit : Entity
             m_navMeshAgent.SetDestination(m_patrolPoint[m_patrolIndex]);
         }
 
-
         if (m_target != null)
         {
             if (m_target.Team != Team)
@@ -142,14 +141,11 @@ public abstract class Unit : Entity
     #region Capture methods
     
     //  Capture Task
-
-
-    public void SetCaptureTarget(Entity target)
+    public virtual void SetCaptureTarget(StaticBuilding target)
     {
-        StaticBuilding buildingToCapture = target as StaticBuilding;
-        if (buildingToCapture == null) return;
+        m_target = target;
 
-        m_target = buildingToCapture;
+        if (target == null) return;
 
         if (CanCapture(target)) return;
 
@@ -159,19 +155,6 @@ public abstract class Unit : Entity
             m_navMeshAgent.isStopped = false;
         }
     }
-
-    //public void StartCapture(Entity target)
-    //{
-    //    StaticBuilding buildingToCapture = target as StaticBuilding;
-    //    if (buildingToCapture == null) return;
-
-    //    if (Vector3.SqrMagnitude(buildingToCapture.transform.position - transform.position) > UnitData.captureDistance * UnitData.captureDistance)
-    //        return;
-
-    //    if (m_navMeshAgent) m_navMeshAgent.isStopped = true;
-
-    //    buildingToCapture.StartCapture(this);
-    //}
 
     private void ComputeCapture()
     {
@@ -185,15 +168,6 @@ public abstract class Unit : Entity
             m_target = null;
         }
     }
-
-    //public void StopCapture()
-    //{
-    //    StaticBuilding buildingToCapture = m_target as StaticBuilding;
-    //    if (buildingToCapture == null) return;
-
-    //    buildingToCapture.StopCapture(this);
-    //    m_target = null;
-    //}
 
     public bool CanCapture(Entity target)
     {
@@ -224,10 +198,6 @@ public abstract class Unit : Entity
     public virtual void MoveTo(Vector3 pos)
     {
         Stop();
-        m_target = null;
-
-        //if (m_target != null)
-        //  StopCapture();
 
         if (m_navMeshAgent)
         {

@@ -100,7 +100,7 @@ namespace AIPlanner.GOAP
         {
             float heuristic = 0f;
             Goal bestGoal = null;
-            int bestGoalId = -1;
+
             for (int i = 0; i < m_goals.Count; ++i)
             {
                 Goal goal = m_goals[i];
@@ -110,7 +110,6 @@ namespace AIPlanner.GOAP
                 {
                     heuristic = newHeuristic;
                     bestGoal = goal;
-                    bestGoalId = i;
                 }
             }
 
@@ -122,7 +121,7 @@ namespace AIPlanner.GOAP
                 m_currentGoal = bestGoal;
 
                 if (m_useDebugLog)
-                    Debug.Log($"New Goal ({bestGoalId})");
+                    Debug.Log($"New Goal : {m_currentGoal.name}");
 
                 GeneratePlan();
             }
@@ -130,6 +129,7 @@ namespace AIPlanner.GOAP
 
         private void GeneratePlan()
         {
+            m_nodes.Clear();
             m_worldState.ComputeHashValues();
 
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -152,7 +152,7 @@ namespace AIPlanner.GOAP
                 foreach (Node node in m_nodes)
                     plan += "->" + node.action.name;
 
-                Debug.Log(plan + $"Generation duration : {stopwatch.ElapsedMilliseconds}");
+                Debug.Log(plan + $" | Generation duration : {stopwatch.ElapsedMilliseconds}");
             }
 
             NextNode();
@@ -176,6 +176,9 @@ namespace AIPlanner.GOAP
                 ActionFailed();
                 return;
             }
+
+            if (m_useDebugLog)
+                Debug.Log($"Action Started: {m_currentNode.action.name}");
         }
 
         private void UpdatePlan()

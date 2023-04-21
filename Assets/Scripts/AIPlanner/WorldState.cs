@@ -43,16 +43,30 @@ namespace AIPlanner.GOAP
             }
         }
 
-        public State GetState(string stateName)
+        public object GetState(string stateName)
         {
             for (int i = 0; i < states.Count; ++i)
             {
                 State state = states[i];
                 if (state.name == stateName)
-                    return state;
+                    return state.stateValue.Value;
             }
 
-            return new State();
+            return null;
+        }
+
+        public void SetState(string stateName, object value)
+        {
+            for (int i = 0; i < states.Count; ++i)
+            {
+                State state = states[i];
+
+                if (state.name == stateName)
+                {
+                    state.stateValue.Value = value;
+                    states[i] = state;
+                }
+            }
         }
 
 #if UNITY_EDITOR
