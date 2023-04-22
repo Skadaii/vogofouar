@@ -26,8 +26,6 @@ public sealed class PlayerController : UnitController
 
     [SerializeField, Range(1f, 25f)] private float m_selectionLineWidth = 3.5f;
 
-    private PointerEventData m_menuPointerEventData = null;
-
     private float m_rightMouseButtonDownElapsedTime = 0f;
 
     // Build Menu UI
@@ -98,8 +96,6 @@ public sealed class PlayerController : UnitController
             Debug.LogWarning("EventSystem not assigned in PlayerController, searching in current scene...");
             m_sceneEventSystem = FindObjectOfType<EventSystem>();
         }
-        // Set up the new Pointer Event
-        m_menuPointerEventData = new PointerEventData(m_sceneEventSystem);
     }
 
     protected override void Start()
@@ -251,17 +247,7 @@ public sealed class PlayerController : UnitController
         int unitMask = 1 << LayerMask.NameToLayer("Unit");
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
 
-        // *** Ignore Unit selection when clicking on UI ***
-        // Set the Pointer Event Position to that of the mouse position
-        m_menuPointerEventData.position = Input.mousePosition;
-
-        //Create a list of Raycast Results
-        List<RaycastResult> results = new List<RaycastResult>();
-        m_playerMenuController.BuildMenuRaycaster.Raycast(m_menuPointerEventData, results);
-        if (results.Count > 0)
-            return;
-
-        if (EventSystem.current.IsPointerOverGameObject()) return;
+        if (m_wheelMenu.IsActiveAndHovered()) return;
 
         RaycastHit raycastInfo;
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, uiMask)) return;
@@ -365,10 +351,10 @@ public sealed class PlayerController : UnitController
 
         if (multiSelectedUnits.Count > 0)
         {
-            SelectUnitList(multiSelectedUnits);
             UnselectCurrentFactory();
+            SelectUnitList(multiSelectedUnits);
         }
-        else m_selectedBuildings = selectedFactory;
+        else SelectFactory(selectedFactory);
 
         m_selectionStarted = false;
         m_selectionStart = Vector3.zero;
@@ -423,13 +409,13 @@ public sealed class PlayerController : UnitController
 
     private void BuildingSelectedUpdate()
     {
-        DefaultUpdate();
-
-        if (m_wheelMenu.isActiveAndEnabled && HasSelectedBuildings)
+        if (m_wheelMenu.isActiveAndEnabled && m_wheelMenu.IsActiveAndHovered())
         {
             if (Input.GetMouseButtonDown(0)) ValidateBuildingCommandOnWheel();
             if (Input.GetMouseButtonDown(1)) ValidateBuildingReverseCommandOnWheel();
         }
+
+        DefaultUpdate();
     }
 
 
@@ -458,17 +444,6 @@ public sealed class PlayerController : UnitController
         m_wheelMenu.SetBuildingWheel(factory);
     }
 
-    protected override void UnselectCurrentFactory()
-    {
-        //if (m_selectedBuildings)
-        //{
-        //    m_playerMenuController.UnregisterBuildButtons(m_selectedBuildings.AvailableUnitsCount);
-        //}
-
-        //m_playerMenuController.HideFactoryMenu();
-
-        base.UnselectCurrentFactory();
-    }
     private void ValidateBuildingCommandOnWheel()
     {
         m_wheelMenu.ExecuteCommand();
@@ -485,13 +460,13 @@ public sealed class PlayerController : UnitController
 
     private void UnitSelectedUpdate()
     {
-        DefaultUpdate();
-
         if (Input.GetMouseButtonUp(0) && m_wheelMenu.isActiveAndEnabled) ValidateUnitCommandWheel();
 
         //  Right mouse 
         if (Input.GetMouseButton(1)) HandleRightMouseOnUnitSelected();
         if (Input.GetMouseButtonUp(1)) HandleRightMouseReleaseOnUnitSelected();
+
+        DefaultUpdate();
     }
 
 

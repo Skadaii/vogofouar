@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -25,6 +26,8 @@ public class WheelMenu : MonoBehaviour
 
     private int m_selectedIndex = 0;
     private object m_clickedObject;
+
+    private Coroutine _appearanceCoroutine;
 
     //Functions
 
@@ -220,13 +223,44 @@ public class WheelMenu : MonoBehaviour
     public void Appear()
     {
         gameObject.SetActive(true);
-        StartCoroutine(ScaleCoroutine(Vector3.zero, Vector3.one, 0.15f)); ;
+
+        if (_appearanceCoroutine != null) StopCoroutine(_appearanceCoroutine);
+        _appearanceCoroutine = StartCoroutine(ScaleCoroutine(transform.localScale, Vector3.one, 0.15f)); ;
     }
 
     public void Disappear()
     {
-        StartCoroutine(ScaleCoroutine(Vector3.one, Vector3.zero, 0.15f, () => { Clear(); gameObject.SetActive(false); }));
+        if (_appearanceCoroutine != null) StopCoroutine(_appearanceCoroutine);
+        _appearanceCoroutine = StartCoroutine(ScaleCoroutine(transform.localScale, Vector3.zero, 0.15f, () => { Clear(); gameObject.SetActive(false); }));
     }
+
+
+    public bool IsHovered()
+    {
+        EventSystem eventSystem = EventSystem.current;
+
+        if (eventSystem == null) return false;
+
+        PointerEventData pointerData = new PointerEventData(eventSystem)
+        {
+            pointerId = -1,
+        };
+
+        pointerData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        eventSystem.RaycastAll(pointerData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            GameObject go = result.gameObject;
+            if (go.transform.IsChildOf(transform) || transform == go.transform) return true;
+        }
+
+        return false;
+    }
+
+    public bool IsActiveAndHovered() => isActiveAndEnabled && IsHovered();
 
     #region Coroutine
 
