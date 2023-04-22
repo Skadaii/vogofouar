@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e72fd6405fa72d349909348445a09055, type: 3}
   m_Name: Builder_Data
   m_EditorClassIdentifier: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 52c88ef8acb37e242aa32e46f84d0a8c, type: 3}
   typeId: 0
   caption: Builder
   cost: 1
