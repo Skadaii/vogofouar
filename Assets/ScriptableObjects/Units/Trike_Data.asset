@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Trike
   cost: 2
   maxHP: 75
+  influenceRadius: 3
+  influenceStrength: 0.5
   speed: 10
   angularSpeed: 250
   acceleration: 20

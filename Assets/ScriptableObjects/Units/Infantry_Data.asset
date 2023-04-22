@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Trooper
   cost: 1
   maxHP: 50
+  influenceRadius: 3
+  influenceStrength: 0.5
   speed: 10
   angularSpeed: 300
   acceleration: 20

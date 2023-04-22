@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Heavy Tank A
   cost: 5
   maxHP: 200
+  influenceRadius: 4
+  influenceStrength: 1
   speed: 3.5
   angularSpeed: 100
   acceleration: 8

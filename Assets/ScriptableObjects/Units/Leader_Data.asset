@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Leader
   cost: 0
   maxHP: 0
+  influenceRadius: 0
+  influenceStrength: 0
   speed: 10
   angularSpeed: 200
   acceleration: 20

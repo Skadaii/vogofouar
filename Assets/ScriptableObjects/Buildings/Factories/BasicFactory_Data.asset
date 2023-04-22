@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Light Factory
   cost: 10
   maxHP: 500
+  influenceRadius: 4
+  influenceStrength: 0.5
   deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
     type: 3}
   nbSpawnSlots: 10

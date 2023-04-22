@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Tank
   cost: 4
   maxHP: 150
+  influenceRadius: 3
+  influenceStrength: 1
   speed: 4
   angularSpeed: 130
   acceleration: 10
