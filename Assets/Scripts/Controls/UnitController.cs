@@ -176,7 +176,7 @@ public class UnitController : MonoBehaviour
 
     protected UnitSquad CreateDynamicSquad(List<Unit> squadUnits)
     {
-        Vector3 averagePosition = squadUnits.Select(unit => unit.transform.position).Aggregate((a, b) => a + b) / squadUnits.Count;
+        Vector3 averagePosition = squadUnits.Where(unit => unit != null).Select(unit => unit.transform.position).Aggregate((a, b) => a + b) / squadUnits.Count;
 
         UnitSquad newSquad = new UnitSquad();
 

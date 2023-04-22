@@ -70,7 +70,6 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
     }
 
     public float HealthPercent => m_healthPoints / m_maxHealthPoints;
-
     //  Functions
     //  ---------
 
@@ -191,7 +190,7 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     virtual public bool NeedsRepairing()
     {
-        return true;
+        return HealthPoint != MaxHealthPoints;
     }
 
     virtual public float Repair(float amount)

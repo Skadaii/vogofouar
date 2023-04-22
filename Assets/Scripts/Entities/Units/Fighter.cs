@@ -109,7 +109,7 @@ public class Fighter : Unit
 
     public static void Command_Attack(Entity entity, Entity target)
     {
-        //((Fighter)entity)?.StartAttacking(target);
+        ((Fighter)entity)?.Squad.m_leaderComponent.SetTarget(target, ETargetType.Attack);
     }
 
     public static bool Command_CanAttackTarget(Entity entity, Entity target)

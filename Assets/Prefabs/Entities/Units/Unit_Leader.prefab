@@ -158,6 +158,22 @@ MonoBehaviour:
       m_stateMethod:
         m_methodName: ResetIsEnemiesHurted
         m_componentName: UnitLeader
+    - show: 0
+      name: DoesUnitNeedHeal
+      stateValue:
+        m_value:
+          rid: 1854990976337313814
+      m_stateMethod:
+        m_methodName: DoesUnitNeedHeal
+        m_componentName: UnitLeader
+    - show: 0
+      name: IsNearRepairTarget
+      stateValue:
+        m_value:
+          rid: 1854990976337313963
+      m_stateMethod:
+        m_methodName: IsNearToRepairTarget
+        m_componentName: UnitLeader
   m_actionSet:
   - m_methodName: MoveToTarget
     m_componentName: UnitLeader
@@ -165,7 +181,7 @@ MonoBehaviour:
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
     m_stateEffects:
     - show: 0
       id: 0
@@ -242,7 +258,7 @@ MonoBehaviour:
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+PreconditionListEditor
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
     m_stateEffects:
     - show: 0
       id: 0
@@ -271,7 +287,7 @@ MonoBehaviour:
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
     m_stateEffects:
     - show: 0
       id: 2
@@ -295,7 +311,7 @@ MonoBehaviour:
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.GOAPWindowEditor+StateIdListEditor
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
     m_stateEffects:
     - show: 0
       id: 3
@@ -313,6 +329,83 @@ MonoBehaviour:
           m_value:
             rid: 1854990961847304341
       cost: 1
+  - m_methodName: RepairUnits
+    m_componentName: UnitLeader
+    name: RepairUnits
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 4
+      stateValue:
+        m_value:
+          rid: 1854990976337313826
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 4
+        stateValue:
+          m_value:
+            rid: 1854990976337313820
+      cost: 1
+  - m_methodName: MoveToRepairTarget
+    m_componentName: UnitLeader
+    name: MoveToRepairTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 5
+      stateValue:
+        m_value:
+          rid: 1854990976337313970
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990976337313962
+      cost: 1
+  - m_methodName: RepairTarget
+    m_componentName: UnitLeader
+    name: RepairTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 0
+      stateValue:
+        m_value:
+          rid: 1854990976337313973
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states:
+      - show: 0
+        id: 5
+        stateValue:
+          m_value:
+            rid: 1854990976337313971
+      - show: 0
+        id: 0
+        stateValue:
+          m_value:
+            rid: 1854990976337313972
+      cost: 1
   m_goals:
   - name: MoveToTarget
     show: 0
@@ -323,6 +416,11 @@ MonoBehaviour:
       stateValue:
         m_value:
           rid: 1854990934110634049
+    - show: 0
+      id: 4
+      stateValue:
+        m_value:
+          rid: 1854990976337313828
     m_animationCurve:
       serializedVersion: 2
       m_Curve:
@@ -359,6 +457,11 @@ MonoBehaviour:
       stateValue:
         m_value:
           rid: 1854990961847304340
+    - show: 0
+      id: 4
+      stateValue:
+        m_value:
+          rid: 1854990976337313827
     m_animationCurve:
       serializedVersion: 2
       m_Curve:
@@ -386,6 +489,42 @@ MonoBehaviour:
     m_considerationMethod:
       m_methodName: IsNearEnemiesGoal
       m_componentName: UnitLeader
+  - name: AutoRepair
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 4
+      stateValue:
+        m_value:
+          rid: 1854990976337313891
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.7
+        outSlope: 0.7
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.7
+        inSlope: 0.7
+        outSlope: 0.7
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: RepairGoal
+      m_componentName: UnitLeader
   m_useDebugLog: 1
   references:
     version: 2
@@ -393,7 +532,7 @@ MonoBehaviour:
     - rid: 1854990934110634037
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 3
+        Value: 4
     - rid: 1854990934110634039
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
@@ -405,7 +544,7 @@ MonoBehaviour:
     - rid: 1854990934110634043
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 3
+        Value: 4
     - rid: 1854990934110634044
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
@@ -417,7 +556,7 @@ MonoBehaviour:
     - rid: 1854990934110634046
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 3
+        Value: 4
     - rid: 1854990934110634047
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
@@ -429,11 +568,11 @@ MonoBehaviour:
     - rid: 1854990934110634049
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 3
+        Value: 4
     - rid: 1854990954948198408
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 3
+        Value: 4
     - rid: 1854990954948198409
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
@@ -465,8 +604,56 @@ MonoBehaviour:
     - rid: 1854990961847304341
       type: {class: TargetType, ns: , asm: Assembly-CSharp}
       data:
-        Value: 3
+        Value: 4
     - rid: 1854990961847304342
       type: {class: BoolType, ns: , asm: Assembly-CSharp}
       data:
         Value: 1
+    - rid: 1854990976337313814
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990976337313820
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990976337313826
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990976337313827
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990976337313828
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990976337313891
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990976337313962
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990976337313963
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990976337313970
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990976337313971
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990976337313972
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 3
+    - rid: 1854990976337313973
+      type: {class: TargetType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 4

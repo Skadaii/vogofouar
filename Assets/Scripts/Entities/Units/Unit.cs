@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody), typeof(NavMeshAgent))]
 public abstract class Unit : Entity
@@ -109,7 +111,6 @@ public abstract class Unit : Entity
         Destroy(gameObject);
     }
 
-
     private void InitializeNavMeshAgent()
     {
         m_navMeshAgent = GetComponent<NavMeshAgent>();
@@ -121,6 +122,8 @@ public abstract class Unit : Entity
             m_navMeshAgent.acceleration = UnitData.acceleration;
         }
     }
+
+    public void ResetTarget() => m_target = null; 
 
     #region IRepairable
 
@@ -226,22 +229,23 @@ public abstract class Unit : Entity
 
     public static void Command_MoveTo(Entity entity, Entity target)
     {
-        ((Unit)entity)?.MoveTo(target);
+        ((Unit)entity)?.Squad.m_leaderComponent.SetTargetPosition(target.transform.position);
     }
 
     public static void Command_MoveTo(Entity entity, Vector3 pos)
     {
-        ((Unit)entity)?.MoveTo(pos);
+        ((Unit)entity)?.Squad.m_leaderComponent.SetTargetPosition(pos);
     }
 
     public static void Command_AddPatrolPoint(Entity entity, Vector3 pos)
     {
+        //TODO:
         ((Unit)entity)?.AddPatrolPoint(pos);
     }
 
     public static void Command_Capture(Entity entity, Entity target)
     {
-        //((Unit)entity)?.SetCaptureTarget(target);
+        ((Unit)entity)?.Squad.m_leaderComponent.SetTarget(target, ETargetType.Capture);
     }
 
     public static bool Command_CanCaptureTarget(Entity entity, Entity target)

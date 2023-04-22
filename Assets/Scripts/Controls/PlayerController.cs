@@ -557,20 +557,19 @@ public sealed class PlayerController : UnitController
         {
             if (raycastInfo.transform.TryGetComponent(out Entity other))
             {
+
                 if (other.Team != Team)
                 {
+                    ETargetType targetType = other is StaticBuilding ? ETargetType.Capture : ETargetType.Attack;
+
                     UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
-                    newSquad.m_leaderComponent.SetTargetPosition(null);
-                    newSquad.m_leaderComponent.SetTarget(other);
+                    newSquad.m_leaderComponent.SetTarget(other, targetType);
                 }
                 else if (other.NeedsRepairing())
                 {
-                  // Direct call to reparing task $$$ to be improved by AI behaviour
-                  foreach (Builder unit in m_selectedUnitList)
-                      if (unit != null)
-                          unit.Build(other);
+                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+                    newSquad.m_leaderComponent.SetTarget(other, ETargetType.Repair);
                 }
-
             }
         }
         // Set unit move target
@@ -593,9 +592,7 @@ public sealed class PlayerController : UnitController
         }*/
 
         UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
-
         newSquad.m_leaderComponent.SetTargetPosition(squadTarget);
-        newSquad.m_leaderComponent.SetTarget(null);
     }
 
     #endregion

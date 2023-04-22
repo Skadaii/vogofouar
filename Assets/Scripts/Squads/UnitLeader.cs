@@ -1,16 +1,13 @@
 using AIPlanner;
 using AIPlanner.GOAP;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.Rendering;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.UI.CanvasScaler;
 
 public enum ETargetType
 {
     Move,
     Capture,
     Attack,
+    Repair,
 
     None
 }
@@ -30,7 +27,7 @@ public class UnitLeader : Unit
     private Entity m_currentTarget;
 
     private bool m_isTargetChanged = false;
-    private bool m_isEnemyTargetSetted = false;
+    private bool m_isTargetSetted = false;
 
     private int m_layerMask;
 
@@ -75,6 +72,7 @@ public class UnitLeader : Unit
     public void SetTargetPosition(Vector3? target)
     {
         m_targetPosition = target;
+        m_target = null;
 
         if (target != null)
         {
@@ -84,24 +82,17 @@ public class UnitLeader : Unit
         }
     }
 
-    public void SetTarget(Entity target)
+    public void SetTarget(Entity target, ETargetType targetType)
     {
         m_target = target;
+        m_targetPosition = null;
 
         if (target == null)
             return;
 
         m_isTargetChanged = true;
 
-        if (target as Unit || target as Factory)
-        {
-            m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.Attack));
-        }
-        else // (target as StaticBuilding)
-        {
-            m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.Capture));
-        }
-
+        m_goap.WorldState.SetState("TargetType", new TargetType(targetType));
     }
 
     public override void MoveToward(Vector3 velocity)
@@ -131,28 +122,12 @@ public class UnitLeader : Unit
     }
 
     [ConsiderationMethod]
+    public float RepairGoal(WorldState worldState) =>
+        ((BoolType)worldState.GetState("DoesUnitNeedHeal")).Value ? 1f : 0f;
+
+    [ConsiderationMethod]
     public float MoveToTargetGoal(WorldState worldState) => 
         ((TargetType)worldState.GetState("TargetType")).Value != ETargetType.None ? 1f : 0f;
-
-    [StateMethod]
-    public BoolType IsNearToCaptureTarget()
-    {
-        if (m_target == null || m_target is not StaticBuilding)
-            return new BoolType(false);
-
-        //TODO : remove hardcoded distance '10f'
-        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 10f);
-    }
-
-    [StateMethod]
-    public BoolType IsNearToAttackTarget()
-    {
-        if (m_target == null || (m_target is not Unit && m_target is not Factory))
-            return new BoolType(false);
-
-        //TODO : remove hardcoded distance '100f'
-        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 100f);
-    }
 
     [ConsiderationMethod]
     public float IsNearEnemiesGoal(WorldState worldState)
@@ -186,7 +161,55 @@ public class UnitLeader : Unit
     }
 
     [StateMethod]
+    public BoolType IsNearToCaptureTarget()
+    {
+        if (m_target == null || m_target is not StaticBuilding)
+            return new BoolType(false);
+
+        //TODO : remove hardcoded distance '10f'
+        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 10f);
+    }
+
+    [StateMethod]
+    public BoolType IsNearToAttackTarget()
+    {
+        if (m_target == null || (m_target is not Unit && m_target is not Factory))
+            return new BoolType(false);
+
+        //TODO : remove hardcoded distance '100f'
+        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 100f);
+    }
+
+    [StateMethod]
+    public BoolType IsNearToRepairTarget()
+    {
+        if (m_target == null || (m_target is not Unit && m_target is not Factory))
+            return new BoolType(false);
+
+        //TODO : remove hardcoded distance '100f'
+        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 10f);
+    }
+
+    [StateMethod]
     public BoolType ResetIsEnemiesHurted() => new BoolType(false);
+
+    [StateMethod]
+    public BoolType DoesUnitNeedHeal()
+    {
+        bool needsRepairing = false;
+        bool hasUnitBuilder = false;
+
+        foreach (Unit unit in Squad.Units)
+        {
+            if (unit as Builder)
+                hasUnitBuilder = true;
+
+            if (unit.NeedsRepairing())
+                needsRepairing = true;
+        }
+
+        return new BoolType(needsRepairing && hasUnitBuilder);
+    }
 
     private Action.EActionState MoveToTarget()
     {
@@ -222,25 +245,19 @@ public class UnitLeader : Unit
     [ActionMethod]
     public Action.EActionState MoveToTarget(WorldState worldState)
     {
-        /*if (!m_currentTargetPosition.HasValue || m_currentTarget != null)
-        {
-            m_target = null;
-            m_currentTarget = null;
-            m_currentTargetPosition = null;
-        }*/
 
         Action.EActionState actionState = MoveToTarget();
 
         return actionState;
     }
 
-    private void ResetUnitsCaptureTarget()
+    private void ResetUnitsTarget()
     {
         m_currentTarget = null;
 
         foreach (Unit unit in m_squad.Units)
             if (unit != null)
-                unit.SetCaptureTarget(null);
+                unit.ResetTarget();
     }
 
     [ActionMethod]
@@ -299,7 +316,7 @@ public class UnitLeader : Unit
             if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Capture)
                 m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
 
-            ResetUnitsCaptureTarget();
+            ResetUnitsTarget();
             return Action.EActionState.Failed;
         }
 
@@ -318,7 +335,7 @@ public class UnitLeader : Unit
 
         if (m_currentTarget != staticBuilding)
         {
-            ResetUnitsCaptureTarget();
+            ResetUnitsTarget();
             return Action.EActionState.Failed;
         }
 
@@ -326,7 +343,7 @@ public class UnitLeader : Unit
         {
             m_target = null;
 
-            ResetUnitsCaptureTarget();
+            ResetUnitsTarget();
             return Action.EActionState.Finished;
         }
 
@@ -336,18 +353,18 @@ public class UnitLeader : Unit
     [ActionMethod]
     public Action.EActionState MoveToAttackTarget(WorldState worldState)
     {
-        if ((m_target == null || (m_target is not Factory && m_target is not Unit)) && !m_isEnemyTargetSetted)
+        if ((m_target == null || (m_target is not Factory && m_target is not Unit)) && !m_isTargetSetted)
         {
-            if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Capture)
+            if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Attack)
                 m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
 
             m_currentTarget = null;
             return Action.EActionState.Failed;
         }
 
-        if (m_currentTarget == null && !m_isEnemyTargetSetted && m_isTargetChanged)
+        if (m_currentTarget == null && !m_isTargetSetted && m_isTargetChanged)
         {
-            m_isEnemyTargetSetted = true;
+            m_isTargetSetted = true;
             m_isTargetChanged = false;
 
             m_currentTargetPosition = null;
@@ -362,7 +379,7 @@ public class UnitLeader : Unit
             m_currentTarget = null;
             m_currentTargetPosition = null;
 
-            m_isEnemyTargetSetted = false;
+            m_isTargetSetted = false;
             m_isTargetChanged = true;
 
             return Action.EActionState.Failed;
@@ -375,13 +392,13 @@ public class UnitLeader : Unit
             m_targetPosition = null;
             m_currentTargetPosition = null;
 
-            m_isEnemyTargetSetted = false;
+            m_isTargetSetted = false;
             return Action.EActionState.Finished;
         }
 
         if (actionState == Action.EActionState.Finished)
         {
-            m_isEnemyTargetSetted = false;
+            m_isTargetSetted = false;
             m_isTargetChanged = true;
 
             m_currentTarget = null;
@@ -393,18 +410,18 @@ public class UnitLeader : Unit
     [ActionMethod]
     public Action.EActionState AttackTarget(WorldState worldState)
     {
-        if ((m_target == null || (m_target is not Factory && m_target is not Unit)) && !m_isEnemyTargetSetted)
+        if ((m_target == null || (m_target is not Factory && m_target is not Unit)) && !m_isTargetSetted)
         {
             if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Attack)
                 m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
 
-            ResetUnitsCaptureTarget();
+            ResetUnitsTarget();
             return Action.EActionState.Failed;
         }
 
-        if (m_currentTarget == null && !m_isEnemyTargetSetted && m_isTargetChanged)
+        if (m_currentTarget == null && !m_isTargetSetted && m_isTargetChanged)
         {
-            m_isEnemyTargetSetted = true;
+            m_isTargetSetted = true;
             m_isTargetChanged = false;
 
             m_targetPosition = null;
@@ -425,15 +442,15 @@ public class UnitLeader : Unit
 
         if (m_isTargetChanged)
         {
-            m_isEnemyTargetSetted = false;
+            m_isTargetSetted = false;
 
-            ResetUnitsCaptureTarget();
+            ResetUnitsTarget();
             return Action.EActionState.Failed;
         }
 
         if (m_target == null && !m_isTargetChanged)
         {
-            m_isEnemyTargetSetted = false;
+            m_isTargetSetted = false;
             return Action.EActionState.Finished;
         }
 
@@ -483,65 +500,148 @@ public class UnitLeader : Unit
         return Action.EActionState.Finished;
     }
 
-    /*[ActionMethod]
-    public Action.EActionState AttackTarget(WorldState worldState)
+    [ActionMethod]
+    public Action.EActionState RepairUnits(WorldState worldState)
     {
-        if ((m_target as Unit) == null && (m_target as Factory) == null)
-            return Action.EActionState.Failed;
-
-        m_targetPosition = null;
-
         foreach (Unit unit in m_squad.Units)
         {
-            Fighter fighter = unit as Fighter;
+            if (unit as Builder)
+            {
+                Unit closestTarget = null;
+                float closestDistanceSqr = float.MaxValue;
 
-            if (fighter != null)
-                fighter.SetAttackTarget(m_target);
+                foreach (Unit otherUnit in m_squad.Units)
+                {
+                    if (unit == otherUnit)
+                        continue;
+
+                    float currentDistanceSqr = (unit.transform.position - otherUnit.transform.position).sqrMagnitude;
+
+                    if (otherUnit.NeedsRepairing() && currentDistanceSqr < closestDistanceSqr)
+                    {
+                        closestTarget = otherUnit;
+                        closestDistanceSqr = currentDistanceSqr;
+                    }
+                }
+
+                if (closestTarget)
+                {
+                    Builder builder = unit as Builder;
+                    builder.SetRepairTarget(closestTarget);
+                }
+            }
         }
 
         return Action.EActionState.Finished;
     }
 
     [ActionMethod]
-    public Action.EActionState CheckEnemyHasKilled(WorldState worldState)
+    public Action.EActionState MoveToRepairTarget(WorldState worldState)
     {
-        if (m_target == null)
+        if ((m_target == null || (m_target is not Factory && m_target is not Unit)) && !m_isTargetSetted)
+        {
+            if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Repair)
+                m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
+
+            m_currentTarget = null;
+            return Action.EActionState.Failed;
+        }
+
+        if (m_currentTarget == null && !m_isTargetSetted && m_isTargetChanged)
+        {
+            m_isTargetSetted = true;
+            m_isTargetChanged = false;
+
+            m_currentTargetPosition = null;
+            m_targetPosition = m_target.transform.position;
+            m_currentTarget = m_target;
+        }
+
+        Action.EActionState actionState = MoveToTarget();
+
+        if (m_isTargetChanged || actionState == Action.EActionState.Failed)
+        {
+            m_currentTarget = null;
+            m_currentTargetPosition = null;
+
+            m_isTargetSetted = false;
+            m_isTargetChanged = true;
+
+            return Action.EActionState.Failed;
+        }
+
+        if (m_target == null && !m_isTargetChanged)
+        {
+            m_target = null;
+            m_currentTarget = null;
+            m_targetPosition = null;
+            m_currentTargetPosition = null;
+
+            m_isTargetSetted = false;
             return Action.EActionState.Finished;
+        }
+
+        if (actionState == Action.EActionState.Finished)
+        {
+            m_isTargetSetted = false;
+            m_isTargetChanged = true;
+
+            m_currentTarget = null;
+        }
+
+        return actionState;
+    }
+
+    [ActionMethod]
+    public Action.EActionState RepairTarget(WorldState worldState)
+    {
+        if ((m_target == null || (m_target is not Factory && m_target is not Unit)) && !m_isTargetSetted)
+        {
+            if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Repair)
+                m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
+
+            ResetUnitsTarget();
+            return Action.EActionState.Failed;
+        }
+
+        if (m_currentTarget == null && !m_isTargetSetted && m_isTargetChanged)
+        {
+            m_isTargetSetted = true;
+            m_isTargetChanged = false;
+
+            m_targetPosition = null;
+            m_currentTargetPosition = null;
+
+            m_currentTarget = m_target;
+
+            foreach (Unit unit in m_squad.Units)
+            {
+                if (unit == m_target)
+                    continue;
+
+                Builder builder = unit as Builder;
+
+                if (builder != null)
+                    builder.SetRepairTarget(m_target);
+            }
+
+            return Action.EActionState.Loading;
+        }
+
+        if (m_isTargetChanged)
+        {
+            m_isTargetSetted = false;
+
+            ResetUnitsTarget();
+            return Action.EActionState.Failed;
+        }
+
+        if ((m_target == null || !m_target.NeedsRepairing()) && !m_isTargetChanged)
+        {
+            m_isTargetSetted = false;
+            return Action.EActionState.Finished;
+        }
 
         return Action.EActionState.Loading;
-    }*/
-
-    /*public void CheckUnits()
-    {
-        List<Entity> entities = new List<Entity>();
-
-        foreach (Unit unit in m_squad.Units)
-        {
-            if (unit as Fighter)
-            {
-                FighterDataScriptable fighterData = unit.UnitData as FighterDataScriptable;
-                //fighterData.attackDistanceMax
-
-                Collider[] colliders = Physics.OverlapSphere(unit.transform.position, fighterData.attackDistanceMax);
-
-                if (colliders is not null)
-                {
-                    foreach (Collider collider in colliders)
-                    {
-                        Entity entity;
-                        if (collider.gameObject.TryGetComponent(out entity) && entity.Team != unit.Team)
-                        {
-                            //if (!entities.Contains(entity))
-                            //    entities.Add(entity);
-
-                            if (entity is not StaticBuilding)
-                            {
-                                (unit as Fighter).SetAttackTarget(entity);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }*/
+    }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 
 /// <summary>
@@ -52,14 +53,18 @@ public class Builder : Unit
                 }
             }
         }
-    }
 
+        if (m_target != null)
+        {
+            if (CanRepair(m_target)) ComputeRepairing();
+        }
+    }
     #endregion
 
     // Repairing Task
     public bool CanRepair(Entity target)
     {
-        if (m_builderData.canRepair == false || target == null)
+        if (target is not Unit && target is not Factory && target == null && target.Team == Team)
             return false;
 
         // distance check
@@ -68,12 +73,14 @@ public class Builder : Unit
 
         return true;
     }
-    public void StartRepairing(Entity entity)
+
+    public void SetRepairTarget(Entity entity)
     {
-        if (m_builderData.canRepair)
-        {
-            m_target = entity;
-        }
+        m_target = entity;
+
+        if (CanRepair(entity)) return;
+
+        MoveTo(entity);
     }
 
     public void Build(Entity target)

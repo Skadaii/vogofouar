@@ -11,7 +11,6 @@ public class BuilderDataScriptable : UnitDataScriptable
     public float buildingDistanceMax = 10f;
 
     [Header("Repairing")]
-    public bool canRepair = false;
     public int rps = 10;
     public float repairFrequency = 1f;
     public float repairDistanceMax = 10f;
