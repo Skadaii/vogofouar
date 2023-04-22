@@ -123,7 +123,7 @@ public abstract class Unit : Entity
         }
     }
 
-    public void ResetTarget() => m_target = null; 
+    public virtual void ResetTarget() => m_target = null; 
 
     #region IRepairable
 

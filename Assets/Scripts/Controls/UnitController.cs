@@ -252,8 +252,8 @@ public class UnitController : MonoBehaviour
 
     protected virtual bool ConstructBuilding(GameObject building, Vector3 position)
     {
-        Builder[] builders = m_selectedUnitList.OfType<Builder>().ToArray();
-        return RequestBuildingConstruction(building, position, builders);
+        UnitSquad squad = CreateDynamicSquad(m_selectedUnitList);
+        return RequestBuildingConstruction(building, position, squad);
     }
 
 
@@ -275,7 +275,7 @@ public class UnitController : MonoBehaviour
         return true;
     }
 
-    protected bool RequestBuildingConstruction(GameObject buildingPrefab, Vector3 buildPos, Builder[] builders)
+    protected bool RequestBuildingConstruction(GameObject buildingPrefab, Vector3 buildPos, UnitSquad squad)
     {
         Building building = buildingPrefab.GetComponent<Building>();
 
@@ -295,12 +295,8 @@ public class UnitController : MonoBehaviour
         if (createdBuilding != null)
         {
             if(createdBuilding as Factory != null) AddFactory(createdBuilding as Factory);
-            //CurrentResources -= cost;
 
-            foreach(Builder builder in builders)
-            {
-                builder.Build(createdBuilding);
-            }
+            squad.m_leaderComponent.SetTarget(createdBuilding, ETargetType.Build);
 
             return true;
         }

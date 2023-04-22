@@ -582,6 +582,14 @@ public sealed class PlayerController : UnitController
                 else if (other.NeedsRepairing())
                 {
                     UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+
+                    Building building = other as Building;
+                    if (building != null && building.IsUnderConstruction)
+                    {
+                        newSquad.m_leaderComponent.SetTarget(other, ETargetType.Build);
+                        return;
+                    }
+
                     newSquad.m_leaderComponent.SetTarget(other, ETargetType.Repair);
                 }
             }

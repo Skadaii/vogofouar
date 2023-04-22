@@ -34,32 +34,20 @@ public class Builder : Unit
     {
         base.Update();
 
-        if(m_buildingTarget != null)
-        {
-            if(Vector3.SqrMagnitude(m_buildingTarget.transform.position - transform.position) <= m_builderData.buildingDistanceMax * m_builderData.buildingDistanceMax)
-            {
-                if (m_navMeshAgent) m_navMeshAgent.isStopped = true;
-
-                float resource = Mathf.Min(m_builderData.bps * Time.deltaTime, TeamController.CurrentResources);
-
-                TeamController.CurrentResources -= resource;
-
-                float extra = m_buildingTarget.Repair(resource);
-
-                if(extra > 0)
-                {
-                    TeamController.CurrentResources += extra;
-                    m_buildingTarget = null;
-                }
-            }
-        }
+        if (m_buildingTarget != null)
+            ComputeBuild();
 
         if (m_target != null)
-        {
-            if (CanRepair(m_target)) ComputeRepairing();
-        }
+            ComputeRepairing();
     }
     #endregion
+
+    public override void ResetTarget()
+    {
+        base.ResetTarget();
+
+        m_buildingTarget = null;
+    }
 
     // Repairing Task
     public bool CanRepair(Entity target)
@@ -74,21 +62,31 @@ public class Builder : Unit
         return true;
     }
 
-    public void SetRepairTarget(Entity entity)
+    public bool CanBuild(Entity target)
     {
-        m_target = entity;
+        // distance check
+        if (Vector3.SqrMagnitude(target.transform.position - transform.position) > 
+            m_builderData.buildingDistanceMax * m_builderData.buildingDistanceMax)
+            return false;
 
-        if (CanRepair(entity)) return;
-
-        MoveTo(entity);
+        return true;
     }
 
-    public void Build(Entity target)
+    public void SetRepairTarget(Entity target)
     {
+        m_target = target;
+
+        if (CanRepair(target)) return;
+
         MoveTo(target);
-        m_buildingTarget = target as Building;
     }
-    
+
+    public void SetBuildTarget(Entity target)
+    {
+        m_buildingTarget = target as Building;
+
+        MoveTo(target);
+    }
 
     public void RequestBuild(GameObject building)
     {
@@ -125,6 +123,29 @@ public class Builder : Unit
         }
     }
 
+    public void ComputeBuild()
+    {
+        if (CanBuild(m_buildingTarget) == false)
+            return;
+
+        if (m_navMeshAgent)
+            m_navMeshAgent.isStopped = true;
+
+        float resource = Mathf.Min(m_builderData.bps * Time.deltaTime, TeamController.CurrentResources);
+
+        TeamController.CurrentResources -= resource;
+
+        float extra = m_buildingTarget.Repair(resource);
+
+        if (extra > 0)
+        {
+            TeamController.CurrentResources += extra;
+            m_buildingTarget = null;
+
+        }
+
+    }
+
     #region Commands
 
     public static void Command_RequestBuild(Entity entity, GameObject building)
@@ -134,7 +155,7 @@ public class Builder : Unit
 
     public static void Command_Build(Entity entity, Entity target)
     {
-        ((Builder)entity)?.Build(target);
+        ((Builder)entity)?.SetBuildTarget(target);
     }
     public static bool Command_CanBuildTarget(Entity entity, Entity target)
     {

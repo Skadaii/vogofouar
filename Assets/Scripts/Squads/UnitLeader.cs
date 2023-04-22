@@ -7,6 +7,7 @@ public enum ETargetType
     Move,
     Capture,
     Attack,
+    Build,
     Repair,
 
     None
@@ -186,8 +187,18 @@ public class UnitLeader : Unit
         if (m_target == null || (m_target is not Unit && m_target is not Factory))
             return new BoolType(false);
 
+        //TODO : remove hardcoded distance '10f'
+        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 100f);
+    }
+
+    [StateMethod]
+    public BoolType IsNearToBuildTarget()
+    {
+        if (m_target == null || (m_target is not Building))
+            return new BoolType(false);
+
         //TODO : remove hardcoded distance '100f'
-        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 10f);
+        return new BoolType((m_target.transform.position - transform.position).sqrMagnitude <= 100f);
     }
 
     [StateMethod]
@@ -254,6 +265,8 @@ public class UnitLeader : Unit
     private void ResetUnitsTarget()
     {
         m_currentTarget = null;
+        m_currentTargetPosition = null;
+        m_isTargetSetted = false;
 
         foreach (Unit unit in m_squad.Units)
             if (unit != null)
@@ -270,7 +283,7 @@ public class UnitLeader : Unit
             if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Capture)
                 m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
 
-            m_currentTarget = null;
+            ResetUnitsTarget();
 
             return Action.EActionState.Failed;
         }
@@ -358,7 +371,8 @@ public class UnitLeader : Unit
             if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Attack)
                 m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
 
-            m_currentTarget = null;
+            ResetUnitsTarget();
+
             return Action.EActionState.Failed;
         }
 
@@ -570,7 +584,7 @@ public class UnitLeader : Unit
             return Action.EActionState.Failed;
         }
 
-        if (m_target == null && !m_isTargetChanged)
+        if ((m_target == null && !m_isTargetChanged) || !m_target.NeedsRepairing())
         {
             m_target = null;
             m_currentTarget = null;
@@ -601,6 +615,11 @@ public class UnitLeader : Unit
                 m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
 
             ResetUnitsTarget();
+
+            m_currentTarget = null;
+            m_currentTargetPosition = null;
+            m_isTargetSetted = false;
+
             return Action.EActionState.Failed;
         }
 
@@ -623,6 +642,116 @@ public class UnitLeader : Unit
 
                 if (builder != null)
                     builder.SetRepairTarget(m_target);
+            }
+
+            return Action.EActionState.Loading;
+        }
+
+        if (m_isTargetChanged)
+        {
+            m_isTargetSetted = false;
+
+            ResetUnitsTarget();
+            return Action.EActionState.Failed;
+        }
+
+        if ((m_target == null || !m_target.NeedsRepairing()) && !m_isTargetChanged)
+        {
+            m_isTargetSetted = false;
+            return Action.EActionState.Finished;
+        }
+
+        return Action.EActionState.Loading;
+    }
+
+    [ActionMethod]
+    public Action.EActionState MoveToBuildTarget(WorldState worldState)
+    {
+        if (m_target == null || (m_target is not Building  && !m_isTargetSetted))
+        {
+            if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Build)
+                m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
+
+            m_currentTarget = null;
+            m_currentTargetPosition = null;
+            m_isTargetSetted = false;
+
+            return Action.EActionState.Failed;
+        }
+
+        if (m_currentTarget == null && !m_isTargetSetted && m_isTargetChanged)
+        {
+            m_isTargetSetted = true;
+            m_isTargetChanged = false;
+
+            m_currentTargetPosition = null;
+            m_targetPosition = m_target.transform.position;
+            m_currentTarget = m_target;
+        }
+
+        Action.EActionState actionState = MoveToTarget();
+
+        if (m_isTargetChanged || actionState == Action.EActionState.Failed)
+        {
+            m_currentTarget = null;
+            m_currentTargetPosition = null;
+
+            m_isTargetSetted = false;
+            m_isTargetChanged = true;
+
+            return Action.EActionState.Failed;
+        }
+
+        if ((m_target == null && !m_isTargetChanged) || !m_target.NeedsRepairing())
+        {
+            m_target = null;
+            m_currentTarget = null;
+            m_targetPosition = null;
+            m_currentTargetPosition = null;
+
+            m_isTargetSetted = false;
+            return Action.EActionState.Finished;
+        }
+
+        if (actionState == Action.EActionState.Finished)
+        {
+            m_isTargetSetted = false;
+            m_isTargetChanged = true;
+
+            m_currentTarget = null;
+        }
+
+        return actionState;
+    }
+
+    [ActionMethod]
+    public Action.EActionState BuildTarget(WorldState worldState)
+    {
+        if (m_target == null || (m_target is not Building && !m_isTargetSetted))
+        {
+            if (((TargetType)m_goap.WorldState.GetState("TargetType")).Value == ETargetType.Build)
+                m_goap.WorldState.SetState("TargetType", new TargetType(ETargetType.None));
+
+            ResetUnitsTarget();
+            return Action.EActionState.Failed;
+        }
+
+        if (m_currentTarget == null && !m_isTargetSetted && m_isTargetChanged)
+        {
+            m_isTargetSetted = true;
+            m_isTargetChanged = false;
+
+            m_targetPosition = null;
+            m_currentTargetPosition = null;
+
+            m_currentTarget = m_target;
+
+            foreach (Unit unit in m_squad.Units)
+            {
+                Builder builder = unit as Builder;
+
+                if (builder != null)
+                    builder.SetBuildTarget(m_target);
             }
 
             return Action.EActionState.Loading;
