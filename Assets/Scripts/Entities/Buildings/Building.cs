@@ -16,7 +16,6 @@ public abstract class Building : Entity
     [SerializeField] protected bool m_isCompleted;
 
     public Action<Building> OnBuildingBuilt;
-    public Action OnBuildCanceled;
 
     //  Properties
     //  ----------

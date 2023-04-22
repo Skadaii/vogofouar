@@ -34,6 +34,7 @@ public sealed class PlayerController : UnitController
     private MenuController m_playerMenuController;
 
     // Camera
+    [SerializeField] private Camera m_mainCamera = null;
     private PlayerCamera m_cameraPlayer = null;
     private bool m_canMoveCamera = false;
     private Vector2 m_cameraInputPos = Vector2.zero;
@@ -85,13 +86,13 @@ public sealed class PlayerController : UnitController
         m_onResourceUpdated += m_playerMenuController.UpdateBuildPointsUI;
         m_onCaptureTarget += m_playerMenuController.UpdateCapturedTargetsUI;
 
-        m_cameraPlayer = Camera.main.GetComponent<PlayerCamera>();
+        m_cameraPlayer = m_mainCamera.GetComponent<PlayerCamera>();
 
         m_selectionLineRenderer = GetComponentInChildren<LineRenderer>();
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = m_selectionLineWidth;
 
         m_playerMenuController = GetComponent<MenuController>();
-       
+
         if (m_sceneEventSystem == null)
         {
             Debug.LogWarning("EventSystem not assigned in PlayerController, searching in current scene...");
@@ -243,7 +244,7 @@ public sealed class PlayerController : UnitController
         // Hide target cursor
         SetTargetCursorVisible(false);
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
 
         int uiMask = 1 << LayerMask.NameToLayer("UI");
         int buildingMask = 1 << LayerMask.NameToLayer("Building");
@@ -324,6 +325,8 @@ public sealed class PlayerController : UnitController
 
         UpdateSelectionRect();
         m_selectionLineRenderer.enabled = false;
+
+
         Vector3 center = (m_selectionStart + m_selectionEnd) / 2f;
         Vector3 size = Vector3.up * m_selectionBoxHeight + m_selectionEnd - m_selectionStart;
         size.x = Mathf.Abs(size.x);
@@ -338,6 +341,8 @@ public sealed class PlayerController : UnitController
         Collider[] colliders = Physics.OverlapBox(center, size / 2f, Quaternion.identity, unitLayerMask | factoryLayerMask, QueryTriggerInteraction.Ignore);
 
         List<Unit> multiSelectedUnits = new List<Unit>();
+        Factory selectedFactory = null;
+
         foreach (Collider col in colliders)
         {
             //Debug.Log("collider name = " + col.gameObject.name);
@@ -353,17 +358,17 @@ public sealed class PlayerController : UnitController
                 else if (selectedEntity is Factory && multiSelectedUnits.Count == 0)
                 {
                     // Select only one factory at a time
-                    if (m_selectedBuildings == null)
-                        SelectFactory(selectedEntity as Factory);
+                    if (selectedFactory == null) selectedFactory = selectedEntity as Factory;
                 }
             }
         }
 
-        if(multiSelectedUnits.Count > 0)
+        if (multiSelectedUnits.Count > 0)
         {
             SelectUnitList(multiSelectedUnits);
             UnselectCurrentFactory();
         }
+        else m_selectedBuildings = selectedFactory;
 
         m_selectionStarted = false;
         m_selectionStart = Vector3.zero;
@@ -375,8 +380,9 @@ public sealed class PlayerController : UnitController
         if (m_selectionStarted == false)
             return;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
+
 
         RaycastHit raycastInfo;
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))
@@ -385,12 +391,14 @@ public sealed class PlayerController : UnitController
         }
 
         RenderSelectionRect();
+
     }
 
     private void RenderSelectionRect()
     {
         float width = 2f * m_cameraPlayer.Distance * Mathf.Tan(m_cameraPlayer.FOV * Mathf.Deg2Rad * 0.5f) * (m_selectionLineWidth / Screen.width);
         m_selectionLineRenderer.startWidth = m_selectionLineRenderer.endWidth = width;
+
         m_selectionLineRenderer.SetPosition(0, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionStart.z));
         m_selectionLineRenderer.SetPosition(1, new Vector3(m_selectionStart.x, m_selectionStart.y, m_selectionEnd.z));
         m_selectionLineRenderer.SetPosition(2, new Vector3(m_selectionEnd.x, m_selectionStart.y, m_selectionEnd.z));
@@ -419,7 +427,8 @@ public sealed class PlayerController : UnitController
 
         if (m_wheelMenu.isActiveAndEnabled && HasSelectedBuildings)
         {
-            if (Input.GetMouseButtonDown(0)) ValidateBuildingCommandWheel();
+            if (Input.GetMouseButtonDown(0)) ValidateBuildingCommandOnWheel();
+            if (Input.GetMouseButtonDown(1)) ValidateBuildingReverseCommandOnWheel();
         }
     }
 
@@ -460,9 +469,13 @@ public sealed class PlayerController : UnitController
 
         base.UnselectCurrentFactory();
     }
-    private void ValidateBuildingCommandWheel()
+    private void ValidateBuildingCommandOnWheel()
     {
         m_wheelMenu.ExecuteCommand();
+    }
+    private void ValidateBuildingReverseCommandOnWheel()
+    {
+        m_wheelMenu.ReverseCommand();
     }
 
     #endregion
@@ -527,7 +540,7 @@ public sealed class PlayerController : UnitController
         int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastInfo;
 
         // Set unit / factory attack target
@@ -561,7 +574,7 @@ public sealed class PlayerController : UnitController
 
         int entityMask = (1 << LayerMask.NameToLayer("Unit")) | (1 << LayerMask.NameToLayer("Building"));
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastInfo;
 
         // Set unit / factory attack target
@@ -596,7 +609,7 @@ public sealed class PlayerController : UnitController
 
     private void MoveUnits(Vector3 squadTarget)
     {
-        /*if (m_selectedUnitList.Count == 1)
+        /*if (!m_lonerUseLeader && m_selectedUnitList.Count == 1)
         {
             Unit unitToMove = m_selectedUnitList.First();
             unitToMove.Squad = null;
@@ -681,7 +694,7 @@ public sealed class PlayerController : UnitController
         }
 
         Vector3 floorPos = Vector3.zero;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
         RaycastHit raycastInfo;
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorMask))

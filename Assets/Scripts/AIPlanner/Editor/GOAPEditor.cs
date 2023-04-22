@@ -3,10 +3,10 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AIPlanner.GOAP
+namespace AIPlanner.GOAP.Editor
 {
     [CustomEditor(typeof(GOAP))]
-    public class GOAPEditor : Editor
+    public class GOAPEditor : UnityEditor.Editor
     {
         private Button editPlannerButton;
 

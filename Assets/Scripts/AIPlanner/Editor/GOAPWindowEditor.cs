@@ -6,7 +6,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AIPlanner.GOAP
+namespace AIPlanner.GOAP.Editor
 {
     public class GOAPWindowEditor : EditorWindow
     {

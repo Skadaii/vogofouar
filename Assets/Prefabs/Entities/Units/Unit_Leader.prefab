@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 5316912940270367767}
   - component: {fileID: 6118784043142660062}
   - component: {fileID: -9016266341179929428}
-  - component: {fileID: 7912077643285499108}
   - component: {fileID: 1981893886112161292}
-  - component: {fileID: 5858002665697639906}
+  - component: {fileID: 7912077643285499108}
+  - component: {fileID: -1041036110041789122}
   m_Layer: 0
   m_Name: Unit_Leader
   m_TagString: Untagged
@@ -48,7 +48,7 @@ NavMeshAgent:
   m_Radius: 0.5
   m_Speed: 10
   m_Acceleration: 20
-  avoidancePriority: 50
+  avoidancePriority: 99
   m_AngularSpeed: 200
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
@@ -57,7 +57,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
 --- !u!114 &-9016266341179929428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,24 +77,7 @@ MonoBehaviour:
   m_targetDistanceEpsilon: 0.1
   m_usePrediction: 0
   m_leaderData: {fileID: 11400000, guid: b4195662709c8434da403a2bc8923e19, type: 2}
-  m_goap: {fileID: 5858002665697639906}
---- !u!114 &7912077643285499108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7114013581813105076}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Team: 0
-  range: 5
-  m_gameObjectDefaultLayer: []
-  m_gameObjectUILayer: []
-  m_gameObjectMinimapLayer: []
+  m_goap: {fileID: -1041036110041789122}
 --- !u!54 &1981893886112161292
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -111,7 +94,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5858002665697639906
+--- !u!114 &7912077643285499108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7114013581813105076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2875bd9abe4ed8741bbb82523b275653, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Team: 0
+  range: 0
+  m_gameObjectDefaultLayer: []
+  m_gameObjectUILayer: []
+  m_gameObjectMinimapLayer: []
+--- !u!114 &-1041036110041789122
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

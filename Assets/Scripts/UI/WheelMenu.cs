@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class WheelMenu : MonoBehaviour
 {
@@ -13,8 +14,10 @@ public class WheelMenu : MonoBehaviour
     [SerializeField] private GameObject m_commandButton;
     [SerializeField] private Transform m_canvas;
     [SerializeField] private Transform m_disk;
+    [SerializeField] private Camera m_mainCamera;
 
-    private List<Button> m_buttons = new List<Button>();
+
+    private List<ActionButton> m_buttons = new List<ActionButton>();
     private List<Entity.Command> m_commands = new List<Entity.Command>();
     private List<Entity> m_entities = new List<Entity>();
 
@@ -29,17 +32,17 @@ public class WheelMenu : MonoBehaviour
 
     private void OnValidate()
     {
-        if(m_disk) m_disk.localScale = Vector3.one * (m_size + m_radius * 2f);
+        UpdateDiscSize();
     }
 
     private void Awake()
     {
-        if (m_disk) m_disk.localScale = Vector3.one * (m_size + m_radius * 2f);
+        UpdateDiscSize();
     }
 
     private void Update()
     {
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+        Vector2 screenPosition = m_mainCamera.WorldToScreenPoint(transform.position);
         clockDirection = (Vector2)Input.mousePosition - screenPosition;
 
         if (m_buttons.Count > 0)
@@ -49,10 +52,29 @@ public class WheelMenu : MonoBehaviour
 
             m_buttons[m_selectedIndex].Select();
         }
+
+        if (m_entities.Count == 1 && m_entities[0] is Factory)
+        {
+            for (int i = 0; i < m_commands.Count; i++)
+            {
+                Entity.BuildCommand command = m_commands[i] as Entity.BuildCommand;
+
+                if (command != null)
+                {
+                    m_buttons[i].Count = command.GetCount(m_entities[0] as Factory);
+                }
+            }
+        }
     }
 
     #endregion
 
+
+    private void UpdateDiscSize()
+    {
+        if (m_disk)
+            m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
+    }
 
     //  Show allowed actions 
     public void SetUnitWheel(List<Unit> selectedUnits, Entity entity)
@@ -68,7 +90,9 @@ public class WheelMenu : MonoBehaviour
             m_entities.Add(unit);
             foreach (Entity.Command command in unit.Commands)
             {
-                if(command as Entity.VoidCommand != null) TryAddCommand(command);
+                if (!command.VerifyCommand(unit, entity)) continue;
+
+                if (command as Entity.VoidCommand != null) TryAddCommand(command);
                 else if(command as Entity.BuildCommand != null) TryAddCommand(command);
                 else if(command as Entity.TargetCommand != null) TryAddCommand(command);
             }
@@ -95,6 +119,8 @@ public class WheelMenu : MonoBehaviour
 
             foreach (Entity.Command command in unit.Commands)
             {
+                if (!command.VerifyCommand(unit, position)) continue;
+
                 if (command as Entity.VoidCommand != null) TryAddCommand(command);
                 else if (command as Entity.BuildCommand != null) TryAddCommand(command);
                 else if (command as Entity.LocationCommand != null) TryAddCommand(command);
@@ -114,6 +140,13 @@ public class WheelMenu : MonoBehaviour
         foreach (Entity entity in m_entities)
         {
             m_commands[m_selectedIndex].ExecuteCommand(entity, m_clickedObject);
+        }
+    }
+    public void ReverseCommand()
+    {
+        foreach (Entity entity in m_entities)
+        {
+            m_commands[m_selectedIndex].ReverseCommand(entity, m_clickedObject);
         }
     }
 
@@ -160,19 +193,18 @@ public class WheelMenu : MonoBehaviour
 
             float rad = i / (float)m_commands.Count * Mathf.PI * 2f;
             Vector2 pos = new Vector2(Mathf.Sin(rad), Mathf.Cos(rad)) * m_radius;
-            Button button = Instantiate(m_commandButton, m_canvas).GetComponent<Button>();
-            button.image.sprite = command.Icon;
+            ActionButton button = Instantiate(m_commandButton, m_canvas).GetComponent<ActionButton>();
+            button.Icon = command.Icon;
 
             button.transform.localPosition = pos;
-            RectTransform rt = button.GetComponent(typeof(RectTransform)) as RectTransform;
-            if(rt != null) rt.sizeDelta = new Vector2(m_size, m_size);
+            button.SetSize(m_size);
 
             m_buttons.Add(button);
         }
     }
 
     private void TryAddCommand(Entity.Command command)
-    {
+    {   
         if (m_commands.Contains(command)) return;
         if (m_commands.Find((c) => c.Name == command.Name) != null) return;
 

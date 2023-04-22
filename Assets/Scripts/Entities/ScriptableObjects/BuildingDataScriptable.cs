@@ -12,12 +12,19 @@ public class BuildingDataScriptable : EntityDataScriptable
     private List<Command> m_buildingCommands;
     public override Command[] Commands => base.Commands.Concat(m_buildingCommands).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
         m_buildingCommands = new List<Command>
         {
         };
+    }
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_buildingCommands.Clear();
     }
 }

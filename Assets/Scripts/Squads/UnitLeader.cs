@@ -121,6 +121,8 @@ public class UnitLeader : Unit
         base.Awake();
 
         m_layerMask = LayerMask.GetMask("Building", "Unit");
+
+        m_visibility = null;
     }
 
     protected virtual new void Update()

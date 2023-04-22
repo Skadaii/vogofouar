@@ -22,18 +22,27 @@ public class BuilderDataScriptable : UnitDataScriptable
     private List<Command> m_builderCommands;
     public override Command[] Commands => base.Commands.Concat(m_builderCommands).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
-        m_builderCommands = new List<Command>();
+        m_builderCommands = new List<Command>
+        {
+            new TargetCommand($"Builder_Build", Resources.Load<Sprite>("Textures/Sprites/Commands/build_icon"), Builder.Command_Build, Builder.Command_CanBuildTarget)
+        };
 
         foreach (GameObject buildingPrefab in availableBuildings)
         {
             if (buildingPrefab.TryGetComponent(out Building building))
             {
-                m_builderCommands.Add(new BuildCommand($"Builder_Build_{buildingPrefab.name}", newMethod: "RequestBuild", icon: building.EntityData.icon, toBuild: buildingPrefab));
+                m_builderCommands.Add(new BuildCommand($"Builder_Build_{buildingPrefab.name}", building.EntityData.icon, Builder.Command_RequestBuild, toBuild: buildingPrefab));
             }
         }
+    }
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_builderCommands.Clear();
     }
 }

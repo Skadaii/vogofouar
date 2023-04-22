@@ -15,6 +15,8 @@ public class UnitController : MonoBehaviour
 
     protected float m_currentResources = 0f;
 
+    [SerializeField] protected bool m_lonerUseLeader = true;
+
     protected int m_capturedTargets = 0;
     protected Transform m_teamRoot = null;
 
@@ -194,7 +196,7 @@ public class UnitController : MonoBehaviour
             lastSquad.Units.Remove(unit);
 
             // Destroy the leader if there is one or less unit left in the last squad
-            if (lastSquad.Units.Count > 1)
+            if (lastSquad.Units.Count > (m_lonerUseLeader ? 0 : 1))
                 continue;
 
             lastSquad.Destroy();

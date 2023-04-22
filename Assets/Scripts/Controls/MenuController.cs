@@ -7,8 +7,9 @@ using TMPro;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField]
-    private string[] m_instancedFormationDirectories = null;
+
+    [SerializeField] private string[] m_internalInstancedFormationDirectories = null;
+    [SerializeField] private string[] m_externalInstancedFormationDirectories = null;
 
     private List<FormationRule> m_instancedRules = new List<FormationRule>();
 
@@ -19,17 +20,16 @@ public class MenuController : MonoBehaviour
     private Text m_buildPointsText = null;
     private Text m_capturedTargetsText = null;
     private Button[] m_buildUnitButtons = null;
-    private Button[] m_buildFactoryButtons = null;
-    private Button m_cancelBuildButton = null;
-    private Text[] m_buildQueueTexts = null;
+
+    [SerializeField] private FormationEditor m_formationEditor = null;
 
     //  Formations
 
     [Header("Formations")]
-    [SerializeField] private FormationRule[] m_availableFormations = null;
     [SerializeField] private GameObject m_buttonFormationSelectionPrefab = null;
 
-    private Button[] m_formationButtons = null;
+    private Dictionary<FormationRule, Button> m_formationButtons = new Dictionary<FormationRule, Button>();
+    private Transform m_formationContent = null;
 
     public GraphicRaycaster BuildMenuRaycaster { get; private set; }
 
@@ -70,13 +70,15 @@ public class MenuController : MonoBehaviour
 
     void Start()
     {
-        m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
-        m_buildFactoryButtons = m_factoryMenuPanel.transform.Find("BuildFactoryMenu_Panel").GetComponentsInChildren<Button>();
-        m_cancelBuildButton = m_factoryMenuPanel.transform.Find("Cancel_Button").GetComponent<Button>();
-        m_buildQueueTexts = new Text[m_buildUnitButtons.Length];
+        //m_buildUnitButtons = m_factoryMenuPanel.transform.Find("BuildUnitMenu_Panel").GetComponentsInChildren<Button>();
+        m_formationContent = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
 
         LoadAvailableRules();
         InitializeInstanceViewport();
+
+        m_formationEditor.OnNewRuleCreated.AddListener(OnNewRule);
+        m_formationEditor.OnRuleDeleted.AddListener(OnRuleDeleted);
+
     }
 
     #endregion
@@ -84,8 +86,9 @@ public class MenuController : MonoBehaviour
     public void UpdateBuildPointsUI()
     {
         if (m_buildPointsText != null)
-            m_buildPointsText.text = "Build Points : " + m_controller.CurrentResources;
+            m_buildPointsText.text = "Build Points : " + m_controller.CurrentResources.ToString("0.00"); ;
     }
+
     public void UpdateCapturedTargetsUI()
     {
         if (m_capturedTargetsText != null)
@@ -94,13 +97,8 @@ public class MenuController : MonoBehaviour
 
     public void UnregisterFormationButtons()
     {
-
-        for (int i = 0; i < m_formationButtons.Length - 1; i++)
-        {
-            Button button = m_formationButtons[i];
-
+        foreach (var (rule, button) in m_formationButtons)
             button.onClick.RemoveAllListeners();
-        }
     }
 
     public void UpdateFormationMenu(List<Unit> selectedUnit, Action<List<Unit>, FormationRule> setSquadMethod)
@@ -109,41 +107,62 @@ public class MenuController : MonoBehaviour
 
         bool isMixed = selectedUnit.Any(u => u.Squad != firstUnit.Squad);
 
-        for (int i = 0; i < m_formationButtons.Length; i++)
-        {
-            Button button = m_formationButtons[i];
-            FormationRule currentFormation = m_instancedRules[i];
-            button.onClick.AddListener(() => setSquadMethod(selectedUnit, currentFormation));
-        }
+        foreach (var (rule, button) in m_formationButtons)
+            button.onClick.AddListener(() => setSquadMethod(selectedUnit, rule));
     }
-
 
     void LoadAvailableRules()
     {
-        foreach (string formationDir in m_instancedFormationDirectories)
+        foreach (string formationDir in m_internalInstancedFormationDirectories)
         {
-            List<FormationRule> instancedRulesRange = FormationEditor.LoadInstancedRules(formationDir);
+            List<FormationRule> instancedRulesRange = FormationEditor.LoadInternalInstancedRules(formationDir);
+
+            if (instancedRulesRange is not null)
+                m_instancedRules.AddRange(instancedRulesRange);
+        }
+
+        foreach (string formationDir in m_externalInstancedFormationDirectories)
+        {
+            List<FormationRule> instancedRulesRange = FormationEditor.LoadExternalInstancedRules(formationDir);
 
             if (instancedRulesRange is not null)
                 m_instancedRules.AddRange(instancedRulesRange);
         }
     }
 
+    void OnNewRule(FormationRule newRule)
+    {
+        CreateRuleButton(newRule, m_formationContent);
+    }
+
+    void OnRuleDeleted(FormationRule newRule)
+    {
+        var formationPairs = m_formationButtons.Where(pair => pair.Key.name == newRule.name).ToList();
+
+        foreach (var (rule, button) in formationPairs)
+        {
+            Destroy(button.gameObject);
+            m_formationButtons.Remove(rule);
+        }
+
+        m_instancedRules.RemoveAll((rule) => rule.name == newRule.name);
+    }
+
     private void InitializeInstanceViewport()
     {
-        Transform ContentTransform = m_playerUI.Find("FormationMenu_Panel").Find("Scroll View").Find("Viewport").Find("Content");
-
-        m_formationButtons = new Button[m_instancedRules.Count];
         for (int i = 0; i < m_instancedRules.Count; i++)
-        {
-            GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, ContentTransform);
+            CreateRuleButton(m_instancedRules[i], m_formationContent);
+    }
 
-            Button buttonComp = buttonGO.GetComponent<Button>();
-            m_formationButtons[i] = buttonComp;
+    private void CreateRuleButton(FormationRule rule, Transform contentListTransform)
+    {
+        GameObject buttonGO = Instantiate(m_buttonFormationSelectionPrefab, contentListTransform);
 
-            TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = m_instancedRules[i].name;
-        }
+        Button buttonComp = buttonGO.GetComponent<Button>();
+        m_formationButtons.Add(rule, buttonComp);
+
+        TextMeshProUGUI textComp = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+        textComp.text = rule.name;
     }
 }
 

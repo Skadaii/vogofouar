@@ -118,30 +118,21 @@ public class Builder : Unit
         }
     }
 
+    #region Commands
 
-    //  Capture Task
-    //public void StartCapture(Entity target)
-    //{
-    //    if (CanCapture(target) == false)
-    //        return;
+    public static void Command_RequestBuild(Entity entity, GameObject building)
+    {
+        ((Builder)entity)?.RequestBuild(building);
+    }
 
-    //    if (m_navMeshAgent)
-    //        m_navMeshAgent.isStopped = true;
+    public static void Command_Build(Entity entity, Entity target)
+    {
+        ((Builder)entity)?.Build(target);
+    }
+    public static bool Command_CanBuildTarget(Entity entity, Entity target)
+    {
+        return entity && target && (target.Team == entity.Team) && target.HealthPercent != 1f;
+    }
 
-    //    m_target = target;
-    //    m_target.StartCapture(this);
-    //}
-    //public void StopCapture()
-    //{
-    //    if (m_target == null)
-    //        return;
-
-    //    m_target.StopCapture(this);
-    //    m_target = null;
-    //}
-
-    //public bool IsCapturing()
-    //{
-    //    return m_captureTarget != null;
-    //}
+    #endregion
 }

@@ -17,13 +17,20 @@ public class FighterDataScriptable : UnitDataScriptable
     private List<Command> m_fighterCommands;
     public override Command[] Commands => base.Commands.Concat(m_fighterCommands).ToArray();
 
-    protected new void OnValidate()
+    protected new void OnEnable()
     {
-        base.OnValidate();
+        base.OnEnable();
 
         m_fighterCommands = new List<Command>
         {
-            new TargetCommand("Fighter_Attack", newMethod: "Attack", icon: Resources.Load<Sprite>("Textures/T_cross"))
+            new TargetCommand("Fighter_Attack", Resources.Load<Sprite>("Textures/Sprites/Commands/attack_icon"), Fighter.Command_Attack,Fighter.Command_CanAttackTarget)
         };
+    }
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        m_fighterCommands.Clear();
     }
 }

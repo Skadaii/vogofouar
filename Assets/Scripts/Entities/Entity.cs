@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(EntityVisibility))]
 public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, IRepairable//, ICapturable
 {
     //  Variables
@@ -84,6 +83,8 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     protected virtual void Awake()
     {
+        SetTeamColor();
+
         m_visibility = GetComponent<EntityVisibility>();
         m_hud = transform.GetComponentInChildren<EntityHUD>();
         if(m_selectedSprite != null) m_selectedSprite.SetActive(false);
@@ -205,6 +206,15 @@ public abstract partial class Entity : MonoBehaviour, ISelectable, IDamageable, 
 
     virtual public void FullRepair()
     {
+    }
+
+    #endregion
+
+    #region Commands
+
+    public static void Command_Stop(Entity entity)
+    {
+        entity.Stop();
     }
 
     #endregion

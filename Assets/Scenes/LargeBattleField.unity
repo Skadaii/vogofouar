@@ -758,6 +758,11 @@ PrefabInstance:
       objectReference: {fileID: 945844451}
     - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
+      propertyPath: m_mainCamera
+      value: 
+      objectReference: {fileID: 820823579}
+    - target: {fileID: 114127896467981986, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
       propertyPath: PreviewShader
       value: 
       objectReference: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
@@ -826,6 +831,11 @@ PrefabInstance:
       propertyPath: FactoryPreviewTransparency
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 1032351961649719943, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: m_playerUI
@@ -846,6 +856,11 @@ PrefabInstance:
       propertyPath: FactoryMenuCanvas
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
+        type: 3}
+      propertyPath: m_formationEditor
+      value: 
+      objectReference: {fileID: 1458350552}
     - target: {fileID: 8446335230809480305, guid: dc4ee6691f59b07458286e0cfb38d82d,
         type: 3}
       propertyPath: m_factoryMenuCanvas
@@ -1111,6 +1126,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 374413756}
   m_PrefabAsset: {fileID: 0}
+--- !u!20 &820823579 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 3124353299293301188, guid: 32676265f95fdeb40833df7b0b170998,
+    type: 3}
+  m_PrefabInstance: {fileID: 1758179112}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &834938844
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1188,6 +1209,11 @@ PrefabInstance:
       propertyPath: m_canvas
       value: 
       objectReference: {fileID: 1292078514}
+    - target: {fileID: 8267516106023046834, guid: 38bdfe61b626f3246b20ead769e6b493,
+        type: 3}
+      propertyPath: m_mainCamera
+      value: 
+      objectReference: {fileID: 820823579}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38bdfe61b626f3246b20ead769e6b493, type: 3}
 --- !u!4 &918881042 stripped
@@ -1965,6 +1991,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67effc09ec1950247bdaf2757b2d228d, type: 3}
+--- !u!114 &1458350552 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5530388179527711909, guid: ff215fdabb9168540bd1e50cc210b369,
+    type: 3}
+  m_PrefabInstance: {fileID: 1967584159}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70d558bc220698247aeebbabcc00fb55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1509813179
 PrefabInstance:
   m_ObjectHideFlags: 0

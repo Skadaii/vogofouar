@@ -1,6 +1,4 @@
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Fighters can only destroy enemies
@@ -106,4 +104,19 @@ public class Fighter : Unit
             target.AddDamage(damages);
         }
     }
+
+    #region Commands
+
+    public static void Command_Attack(Entity entity, Entity target)
+    {
+        //((Fighter)entity)?.StartAttacking(target);
+    }
+
+    public static bool Command_CanAttackTarget(Entity entity, Entity target)
+    {
+        return entity && target && (target.Team != entity.Team) && target is not StaticBuilding;
+    }
+
+
+    #endregion
 }

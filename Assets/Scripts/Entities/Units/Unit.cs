@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody), typeof(NavMeshAgent))]
 public abstract class Unit : Entity
 {
     //  Variables
@@ -222,4 +221,33 @@ public abstract class Unit : Entity
     public virtual void MoveTo(Entity target) => MoveTo(target.transform.position);
 
     public virtual void MoveToward(Vector3 velocity) => m_navMeshAgent.Move(velocity);
+
+    #region Commands
+
+    public static void Command_MoveTo(Entity entity, Entity target)
+    {
+        ((Unit)entity)?.MoveTo(target);
+    }
+
+    public static void Command_MoveTo(Entity entity, Vector3 pos)
+    {
+        ((Unit)entity)?.MoveTo(pos);
+    }
+
+    public static void Command_AddPatrolPoint(Entity entity, Vector3 pos)
+    {
+        ((Unit)entity)?.AddPatrolPoint(pos);
+    }
+
+    public static void Command_Capture(Entity entity, Entity target)
+    {
+        //((Unit)entity)?.SetCaptureTarget(target);
+    }
+
+    public static bool Command_CanCaptureTarget(Entity entity, Entity target)
+    {
+        return entity && target && (target.Team != entity.Team) && target is StaticBuilding;
+    }
+
+    #endregion
 }
