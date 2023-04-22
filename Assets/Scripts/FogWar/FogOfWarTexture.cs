@@ -19,7 +19,7 @@ public class FogOfWarTexture : MonoBehaviour
     //  Functions
     //  ---------
 
-    private void Start()
+    private void Awake()
     {
         m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
