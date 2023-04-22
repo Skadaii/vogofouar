@@ -46,10 +46,10 @@ public class InfluenceMap : Graph
             ComputeInfluence();
         }
 
-        if (Input.GetKeyDown(KeyCode.T) && GetRandomPositionInInfluenceZone(ETeam.Blue, 0.1f, out Vector3 pos))
-        {
-            Debug.DrawLine(pos, pos + Vector3.up, Color.magenta);
-        }
+        //if (Input.GetKeyDown(KeyCode.T) && GetRandomPositionInInfluenceZone(ETeam.Blue, 0.1f, out Vector3 pos))
+        //{
+        //    Debug.DrawLine(pos, pos + Vector3.up, Color.magenta);
+        //}
     }
 
     protected override Node CreateNode()
