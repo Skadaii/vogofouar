@@ -150,12 +150,12 @@ public class Builder : Unit
 
     public static void Command_RequestBuild(Entity entity, GameObject building)
     {
-        ((Builder)entity)?.RequestBuild(building);
+        (entity as Builder)?.RequestBuild(building);
     }
 
     public static void Command_Build(Entity entity, Entity target)
     {
-        ((Builder)entity)?.SetBuildTarget(target);
+        (entity as Builder)?.SetBuildTarget(target);
     }
     public static bool Command_CanBuildTarget(Entity entity, Entity target)
     {
