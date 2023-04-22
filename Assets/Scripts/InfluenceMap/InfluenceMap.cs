@@ -45,6 +45,11 @@ public class InfluenceMap : Graph
         {
             ComputeInfluence();
         }
+
+        if (Input.GetKeyDown(KeyCode.T) && GetRandomPositionInInfluenceZone(ETeam.Blue, 0.1f, out Vector3 pos))
+        {
+            Debug.DrawLine(pos, pos + Vector3.up, Color.magenta);
+        }
     }
 
     protected override Node CreateNode()
@@ -65,7 +70,7 @@ public class InfluenceMap : Graph
         List<InfluenceNode> frontier;
 
         List<Entity> blueEntities = GameServices.GetControllerByTeam(ETeam.Blue).EntityList;
-        List<Entity> redEntities =  GameServices.GetControllerByTeam(ETeam.Red).EntityList;
+        List<Entity> redEntities = GameServices.GetControllerByTeam(ETeam.Red).EntityList;
         List<Entity> allEntities = blueEntities.Concat(redEntities).ToList();
 
 
@@ -96,9 +101,35 @@ public class InfluenceMap : Graph
         }
     }
 
+    public List<InfluenceNode> GetTeamNodes(ETeam team)
+    {
+        return NodeList.FindAll((n) =>
+        {
+            InfluenceNode node = n as InfluenceNode;
+
+            if (node == null) return false;
+
+            return node.team == team;
+        }).Cast<InfluenceNode>().ToList();
+    }
+
+    public bool GetRandomPositionInInfluenceZone(ETeam team, float minimumValue, out Vector3 position)
+    {
+        List<InfluenceNode> nodes = GetTeamNodes(team).FindAll((n) => n.value >= minimumValue);
+
+        position = Vector3.zero;
+
+        if (nodes.Count == 0) return false;
+
+        position = nodes[Random.Range(0, nodes.Count)].Position;
+
+        return true;
+    }
+
+
     #endregion
 
-    #region Gizmos
+        #region Gizmos
 
     protected override void DrawNodesGizmo()
     {
@@ -121,5 +152,6 @@ public class InfluenceMap : Graph
             }
         }
     }
+
     #endregion
 }
