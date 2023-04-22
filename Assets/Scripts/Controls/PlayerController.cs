@@ -30,6 +30,7 @@ public sealed class PlayerController : UnitController
 
     // Build Menu UI
     private MenuController m_playerMenuController;
+    private PointerEventData m_menuPointerEventData = null;
 
     // Camera
     [SerializeField] private Camera m_mainCamera = null;
@@ -95,7 +96,12 @@ public sealed class PlayerController : UnitController
         {
             Debug.LogWarning("EventSystem not assigned in PlayerController, searching in current scene...");
             m_sceneEventSystem = FindObjectOfType<EventSystem>();
+        
         }
+
+
+        // Set up the new Pointer Event
+        m_menuPointerEventData = new PointerEventData(m_sceneEventSystem);
     }
 
     protected override void Start()
@@ -242,15 +248,23 @@ public sealed class PlayerController : UnitController
 
         Ray ray = m_mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        int uiMask = 1 << LayerMask.NameToLayer("UI");
         int buildingMask = 1 << LayerMask.NameToLayer("Building");
         int unitMask = 1 << LayerMask.NameToLayer("Unit");
         int floorMask = 1 << LayerMask.NameToLayer("Floor");
 
+        // *** Ignore Unit selection when clicking on UI ***
+        // Set the Pointer Event Position to that of the mouse position
+        m_menuPointerEventData.position = Input.mousePosition;
+
+        //Create a list of Raycast Results
+        List<RaycastResult> results = new List<RaycastResult>();
+        m_playerMenuController.BuildMenuRaycaster.Raycast(m_menuPointerEventData, results);
+        if (results.Count > 0)
+            return;
+
         if (m_wheelMenu.IsActiveAndHovered()) return;
 
         RaycastHit raycastInfo;
-        if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, uiMask)) return;
 
             // factory selection
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, buildingMask))
