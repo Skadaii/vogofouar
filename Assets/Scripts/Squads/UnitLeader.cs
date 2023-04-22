@@ -210,13 +210,16 @@ public class UnitLeader : Unit
         bool needsRepairing = false;
         bool hasUnitBuilder = false;
 
-        foreach (Unit unit in Squad.Units)
+        if (Squad.Units.Count > 1)
         {
-            if (unit as Builder)
-                hasUnitBuilder = true;
+            foreach (Unit unit in Squad.Units)
+            {
+                if (unit as Builder)
+                    hasUnitBuilder = true;
 
-            if (unit.NeedsRepairing())
-                needsRepairing = true;
+                if (unit.NeedsRepairing())
+                    needsRepairing = true;
+            }
         }
 
         return new BoolType(needsRepairing && hasUnitBuilder);

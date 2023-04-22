@@ -1,5 +1,4 @@
-﻿// $$$ TO DO :)
-
+﻿
 public sealed class AIController : UnitController
 {
     #region MonoBehaviour methods

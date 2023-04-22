@@ -32,7 +32,10 @@ public class UnitSquad
             m_units = value;
 
             foreach (Unit unit in m_units)
+            {
+                unit.onDeathEvent += delegate { RemoveUnit(unit); };
                 unit.Squad = this;
+            }
         }
     }
 
@@ -45,7 +48,10 @@ public class UnitSquad
     public void AddUnit(Unit unit)
     {
         if (!m_units.Contains(unit))
+        {
+            unit.onDeathEvent += delegate { RemoveUnit(unit); };
             unit.Squad = this;
+        }
     }
 
     #endregion
