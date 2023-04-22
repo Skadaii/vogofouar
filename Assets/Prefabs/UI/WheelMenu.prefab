@@ -50,7 +50,7 @@ MonoBehaviour:
   m_commandButton: {fileID: 6223190169269272210, guid: 58a38ecb46c0f1f45a3f3c2aba2cce7c,
     type: 3}
   m_canvas: {fileID: 6185848294157667778}
-  m_disk: {fileID: 6380179289499735341}
+  m_disk: {fileID: 2014656245983008640}
   m_mainCamera: {fileID: 0}
 --- !u!1 &6185848294157667779
 GameObject:

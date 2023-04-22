@@ -14,7 +14,7 @@ public class WheelMenu : MonoBehaviour
     [SerializeField] private float m_size = 1f;
     [SerializeField] private GameObject m_commandButton;
     [SerializeField] private Transform m_canvas;
-    [SerializeField] private Transform m_disk;
+    [SerializeField] private UnityEngine.UI.Image m_disk;
     [SerializeField] private Camera m_mainCamera;
 
 
@@ -76,7 +76,11 @@ public class WheelMenu : MonoBehaviour
     private void UpdateDiscSize()
     {
         if (m_disk)
-            m_disk.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
+        {
+            m_disk.transform.localScale = Vector3.one * (m_size * 1.25f + m_radius * 2f);
+
+            m_disk.alphaHitTestMinimumThreshold = 0.05f;
+        }
     }
 
     //  Show allowed actions 
