@@ -213,7 +213,7 @@ MonoBehaviour:
     show: 0
     showPreconditions: 0
     showEffects: 0
-    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
     m_stateEffects:
     - show: 0
       id: 0

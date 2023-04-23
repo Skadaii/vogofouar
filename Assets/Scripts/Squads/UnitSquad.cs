@@ -33,7 +33,7 @@ public class UnitSquad
 
             foreach (Unit unit in m_units)
             {
-                unit.onDeathEvent += delegate { RemoveUnit(unit); };
+                unit.onDeathEvent += () => RemoveUnit(unit);
                 unit.Squad = this;
             }
         }
@@ -49,7 +49,6 @@ public class UnitSquad
     {
         if (!m_units.Contains(unit))
         {
-            unit.onDeathEvent += delegate { RemoveUnit(unit); };
             unit.Squad = this;
         }
     }
@@ -68,7 +67,6 @@ public class UnitSquad
         m_leaderComponent ??= CreateVirtuaLeader(leaderPrefab, squadMiddle, Quaternion.identity);
 
         m_leaderComponent.Squad = this;
-
         //m_leaderComponent.m_onMoveChange += UpdatePositions;
     }
 

@@ -204,6 +204,7 @@ public class UnitController : MonoBehaviour
         }
 
         newSquad.InitializeLeader(m_virtualLeaderPrefab, averagePosition);
+        newSquad.m_leaderComponent.Init(Team);
         newSquad.Formation = m_currentFormation;
 
         m_squadList.Add(newSquad);
@@ -331,9 +332,18 @@ public class UnitController : MonoBehaviour
         Debug.Log("found " + m_buildingList.Count + " factory for team " + Team.ToString());
     }
 
-    virtual protected void Update ()
+    virtual protected void Update()
     {
+        m_squadList = m_squadList.Where(squad =>
+        {
+            if (squad.Units.Count == 0)
+            {
+                squad.Destroy();
+                return false;
+            }
 
+            return true;
+        }).ToList();
     }
     #endregion
 }

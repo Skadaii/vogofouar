@@ -39,6 +39,8 @@ public class UnitLeader : Unit
 
     [SerializeField] private GOAP m_goap;
 
+    public GOAP GOAP => m_goap;
+
     public override UnitDataScriptable UnitData => m_leaderData;
 
     public override UnitSquad Squad
@@ -120,6 +122,11 @@ public class UnitLeader : Unit
     protected virtual new void Update()
     {
 
+    }
+
+    public override void Init(ETeam _team)
+    {
+        m_team = _team;
     }
 
     [ConsiderationMethod]

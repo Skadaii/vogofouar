@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UnityEditor.PlayerSettings;
 using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.CanvasScaler;
 
 [RequireComponent(typeof(Rigidbody), typeof(NavMeshAgent))]
 public abstract class Unit : Entity
@@ -44,7 +45,10 @@ public abstract class Unit : Entity
             m_squad = value;
 
             if (m_squad is not null)
+            {
+                onDeathEvent += () => m_squad.RemoveUnit(this);
                 m_squad.Units.Add(this);
+            }
         }
     }
 
@@ -165,10 +169,7 @@ public abstract class Unit : Entity
 
         if (m_navMeshAgent) m_navMeshAgent.isStopped = true;
 
-        if(!buildingToCapture.ComputeCapture(this))
-        {
-            m_target = null;
-        }
+        buildingToCapture.ComputeCapture(this);
     }
 
     public bool CanCapture(Entity target)

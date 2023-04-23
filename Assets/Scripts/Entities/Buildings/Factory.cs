@@ -23,7 +23,14 @@ public class Factory : Building
     [SerializeField]
     private int m_maxBuildingQueueSize = 5;
     //private Queue<int> m_buildingQueue = new Queue<int>();
-    private Queue<Unit> m_unitQueue = new Queue<Unit>();
+
+    private class UnitTask
+    {
+        public Action<Unit> m_onUnitFormedCallback;
+        public Unit m_unit;
+    }
+
+    private Queue<UnitTask> m_unitQueue = new Queue<UnitTask>();
 
     public Action<Unit> OnUnitFormed;
     private bool m_isWorking = false;
@@ -72,8 +79,8 @@ public class Factory : Building
                 // manage build queue : chain with new unit build if necessary
                 if (m_unitQueue.Count != 0)
                 {
-                    Unit unit = m_unitQueue.Dequeue();
-                    StartUnitProduction(unit);
+                    UnitTask unitTask = m_unitQueue.Dequeue();
+                    StartUnitProduction(unitTask.m_unit, unitTask.m_onUnitFormedCallback);
                 }
             }
             else
@@ -98,12 +105,12 @@ public class Factory : Building
         Unit unit = unitPrefab.GetComponent<Unit>();
         if (unit == null) return false;
         
-        Queue<Unit> tempQueue = new Queue<Unit>();
+        Queue<UnitTask> tempQueue = new Queue<UnitTask>();
         bool canceled = false;
 
-        foreach (Unit u in m_unitQueue)
+        foreach (UnitTask u in m_unitQueue)
         {
-            if (unit == u && !canceled)
+            if (unit == u.m_unit && !canceled)
             {
                 canceled = true;
             }
@@ -124,23 +131,23 @@ public class Factory : Building
         return true;
     }
 
-    public bool RequestUnitProduction(GameObject unitPrefab)
+    public bool RequestUnitProduction(GameObject unitPrefab, Action<Unit> onUnitFormedCallback = null)
     {
         Unit unit = unitPrefab.GetComponent<Unit>();
         if (unit == null) return false;
 
-        StartUnitProduction(unit);
+        StartUnitProduction(unit, onUnitFormedCallback);
 
         return true;
     }
 
-    private void StartUnitProduction(Unit unit)
+    private void StartUnitProduction(Unit unit, Action<Unit> onUnitFormedCallback = null)
     {
         // Build queue
         if (m_isWorking)
         {
             if (m_unitQueue.Count < m_maxBuildingQueueSize)
-                m_unitQueue.Enqueue(unit);
+                m_unitQueue.Enqueue(new UnitTask() { m_unit = unit, m_onUnitFormedCallback = onUnitFormedCallback});
             return;
         }
 
@@ -157,6 +164,7 @@ public class Factory : Building
             if (unit != null)
             {
                 TeamController.AddUnit(unit);
+                onUnitFormedCallback?.Invoke(unit);
                 //(TeamController as PlayerController)?.UpdateFactoryBuildQueueUI(m_requestedEntityBuildIndex);
             }
         };
@@ -219,8 +227,8 @@ public class Factory : Building
 
         if (m_unitQueue.Count != 0)
         {
-            Unit unit = m_unitQueue.Dequeue();
-            StartUnitProduction(unit);
+            UnitTask unitTask = m_unitQueue.Dequeue();
+            StartUnitProduction(unitTask.m_unit, unitTask.m_onUnitFormedCallback);
         }
     }
 
@@ -266,9 +274,9 @@ public class Factory : Building
         {
             if (factory.m_requestedUnit == unit) result++;
 
-            foreach(Unit u in factory.m_unitQueue)
+            foreach(UnitTask u in factory.m_unitQueue)
             {
-                if (u == unit) result++;
+                if (u.m_unit == unit) result++;
             }
         }
 

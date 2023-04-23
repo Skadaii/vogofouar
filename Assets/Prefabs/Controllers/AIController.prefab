@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 580627816653263432}
   - component: {fileID: 7859672622032877473}
+  - component: {fileID: 6385484153686728151}
   m_Layer: 0
   m_Name: AIController
   m_TagString: Untagged
@@ -45,7 +46,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_team: 1
-  m_startingBuildPoints: 15
+  m_startingResources: 15
+  m_lonerUseLeader: 1
   m_virtualLeaderPrefab: {fileID: 7114013581813105076, guid: 70a474a91debe734ea38976829a721da,
     type: 3}
   m_currentFormation: {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505, type: 2}
+  m_goap: {fileID: 6385484153686728151}
+  m_enemyController: {fileID: 0}
+--- !u!114 &6385484153686728151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6399179960504004712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56871a0b1e2d3344b2b0c5fb668f0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_worldState:
+    show: 0
+    states: []
+  m_actionSet: []
+  m_goals: []
+  m_useDebugLog: 0
+  references:
+    version: 2
+    RefIds: []

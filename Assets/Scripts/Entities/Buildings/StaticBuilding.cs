@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UI.CanvasScaler;
 
@@ -22,9 +23,11 @@ public class StaticBuilding : Building
     private float m_resourcePerSecond = 1f;
     private float m_capturePointDecreasePerSecond = 1f;
     private float m_capturePoints = 1f;
+
+    public static List<StaticBuilding> staticBuildings = new List<StaticBuilding>();
+
     //  Properties
     //  ----------
-
     public override BuildingDataScriptable BuildingData => m_buildingDatas;
 
     private ETeam CapturingTeam => m_teamCaptureScore[(int)ETeam.Blue] > m_teamCaptureScore[(int)ETeam.Red] ? ETeam.Blue : 
@@ -35,11 +38,12 @@ public class StaticBuilding : Building
 
     #region MonoBehaviour methods
 
-
     protected virtual new void Awake()
     {
         base.Awake();
         ConstructionCompleted();
+
+        staticBuildings.Add(this);
     }
 
     protected virtual new void Start()
@@ -62,12 +66,23 @@ public class StaticBuilding : Building
     {
         base.Update();
 
-        if(Team != ETeam.Neutral)
+        if (Team != ETeam.Neutral)
         {
             TeamController.CurrentResources += m_resourcePerSecond * Time.deltaTime;
+
+            if (m_teamCaptureScore[(int)Team] == 0f)
+            {
+                UnitController teamController = GameServices.GetControllerByTeam(Team);
+                teamController.CapturedTargets--;
+
+                m_team = ETeam.Neutral;
+                if (Visibility) { Visibility.Team = Team; }
+                if (m_icon) { m_icon.color = GameServices.GetTeamColor(Team); }
+                m_buildingMeshRenderer.material = GameServices.GetDefaultTeamMaterial(ETeam.Neutral);
+            }
         }
 
-        if(CapturingTeam == Team)
+        if ((Team == ETeam.Neutral && CapturingTeam == Team)  || (CapturingTeam == Team && m_teamCaptureScore[(int)CapturingTeam] == 100f))
         {
             m_hud.Progression = 0f;
         }
@@ -85,17 +100,20 @@ public class StaticBuilding : Building
 
     #endregion
 
-
     #region Capture methods
 
 
-    public bool ComputeCapture(Unit unit)
+    public void ComputeCapture(Unit unit)
     {
-        if (unit.Team == Team) return false;
-
-        m_teamCaptureScore[(int)unit.Team] = Mathf.Min(m_teamCaptureScore[(int)unit.Team] + unit.UnitData.capturePointPerSecond * Time.deltaTime, m_requiredCapturePoint);
-
-        return true;
+        if (CapturingTeam == unit.Team || CapturingTeam == ETeam.Neutral)
+        {
+            m_teamCaptureScore[(int)unit.Team] = Mathf.Min(m_teamCaptureScore[(int)unit.Team] + unit.UnitData.capturePointPerSecond * Time.deltaTime, m_requiredCapturePoint);
+        }
+        else
+        {
+            ETeam otherTeam = Team != ETeam.Blue ? ETeam.Red : ETeam.Blue;
+            m_teamCaptureScore[(int)otherTeam] = Mathf.Max(m_teamCaptureScore[(int)otherTeam] - unit.UnitData.capturePointPerSecond * Time.deltaTime, 0f);
+        }
     }
 
     void OnCaptured(ETeam newTeam)
@@ -104,11 +122,15 @@ public class StaticBuilding : Building
         if (Team != newTeam)
         {
             UnitController teamController = GameServices.GetControllerByTeam(newTeam);
+            teamController.CapturedTargets++;
+
+            //m_teamCaptureScore = new float[] { 0f, 0f};
 
             if (Team != ETeam.Neutral)
             {
                 // remove points to previously owning team
                 teamController = GameServices.GetControllerByTeam(Team);
+                teamController.CapturedTargets--;
             }
         }
 
