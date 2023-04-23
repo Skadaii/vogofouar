@@ -71,6 +71,8 @@ public class UnitController : MonoBehaviour
     public bool HasSelectedUnits => m_selectedUnitList.Count > 0;
     public bool HasSelectedBuildings => m_selectedBuildings != null;
 
+    public List<UnitSquad> SquadList => m_squadList;
+
 
     #region Unit methods
     protected void UnselectAllUnits()

@@ -15,6 +15,7 @@ public sealed class AIController : UnitController
     [SerializeField] private UnitController m_enemyController;
 
     [SerializeField] private int m_baseCaptureSquadUnitCount = 3;
+    [SerializeField] private int m_baseAttackSquadUnitCount = 3;
 
     private class SquadTask
     {
@@ -42,7 +43,7 @@ public sealed class AIController : UnitController
         get
         {
             var unavailableSquads = m_squadTasksScheduled.Select(squadTask => squadTask.m_unitSquad);
-            unavailableSquads.Concat(m_squadTaskInProgress.Select(squadTask => squadTask.m_unitSquad));
+            unavailableSquads = unavailableSquads.Concat(m_squadTaskInProgress.Select(squadTask => squadTask.m_unitSquad));
 
             List<UnitSquad> availableSquad = new List<UnitSquad>();
             availableSquad.AddRange(m_squadList);
@@ -54,40 +55,34 @@ public sealed class AIController : UnitController
         }
     }
 
-    private int CaptureTaskCount
+    private List<Entity> GetTaskTargets(ETaskType taskType)
     {
-        get
-        {
-            int captureTaskCount = 0;
+        List<Entity> targets = new List<Entity>();
 
-            foreach (SquadTask captureSquadTask in m_squadTaskInProgress)
-                if (captureSquadTask.m_taskType == ETaskType.Capture)
-                    captureTaskCount++;
+        foreach (SquadTask squadTask in m_squadTaskInProgress)
+            if (squadTask.m_taskType == taskType)
+                targets.Add(squadTask.m_target);
 
-            foreach (SquadTask captureSquadTask in m_squadTasksScheduled)
-                if (captureSquadTask.m_taskType == ETaskType.Capture)
-                    captureTaskCount++;
+        foreach (SquadTask squadTask in m_squadTasksScheduled)
+            if (squadTask.m_taskType == taskType)
+                targets.Add(squadTask.m_target);
 
-            return captureTaskCount;
-        }
+        return targets;
     }
 
-    private List<Entity> CaptureTaskTargets
+    private int GetTaskCount(ETaskType taskType)
     {
-        get
-        {
-            List<Entity> captureTarget = new List<Entity>();
+        int taskCount = 0;
 
-            foreach (SquadTask captureSquadTask in m_squadTaskInProgress)
-                if (captureSquadTask.m_taskType == ETaskType.Capture)
-                    captureTarget.Add(captureSquadTask.m_target);
+        foreach (SquadTask squadTask in m_squadTaskInProgress)
+            if (squadTask.m_taskType == taskType)
+                taskCount++;
 
-            foreach (SquadTask captureSquadTask in m_squadTasksScheduled)
-                if (captureSquadTask.m_taskType == ETaskType.Capture)
-                    captureTarget.Add(captureSquadTask.m_target);
+        foreach (SquadTask squadTask in m_squadTasksScheduled)
+            if (squadTask.m_taskType == taskType)
+                taskCount++;
 
-            return captureTarget;
-        }
+        return taskCount;
     }
 
     protected override void Awake()
@@ -139,12 +134,22 @@ public sealed class AIController : UnitController
     public float Goal_PlanifyCaptureTarget(WorldState worldState)
     {
         return m_enemyController.CapturedTargets >= CapturedTargets && 
-            CaptureTaskCount + CapturedTargets <= m_enemyController.CapturedTargets ? 1f : 0f;
+            GetTaskCount(ETaskType.Capture) + CapturedTargets <= m_enemyController.CapturedTargets ? 1f : 0f;
     }
 
     [ConsiderationMethod]
-    public float Goal_Attack(WorldState worldState) =>
-        m_enemyController.FactoryList.Count >= FactoryList.Count ? 1f : 0f;
+    public float Goal_Attack(WorldState worldState)
+    {
+        foreach (SquadTask attackSquadTask in m_squadTasksScheduled)
+            if (attackSquadTask.m_taskType == ETaskType.Attack && attackSquadTask.IsReady)
+                return 1f;
+
+        return 0f;
+    }
+
+    [ConsiderationMethod]
+    public float Goal_PlanifyAttackTarget(WorldState worldState) => 
+        m_enemyController.SquadList.Count - GetTaskCount(ETaskType.Attack) > 0 ? 1f : 0f;
 
     [ConsiderationMethod]
     public float Goal_Defend(WorldState worldState) =>
@@ -160,7 +165,7 @@ public sealed class AIController : UnitController
         List<StaticBuilding> targets = StaticBuilding.staticBuildings.Where(target => target.Team != Team).ToList();
 
         //Already planed capture target
-        List<Entity> captureTaskTargets = CaptureTaskTargets;
+        List<Entity> captureTaskTargets = GetTaskTargets(ETaskType.Capture);
 
         foreach (Entity entity in captureTaskTargets)
             targets.Remove(entity as StaticBuilding);
@@ -319,8 +324,13 @@ public sealed class AIController : UnitController
         SquadTask squadTask = null;
 
         foreach (SquadTask captureSquadTask in m_squadTasksScheduled)
+        {
             if (captureSquadTask.IsReady)
+            {
                 squadTask = captureSquadTask;
+                break;
+            }
+        }
 
         if (squadTask == null)
             return Action.EActionState.Failed;
@@ -334,6 +344,205 @@ public sealed class AIController : UnitController
 
         squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units);
         squadTask.m_unitSquad.m_leaderComponent.SetTarget(squadTask.m_target, ETargetType.Capture);
+
+        return Action.EActionState.Finished;
+    }
+
+    [ActionMethod]
+    public Action.EActionState Action_PlanifyAttackTarget(WorldState worldState)
+    {
+        //Select capture target
+        List<UnitSquad> targets = m_enemyController.SquadList;
+
+        //Already planed attack target
+        List<Entity> attackTaskTargets = GetTaskTargets(ETaskType.Attack);
+
+        foreach (Entity entity in attackTaskTargets)
+        {
+            foreach (UnitSquad unitSquad in targets)
+            {
+                if (unitSquad.m_leaderComponent == entity)
+                {
+                    targets.Remove(unitSquad);
+                    break;
+                }
+            }
+        }
+
+        if (!targets.Any())
+            return Action.EActionState.Failed;
+
+        var target = targets.OrderBy(target => (target.m_leaderComponent.transform.position - FactoryList[0].transform.position).sqrMagnitude).First();
+
+        if (target == null)
+            return Action.EActionState.Failed;
+
+        //Todo: Check influence and potential enemy puisance
+
+        SquadTask attackSquadTask = new SquadTask() { m_target = target.m_leaderComponent, m_taskType = ETaskType.Attack };
+
+        //Check unit available
+        List<UnitSquad> availableSquad = AvailableSquad;
+
+        void RequestUnitProductionForTask(int count)
+        {
+            Factory selectedFactory = null;
+            float closestDistanceSqr = float.MaxValue;
+
+            //TODO: Set TypeId according to the influence of the target
+            int factoryTypeId = 0;
+
+            foreach (Factory factory in FactoryList)
+            {
+                if (factory.FactoryData.typeId == factoryTypeId)
+                {
+                    float distanceSqr = (target.m_leaderComponent.transform.position - factory.transform.position).sqrMagnitude;
+                    if (selectedFactory != null && distanceSqr > closestDistanceSqr)
+                        continue;
+
+                    selectedFactory = factory;
+                    closestDistanceSqr = distanceSqr;
+                }
+
+                if (selectedFactory == null)
+                    selectedFactory = factory;
+            }
+
+            Unit selectedUnit = null;
+            int totalCost = 0;
+
+            if (selectedFactory == null)
+                return;
+
+            foreach (GameObject go in selectedFactory.FactoryData.availableUnits)
+            {
+                Unit unit = go.GetComponent<Unit>();
+
+                if (unit as Builder)
+                    continue;
+
+                int totalCostUnit = unit.UnitData.cost * count;
+                if (totalCostUnit <= m_currentResources)
+                {
+                    selectedUnit = unit;
+                    totalCost = totalCostUnit;
+                }
+
+                if (selectedUnit == null)
+                {
+                    selectedUnit = unit;
+                    totalCost = totalCostUnit;
+                }
+
+            }
+
+            if (selectedFactory == null)
+                return;
+
+            if (totalCost > m_currentResources)
+            {
+                while (count != 0)
+                {
+                    count--;
+                    Unit unit = selectedUnit;
+
+                    if (unit.UnitData.cost * count <= m_currentResources)
+                        break;
+
+                }
+            }
+
+            System.Action<Unit> action = (Unit unit) =>
+            {
+                if (attackSquadTask != null)
+                {
+                    attackSquadTask.m_unitCountProdution--;
+                    attackSquadTask.m_units.Add(unit);
+                }
+            };
+
+            for (int i = 0; i < count; ++i)
+            {
+                attackSquadTask.m_unitCountProdution++;
+                selectedFactory.RequestUnitProduction(selectedUnit.gameObject, action);
+            }
+        }
+
+        if (availableSquad.Any())
+        {
+            var completeSquads = availableSquad.Where(squad => squad.Units.Count >= m_baseAttackSquadUnitCount);
+
+            //Already complete squad to capture target
+            if (completeSquads.Any())
+            {
+                var closestSquad = completeSquads.OrderBy(squad =>
+                (target.m_leaderComponent.transform.position - squad.m_leaderComponent.transform.position).sqrMagnitude).First();
+
+                attackSquadTask.m_units = closestSquad.Units;
+
+                m_squadTasksScheduled.Add(attackSquadTask);
+                return Action.EActionState.Finished;
+            }
+            else
+            {
+                var orderedSquads = availableSquad.OrderBy(squad =>
+                (target.m_leaderComponent.transform.position - squad.m_leaderComponent.transform.position).sqrMagnitude);
+
+                List<Unit> units = new List<Unit>();
+                foreach (var squad in orderedSquads)
+                {
+                    units.AddRange(squad.Units);
+
+                    if (units.Count >= m_baseAttackSquadUnitCount)
+                        break;
+                }
+
+                attackSquadTask.m_units = units;
+
+                if (units.Count < m_baseAttackSquadUnitCount)
+                    RequestUnitProductionForTask(m_baseAttackSquadUnitCount - units.Count);
+
+                m_squadTasksScheduled.Add(attackSquadTask);
+                return Action.EActionState.Finished;
+            }
+        }
+
+        RequestUnitProductionForTask(m_baseAttackSquadUnitCount);
+
+        if (attackSquadTask.m_unitCountProdution + attackSquadTask.m_units.Count == 0)
+            return Action.EActionState.Failed;
+
+        m_squadTasksScheduled.Add(attackSquadTask);
+
+        return Action.EActionState.Finished;
+    }
+
+    [ActionMethod]
+    public Action.EActionState Action_AttackTarget(WorldState worldState)
+    {
+        SquadTask squadTask = null;
+
+        foreach (SquadTask attackSquadTask in m_squadTasksScheduled)
+        {
+            if (attackSquadTask.IsReady)
+            {
+                squadTask = attackSquadTask;
+                break;
+            }
+        }
+
+        if (squadTask == null)
+            return Action.EActionState.Failed;
+
+        m_squadTasksScheduled.Remove(squadTask);
+
+        if (squadTask.m_target == null || squadTask.m_target.Team == Team)
+            return Action.EActionState.Failed;
+
+        m_squadTaskInProgress.Add(squadTask);
+
+        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units);
+        squadTask.m_unitSquad.m_leaderComponent.SetTargetPosition(squadTask.m_target.transform.position);
 
         return Action.EActionState.Finished;
     }

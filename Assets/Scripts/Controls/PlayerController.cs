@@ -115,6 +115,8 @@ public sealed class PlayerController : UnitController
 
     protected override void Update()
     {
+        base.Update();
+
         CheckInputModeStates();
 
         switch (m_currentInputMode)
