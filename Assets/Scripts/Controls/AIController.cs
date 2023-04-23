@@ -144,11 +144,11 @@ public sealed class AIController : UnitController
 
     [ConsiderationMethod]
     public float Goal_Attack(WorldState worldState) =>
-        m_enemyController.GetFactoryList.Count >= GetFactoryList.Count ? 1f : 0f;
+        m_enemyController.FactoryList.Count >= FactoryList.Count ? 1f : 0f;
 
     [ConsiderationMethod]
     public float Goal_Defend(WorldState worldState) =>
-        m_enemyController.GetFactoryList.Count >= GetFactoryList.Count ? 1f : 0f;
+        m_enemyController.FactoryList.Count >= FactoryList.Count ? 1f : 0f;
 
     [StateMethod]
     public BoolType State_ResetState() => new BoolType(false);
@@ -168,8 +168,7 @@ public sealed class AIController : UnitController
         if (!targets.Any())
             return Action.EActionState.Failed;
 
-
-        var target = targets.OrderBy(target => (target.transform.position - GetFactoryList[0].transform.position).sqrMagnitude).First();
+        var target = targets.OrderBy(target => (target.transform.position - FactoryList[0].transform.position).sqrMagnitude).First();
 
         if (target == null)
             return Action.EActionState.Failed;
@@ -192,10 +191,76 @@ public sealed class AIController : UnitController
                 }
             };
 
+            Factory selectedFactory = null;
+            float closestDistanceSqr = float.MaxValue;
+
+            //TODO: Set TypeId according to the influence of the target
+            int factoryTypeId = 0;
+
+            foreach (Factory factory in FactoryList)
+            {
+                if (factory.FactoryData.typeId == factoryTypeId)
+                {
+                    float distanceSqr = (target.transform.position - factory.transform.position).sqrMagnitude;
+                    if (selectedFactory != null && distanceSqr > closestDistanceSqr)
+                        continue;
+
+                    selectedFactory = factory;
+                    closestDistanceSqr = distanceSqr;
+                }
+
+                if (selectedFactory == null)
+                    selectedFactory = factory;
+            }
+
+            Unit selectedUnit = null;
+            int totalCost = 0;
+
+            if (selectedFactory == null)
+                return;
+
+            foreach (GameObject go in selectedFactory.FactoryData.availableUnits)
+            {
+                Unit unit = go.GetComponent<Unit>();
+
+                if (unit as Builder)
+                    continue;
+
+                int totalCostUnit = unit.UnitData.cost * count;
+                if (totalCostUnit <= m_currentResources)
+                {
+                    selectedUnit = unit;
+                    totalCost = totalCostUnit;
+                }
+
+                if (selectedUnit == null)
+                {
+                    selectedUnit = unit;
+                    totalCost = totalCostUnit;
+                }
+
+            }
+
+            if (selectedFactory == null)
+                return;
+
+            if (totalCost > m_currentResources)
+            {
+                while (count != 0)
+                {
+                    count--;
+                    Unit unit = selectedUnit;
+
+                    if (unit.UnitData.cost * count <= m_currentResources)
+                        break;
+
+                }
+            }
+
             for (int i = 0; i < count; ++i)
             {
                 captureSquadTask.m_unitCountProdution++;
-                GetFactoryList[0].RequestUnitProduction(GetFactoryList[0].FactoryData.availableUnits[1], action);
+                selectedFactory.RequestUnitProduction(selectedUnit.gameObject, action);
             }
         }
 
@@ -239,6 +304,10 @@ public sealed class AIController : UnitController
         }
 
         RequestUnitProductionForTask(m_baseCaptureSquadUnitCount);
+
+        if (captureSquadTask.m_unitCountProdution + captureSquadTask.m_units.Count == 0)
+            return Action.EActionState.Failed;
+
         m_squadTasksScheduled.Add(captureSquadTask);
 
         return Action.EActionState.Finished;

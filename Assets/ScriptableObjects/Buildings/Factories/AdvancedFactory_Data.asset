@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AdvancedFactory_Data
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: 2dc594298279eb14f8c2a060aedfa72b, type: 3}
-  typeId: 0
+  typeId: 1
   caption: Heavy Factory
   cost: 15
   maxHP: 10000
