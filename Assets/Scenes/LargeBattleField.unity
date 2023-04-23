@@ -2450,6 +2450,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1967584159}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1870693199 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 142930957807275844, guid: bdf1900aea8b359439cab418f533a7e5,
+    type: 3}
+  m_PrefabInstance: {fileID: 142930958014660627}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eba0334135cf2e49b264668580f890b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1880703088 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3113519962643873967, guid: 67effc09ec1950247bdaf2757b2d228d,
@@ -2749,11 +2761,441 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].name
+      value: PlanifyBuildTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].name
+      value: BuildTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].name
+      value: PlanifyBuildTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].name
+      value: BuildTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_methodName
+      value: Action_PlanifyBuildFactoryTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_methodName
+      value: Action_BuildFactoryTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[6].name
+      value: IsBuildTargetScheduled
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[7].name
+      value: BuildTargetLaunched
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287551]
+      value: Assembly-CSharp BoolType
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287559]
+      value: Assembly-CSharp BoolType
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287568]
+      value: Assembly-CSharp BoolType
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287569]
+      value: Assembly-CSharp BoolType
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287578]
+      value: Assembly-CSharp BoolType
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287587]
+      value: Assembly-CSharp BoolType
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_componentName
+      value: AIController
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_componentName
+      value: AIController
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_states.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_states.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287551].Value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287559].Value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287568].Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287569].Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287578].Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: managedReferences[1854990999423287587].Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_states.Array.data[0].id
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_states.Array.data[0].id
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].currentActionPanelType
+      value: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].currentActionPanelType
+      value: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_stateEffects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_stateEffects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_preconditions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_preconditions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_PreInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_PreInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[6].stateValue.m_value
+      value: 1854990999423287551
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[7].stateValue.m_value
+      value: 1854990999423287559
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_PostInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_PostInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_RotationOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_RotationOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_considerationMethod.m_methodName
+      value: Goal_PlanifyBuildFactoryTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_considerationMethod.m_methodName
+      value: Goal_BuildFactory
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_stateEffects.Array.data[0].id
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_stateEffects.Array.data[0].id
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_considerationMethod.m_componentName
+      value: AIController
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_considerationMethod.m_componentName
+      value: AIController
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_preconditions.Array.data[0].cost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_preconditions.Array.data[0].name
+      value: DefaultPrecondition
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_preconditions.Array.data[0].cost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_preconditions.Array.data[0].name
+      value: DefaultPrecondition
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[6].m_stateMethod.m_methodName
+      value: State_ResetState
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[7].m_stateMethod.m_methodName
+      value: State_ResetState
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_states.Array.data[0].stateValue.m_value
+      value: 1854990999423287578
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_states.Array.data[0].stateValue.m_value
+      value: 1854990999423287587
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[6].m_stateMethod.m_componentName
+      value: AIController
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_worldState.states.Array.data[7].m_stateMethod.m_componentName
+      value: AIController
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[2].m_animationCurve.m_Curve.Array.data[1].value
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[2].m_animationCurve.m_Curve.Array.data[0].inSlope
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[2].m_animationCurve.m_Curve.Array.data[1].inSlope
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[2].m_animationCurve.m_Curve.Array.data[0].outSlope
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[2].m_animationCurve.m_Curve.Array.data[1].outSlope
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[6].m_stateEffects.Array.data[0].stateValue.m_value
+      value: 1854990999423287568
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_actionSet.Array.data[7].m_stateEffects.Array.data[0].stateValue.m_value
+      value: 1854990999423287569
+      objectReference: {fileID: 0}
     - target: {fileID: 6399179960504004712, guid: fee74b0095774cf4f9701d9fab58813d,
         type: 3}
       propertyPath: m_Name
       value: AIController
       objectReference: {fileID: 0}
+    - target: {fileID: 7859672622032877473, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_influenceMap
+      value: 
+      objectReference: {fileID: 1870693199}
+    - target: {fileID: 7859672622032877473, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_enemyController
+      value: 
+      objectReference: {fileID: 589627996}
     - target: {fileID: 7859672622032877473, guid: fee74b0095774cf4f9701d9fab58813d,
         type: 3}
       propertyPath: m_startingResources
@@ -2836,7 +3278,7 @@ PrefabInstance:
     - target: {fileID: 7323399335524938807, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7323399336463703304, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}

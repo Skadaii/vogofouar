@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.UI.CanvasScaler;
 
 [RequireComponent(typeof(Rigidbody), typeof(NavMeshAgent))]
 public abstract class Unit : Entity
@@ -46,7 +43,7 @@ public abstract class Unit : Entity
 
             if (m_squad is not null)
             {
-                onDeathEvent += () => m_squad.RemoveUnit(this);
+                onDeathEvent += () => m_squad?.RemoveUnit(this);
                 m_squad.Units.Add(this);
             }
         }

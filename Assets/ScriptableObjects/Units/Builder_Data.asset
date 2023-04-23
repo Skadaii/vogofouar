@@ -29,7 +29,7 @@ MonoBehaviour:
     type: 3}
   bps: 1
   buildingDistanceMax: 10
-  rps: 2
+  rps: 4
   repairFrequency: 1
   repairDistanceMax: 10
   captureDistanceMax: 10

@@ -53,6 +53,8 @@ MonoBehaviour:
   m_currentFormation: {fileID: 11400000, guid: 276c8f1336708544f80f2207aa5bf505, type: 2}
   m_goap: {fileID: 6385484153686728151}
   m_enemyController: {fileID: 0}
+  m_baseCaptureSquadUnitCount: 3
+  m_baseAttackSquadUnitCount: 3
 --- !u!114 &6385484153686728151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,10 +69,460 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_worldState:
     show: 0
-    states: []
-  m_actionSet: []
-  m_goals: []
-  m_useDebugLog: 0
+    states:
+    - show: 0
+      name: CaptureTargetLaunched
+      stateValue:
+        m_value:
+          rid: 1854990992903504429
+      m_stateMethod:
+        m_methodName: State_ResetState
+        m_componentName: AIController
+    - show: 0
+      name: IsCaptureTargetScheduled
+      stateValue:
+        m_value:
+          rid: 1854990992903504430
+      m_stateMethod:
+        m_methodName: State_ResetState
+        m_componentName: AIController
+    - show: 0
+      name: AttackTargetLaunched
+      stateValue:
+        m_value:
+          rid: 1854990992903504431
+      m_stateMethod:
+        m_methodName: State_ResetState
+        m_componentName: AIController
+    - show: 0
+      name: IsAttackTargetScheduled
+      stateValue:
+        m_value:
+          rid: 1854990992903504432
+      m_stateMethod:
+        m_methodName: State_ResetState
+        m_componentName: AIController
+    - show: 0
+      name: AttackFactoryTargetLaunched
+      stateValue:
+        m_value:
+          rid: 1854990992903504433
+      m_stateMethod:
+        m_methodName: State_ResetState
+        m_componentName: AIController
+    - show: 0
+      name: IsAttackFactoryTargetScheduled
+      stateValue:
+        m_value:
+          rid: 1854990992903504434
+      m_stateMethod:
+        m_methodName: State_ResetState
+        m_componentName: AIController
+  m_actionSet:
+  - m_methodName: Action_PlanifyCaptureTarget
+    m_componentName: AIController
+    name: PlanifyCaptureTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 1
+      stateValue:
+        m_value:
+          rid: 1854990992903504435
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states: []
+      cost: 1
+  - m_methodName: Action_CaptureTarget
+    m_componentName: AIController
+    name: CaptureTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 0
+      stateValue:
+        m_value:
+          rid: 1854990992903504436
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states: []
+      cost: 1
+  - m_methodName: Action_PlanifyAttackTarget
+    m_componentName: AIController
+    name: PlanifyAttackTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 3
+      stateValue:
+        m_value:
+          rid: 1854990992903504437
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states: []
+      cost: 1
+  - m_methodName: Action_AttackTarget
+    m_componentName: AIController
+    name: AttackTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 2
+      stateValue:
+        m_value:
+          rid: 1854990992903504438
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states: []
+      cost: 1
+  - m_methodName: Action_PlanifyAttackFactoryTarget
+    m_componentName: AIController
+    name: PlanifyAttackFactoryTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+StateIdListEditor
+    m_stateEffects:
+    - show: 0
+      id: 5
+      stateValue:
+        m_value:
+          rid: 1854990992903504439
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states: []
+      cost: 1
+  - m_methodName: Action_AttackFactoryTarget
+    m_componentName: AIController
+    name: AttackFactoryTarget
+    show: 0
+    showPreconditions: 0
+    showEffects: 0
+    currentActionPanelType: AIPlanner.GOAP.Editor.GOAPWindowEditor+PreconditionListEditor
+    m_stateEffects:
+    - show: 0
+      id: 4
+      stateValue:
+        m_value:
+          rid: 1854990992903504440
+    m_preconditions:
+    - name: DefaultPrecondition
+      show: 0
+      showStates: 0
+      states: []
+      cost: 1
+  m_goals:
+  - name: PlanifyCaptureTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 1
+      stateValue:
+        m_value:
+          rid: 1854990992903504441
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: Goal_PlanifyCaptureTarget
+      m_componentName: AIController
+  - name: CaptureTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 0
+      stateValue:
+        m_value:
+          rid: 1854990992903504442
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: Goal_CaptureTarget
+      m_componentName: AIController
+  - name: PlanifyAttackTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 3
+      stateValue:
+        m_value:
+          rid: 1854990992903504443
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.8
+        outSlope: 0.8
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.8
+        inSlope: 0.8
+        outSlope: 0.8
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: Goal_PlanifyAttackTarget
+      m_componentName: AIController
+  - name: AttackTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 2
+      stateValue:
+        m_value:
+          rid: 1854990992903504444
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.8
+        outSlope: 0.8
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.8
+        inSlope: 0.8
+        outSlope: 0.8
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: Goal_Attack
+      m_componentName: AIController
+  - name: PlanifyAttackFactoryTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 5
+      stateValue:
+        m_value:
+          rid: 1854990992903504445
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.5
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: Goal_PlanifyAttackFactoryTarget
+      m_componentName: AIController
+  - name: AttackFactoryTarget
+    show: 0
+    showStates: 0
+    m_states:
+    - show: 0
+      id: 4
+      stateValue:
+        m_value:
+          rid: 1854990992903504446
+    m_animationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.5
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_considerationMethod:
+      m_methodName: Goal_AttackFactory
+      m_componentName: AIController
+  m_useDebugLog: 1
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 1854990992903504429
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990992903504430
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504431
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990992903504432
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990992903504433
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990992903504434
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 0
+    - rid: 1854990992903504435
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504436
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504437
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504438
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504439
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504440
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504441
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504442
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504443
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504444
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504445
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
+    - rid: 1854990992903504446
+      type: {class: BoolType, ns: , asm: Assembly-CSharp}
+      data:
+        Value: 1
