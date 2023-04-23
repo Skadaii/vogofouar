@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Builder
   cost: 1
   maxHP: 100
+  influenceRadius: 2
+  influenceStrength: 0.5
   speed: 10
   angularSpeed: 200
   acceleration: 20

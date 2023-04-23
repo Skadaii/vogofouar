@@ -17,6 +17,8 @@ MonoBehaviour:
   caption: Quad
   cost: 3
   maxHP: 100
+  influenceRadius: 3
+  influenceStrength: 0.5
   speed: 7
   angularSpeed: 150
   acceleration: 12

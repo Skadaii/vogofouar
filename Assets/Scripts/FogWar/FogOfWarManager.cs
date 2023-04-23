@@ -131,12 +131,12 @@ public class FogOfWarManager : MonoBehaviour
 
 	private void UpdateFactoriesVisibility()
 	{
-		foreach (Factory factory in GameServices.GetControllerByTeam(Team).GetFactoryList)
+		foreach (Factory factory in GameServices.GetControllerByTeam(Team).FactoryList)
 		{
 			factory.Visibility?.SetVisible(true);
 		}
 
-		foreach (Factory factory in GameServices.GetControllerByTeam(Team.GetOpponent()).GetFactoryList)
+		foreach (Factory factory in GameServices.GetControllerByTeam(Team.GetOpponent()).FactoryList)
         {
             //UpdateEntityVisibility(factory);
 			if (m_FOWSystem.IsVisible(1 << (int)Team, factory.Visibility.Position))

@@ -14,6 +14,9 @@ public class EntityDataScriptable : ScriptableObject
     [Header("Health Points")]
     public int maxHP = 100;
 
+    [Header("Influence")]
+    public int influenceRadius = 5;
+    public float influenceStrength = 1f;
 
     private List<Command> m_entityCommands;
 
@@ -32,4 +35,6 @@ public class EntityDataScriptable : ScriptableObject
     {
         m_entityCommands.Clear();
     }
+
+    public float GetInfluenceDropOff(int locationDistance) => influenceStrength / Mathf.Sqrt(1 + locationDistance);
 }

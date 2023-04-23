@@ -59,12 +59,14 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    public List<Factory> GetFactoryList { get { return m_buildingList; } }
+    public List<Factory> FactoryList { get { return m_buildingList; } }
     public List<Unit> UnitList
     {
         get;
         protected set;
     }
+
+    public List<Entity> EntityList => m_buildingList.Cast<Entity>().Concat(UnitList.Cast<Entity>()).ToList();
 
     public bool HasSelectedUnits => m_selectedUnitList.Count > 0;
     public bool HasSelectedBuildings => m_selectedBuildings != null;
