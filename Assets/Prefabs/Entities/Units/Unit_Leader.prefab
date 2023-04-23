@@ -568,7 +568,7 @@ MonoBehaviour:
     m_considerationMethod:
       m_methodName: RepairGoal
       m_componentName: UnitLeader
-  m_useDebugLog: 1
+  m_useDebugLog: 0
   references:
     version: 2
     RefIds:

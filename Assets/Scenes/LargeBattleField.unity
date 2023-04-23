@@ -2763,6 +2763,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
         type: 3}
+      propertyPath: m_useDebugLog
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
       propertyPath: m_goals.Array.size
       value: 8
       objectReference: {fileID: 0}

@@ -244,6 +244,10 @@ public sealed class AIController : UnitController
                 squadTask.m_unitCountProdution--;
                 squadTask.m_units.Add(unit);
             }
+            else
+            {
+                CreateDynamicSquad(unit);
+            }
         };
 
         int averageSquadCostEnemy = AverageSquadCostEnemy;
@@ -309,7 +313,7 @@ public sealed class AIController : UnitController
             int totalCostUnit = unit.Cost * count;
             if (totalCostUnit <= m_currentResources)
             {
-                if (currentTotalCost + totalCostUnit <= averageSquadCostEnemy || selectedUnit == null)
+                if (currentTotalCost + totalCostUnit <= averageSquadCostEnemy + averageSquadCostEnemy * 0.5f || selectedUnit == null)
                 {
                     selectedUnit = unit;
                     totalCost = totalCostUnit;
@@ -452,7 +456,7 @@ public sealed class AIController : UnitController
 
         m_squadTaskInProgress.Add(squadTask);
 
-        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units);
+        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units.ToArray());
         squadTask.m_unitSquad.m_leaderComponent.SetTarget(squadTask.m_target, ETargetType.Capture);
 
         return Action.EActionState.Finished;
@@ -576,7 +580,7 @@ public sealed class AIController : UnitController
 
         m_squadTaskInProgress.Add(squadTask);
 
-        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units);
+        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units.ToArray());
         squadTask.m_unitSquad.m_leaderComponent.SetTargetPosition(squadTask.m_target.transform.position);
 
         return Action.EActionState.Finished;
@@ -682,7 +686,7 @@ public sealed class AIController : UnitController
 
         m_squadTaskInProgress.Add(squadTask);
 
-        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units);
+        squadTask.m_unitSquad = CreateDynamicSquad(squadTask.m_units.ToArray());
         squadTask.m_unitSquad.m_leaderComponent.SetTarget(squadTask.m_target, ETargetType.Attack);
 
         return Action.EActionState.Finished;
@@ -742,7 +746,7 @@ public sealed class AIController : UnitController
 
         m_squadTasksScheduled.Remove(buildSquadTask);
 
-        buildSquadTask.m_unitSquad = CreateDynamicSquad(buildSquadTask.m_units);
+        buildSquadTask.m_unitSquad = CreateDynamicSquad(buildSquadTask.m_units.ToArray());
 
         if (buildSquadTask.m_units.Count != 0)
         {

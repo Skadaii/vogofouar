@@ -107,6 +107,9 @@ public class UnitLeader : Unit
 
     public bool HasReachedPos(float epsilon)
     {
+        if (!m_navMeshAgent)
+            return false;
+
         return m_navMeshAgent.remainingDistance - m_navMeshAgent.stoppingDistance <= epsilon;
     }
 

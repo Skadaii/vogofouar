@@ -578,12 +578,12 @@ public sealed class PlayerController : UnitController
                 {
                     ETargetType targetType = other is StaticBuilding ? ETargetType.Capture : ETargetType.Attack;
 
-                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
                     newSquad.m_leaderComponent.SetTarget(other, targetType);
                 }
                 else if (other.NeedsRepairing())
                 {
-                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
 
                     Building building = other as Building;
                     if (building != null && building.IsUnderConstruction)
@@ -615,7 +615,7 @@ public sealed class PlayerController : UnitController
             return;
         }*/
 
-        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList);
+        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
         newSquad.m_leaderComponent.SetTargetPosition(squadTarget);
     }
 

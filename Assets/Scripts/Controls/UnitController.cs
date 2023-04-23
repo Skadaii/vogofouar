@@ -152,6 +152,7 @@ public class UnitController : MonoBehaviour
             UnitList.Remove(unit);
         };
         UnitList.Add(unit);
+        CreateDynamicSquad(unit);
     }
     public void CaptureTarget(int points)
     {
@@ -173,14 +174,14 @@ public class UnitController : MonoBehaviour
     #region Squad methods
     public void SetSquadFormation(List<Unit> units, FormationRule formation)
     {
-        UnitSquad unitSquad = CreateDynamicSquad(units);
+        UnitSquad unitSquad = CreateDynamicSquad(units.ToArray());
 
         unitSquad.Formation = formation;
     }
 
-    protected UnitSquad CreateDynamicSquad(List<Unit> squadUnits)
+    protected UnitSquad CreateDynamicSquad(params Unit[] squadUnits)
     {
-        Vector3 averagePosition = squadUnits.Where(unit => unit != null).Select(unit => unit.transform.position).Aggregate((a, b) => a + b) / squadUnits.Count;
+        Vector3 averagePosition = squadUnits.Where(unit => unit != null).Select(unit => unit.transform.position).Aggregate((a, b) => a + b) / squadUnits.Length;
 
         UnitSquad newSquad = new UnitSquad();
 
@@ -257,7 +258,7 @@ public class UnitController : MonoBehaviour
 
     protected virtual bool ConstructBuilding(GameObject building, Vector3 position)
     {
-        UnitSquad squad = CreateDynamicSquad(m_selectedUnitList);
+        UnitSquad squad = CreateDynamicSquad(m_selectedUnitList.ToArray());
         return RequestBuildingConstruction(building, position, squad);
     }
 
