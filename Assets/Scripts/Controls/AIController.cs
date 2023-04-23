@@ -51,8 +51,7 @@ public sealed class AIController : UnitController
             var unavailableSquads = m_squadTasksScheduled.Select(squadTask => squadTask.m_unitSquad);
             unavailableSquads = unavailableSquads.Concat(m_squadTaskInProgress.Select(squadTask => squadTask.m_unitSquad));
 
-            List<UnitSquad> availableSquad = new List<UnitSquad>();
-            availableSquad.AddRange(m_squadList);
+            List<UnitSquad> availableSquad = m_squadList.ToList();
 
             foreach (UnitSquad unavailableSquad in unavailableSquads)
                 availableSquad.Remove(unavailableSquad);
@@ -238,6 +237,15 @@ public sealed class AIController : UnitController
 
     void RequestUnitProductionForTask(int count, SquadTask squadTask, bool onlyBuilder = false)
     {
+        System.Action<Unit> action = (Unit unit) =>
+        {
+            if (squadTask != null)
+            {
+                squadTask.m_unitCountProdution--;
+                squadTask.m_units.Add(unit);
+            }
+        };
+
         int averageSquadCostEnemy = AverageSquadCostEnemy;
 
         int currentTotalCost = 0;
@@ -282,7 +290,16 @@ public sealed class AIController : UnitController
             if (unit as Builder)
             {
                 if (!onlyBuilder)
+                {
+                    if (count != 1)
+                    {
+                        count--;
+                        currentTotalCost += unit.Cost;
+                        squadTask.m_unitCountProdution++;
+                        selectedFactory.RequestUnitProduction(unit.gameObject, action);
+                    }
                     continue;
+                }
 
                 selectedUnit = unit;
                 totalCost = unit.Cost;
@@ -322,15 +339,6 @@ public sealed class AIController : UnitController
 
             }
         }
-
-        System.Action<Unit> action = (Unit unit) =>
-        {
-            if (squadTask != null)
-            {
-                squadTask.m_unitCountProdution--;
-                squadTask.m_units.Add(unit);
-            }
-        };
 
         for (int i = 0; i < count; ++i)
         {
@@ -454,7 +462,7 @@ public sealed class AIController : UnitController
     public Action.EActionState Action_PlanifyAttackTarget(WorldState worldState)
     {
         //Select capture target
-        List<UnitSquad> targets = m_enemyController.SquadList;
+        List<UnitSquad> targets = m_enemyController.SquadList.ToList();
 
         //Already planed attack target
         List<Entity> attackTaskTargets = GetTaskTargets(ETaskType.Attack);
@@ -485,11 +493,11 @@ public sealed class AIController : UnitController
         //Check unit available
         List<UnitSquad> availableSquad = AvailableSquad;
 
-        int desiredSquadCount = Random.Range(1, m_baseAttackSquadUnitCount);
+        int desiredUnitCount = Random.Range(1, target.Units.Count);
 
         if (availableSquad.Any())
         {
-            var completeSquads = availableSquad.Where(squad => squad.Units.Count >= desiredSquadCount);
+            var completeSquads = availableSquad.Where(squad => squad.Units.Count >= desiredUnitCount);
 
             //Already complete squad to capture target
             if (completeSquads.Any())
@@ -512,13 +520,13 @@ public sealed class AIController : UnitController
                 {
                     units.AddRange(squad.Units);
 
-                    if (units.Count >= desiredSquadCount)
+                    if (units.Count >= desiredUnitCount)
                         break;
                 }
 
                 attackSquadTask.m_units = units;
 
-                if (units.Count < desiredSquadCount)
+                if (units.Count < desiredUnitCount)
                 {
                     if (GetTaskCount(ETaskType.AttackFactory) != 0)
                     {
@@ -526,7 +534,7 @@ public sealed class AIController : UnitController
                         return Action.EActionState.Loading;
                     }
 
-                    RequestUnitProductionForTask(desiredSquadCount - units.Count, attackSquadTask);
+                    RequestUnitProductionForTask(desiredUnitCount - units.Count, attackSquadTask);
                 }
 
                 m_squadTasksScheduled.Add(attackSquadTask);

@@ -338,6 +338,7 @@ public class UnitController : MonoBehaviour
 
     virtual protected void Update()
     {
+        
         m_squadList = m_squadList.Where(squad =>
         {
             if (squad.Units.Count == 0)
