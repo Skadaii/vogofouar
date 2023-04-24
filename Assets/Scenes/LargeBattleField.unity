@@ -3083,6 +3083,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
         type: 3}
+      propertyPath: m_goals.Array.data[4].m_animationCurve.m_Curve.Array.data[1].value
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
       propertyPath: m_goals.Array.data[6].m_animationCurve.m_Curve.Array.data[1].value
       value: 1
       objectReference: {fileID: 0}
@@ -3090,6 +3095,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].value
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[4].m_animationCurve.m_Curve.Array.data[0].inSlope
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[4].m_animationCurve.m_Curve.Array.data[1].inSlope
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
         type: 3}
@@ -3110,6 +3125,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_goals.Array.data[7].m_animationCurve.m_Curve.Array.data[1].inSlope
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[4].m_animationCurve.m_Curve.Array.data[0].outSlope
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
+        type: 3}
+      propertyPath: m_goals.Array.data[4].m_animationCurve.m_Curve.Array.data[1].outSlope
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 6385484153686728151, guid: fee74b0095774cf4f9701d9fab58813d,
         type: 3}
@@ -3258,7 +3283,7 @@ PrefabInstance:
     - target: {fileID: 7323399335524938807, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7323399336463703304, guid: 2ab01d8ebdd0d0048a9d597426a3a800,
         type: 3}
