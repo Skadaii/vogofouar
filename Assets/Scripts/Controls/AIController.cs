@@ -313,7 +313,7 @@ public sealed class AIController : UnitController
             int totalCostUnit = unit.Cost * count;
             if (totalCostUnit <= m_currentResources)
             {
-                if (currentTotalCost + totalCostUnit <= averageSquadCostEnemy + averageSquadCostEnemy * 0.5f || selectedUnit == null)
+                //if (currentTotalCost + totalCostUnit <= averageSquadCostEnemy + averageSquadCostEnemy * 0.5f || selectedUnit == null)
                 {
                     selectedUnit = unit;
                     totalCost = totalCostUnit;
@@ -451,7 +451,7 @@ public sealed class AIController : UnitController
 
         m_squadTasksScheduled.Remove(squadTask);
 
-        if (squadTask.m_target == null || squadTask.m_target.Team == Team)
+        if (squadTask.m_target == null || squadTask.m_target.Team == Team || !squadTask.m_units.Any())
             return Action.EActionState.Failed;
 
         m_squadTaskInProgress.Add(squadTask);
@@ -497,7 +497,7 @@ public sealed class AIController : UnitController
         //Check unit available
         List<UnitSquad> availableSquad = AvailableSquad;
 
-        int desiredUnitCount = Random.Range(1, target.Units.Count);
+        int desiredUnitCount = Random.Range(target.Units.Count/2, target.Units.Count);
 
         if (availableSquad.Any())
         {
@@ -575,7 +575,7 @@ public sealed class AIController : UnitController
 
         m_squadTasksScheduled.Remove(squadTask);
 
-        if (squadTask.m_target == null || squadTask.m_target.Team == Team)
+        if (squadTask.m_target == null || squadTask.m_target.Team == Team || !squadTask.m_units.Any())
             return Action.EActionState.Failed;
 
         m_squadTaskInProgress.Add(squadTask);
@@ -681,7 +681,7 @@ public sealed class AIController : UnitController
 
         m_squadTasksScheduled.Remove(squadTask);
 
-        if (squadTask.m_target == null || squadTask.m_target.Team == Team)
+        if (squadTask.m_target == null || squadTask.m_target.Team == Team || !squadTask.m_units.Any())
             return Action.EActionState.Failed;
 
         m_squadTaskInProgress.Add(squadTask);
@@ -741,7 +741,7 @@ public sealed class AIController : UnitController
             }
         }
 
-        if (buildSquadTask == null)
+        if (buildSquadTask == null || !buildSquadTask.m_units.Any())
             return Action.EActionState.Failed;
 
         m_squadTasksScheduled.Remove(buildSquadTask);

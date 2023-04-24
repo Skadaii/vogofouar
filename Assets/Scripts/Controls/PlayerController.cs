@@ -573,26 +573,28 @@ public sealed class PlayerController : UnitController
         {
             if (raycastInfo.transform.TryGetComponent(out Entity other))
             {
-
-                if (other.Team != Team)
+                if (m_selectedUnitList.Any())
                 {
-                    ETargetType targetType = other is StaticBuilding ? ETargetType.Capture : ETargetType.Attack;
-
-                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
-                    newSquad.m_leaderComponent.SetTarget(other, targetType);
-                }
-                else if (other.NeedsRepairing())
-                {
-                    UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
-
-                    Building building = other as Building;
-                    if (building != null && building.IsUnderConstruction)
+                    if (other.Team != Team)
                     {
-                        newSquad.m_leaderComponent.SetTarget(other, ETargetType.Build);
-                        return;
-                    }
+                        ETargetType targetType = other is StaticBuilding ? ETargetType.Capture : ETargetType.Attack;
 
-                    newSquad.m_leaderComponent.SetTarget(other, ETargetType.Repair);
+                        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
+                        newSquad.m_leaderComponent.SetTarget(other, targetType);
+                    }
+                    else if (other.NeedsRepairing())
+                    {
+                        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
+
+                        Building building = other as Building;
+                        if (building != null && building.IsUnderConstruction)
+                        {
+                            newSquad.m_leaderComponent.SetTarget(other, ETargetType.Build);
+                            return;
+                        }
+
+                        newSquad.m_leaderComponent.SetTarget(other, ETargetType.Repair);
+                    }
                 }
             }
         }
@@ -615,8 +617,11 @@ public sealed class PlayerController : UnitController
             return;
         }*/
 
-        UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
-        newSquad.m_leaderComponent.SetTargetPosition(squadTarget);
+        if (m_selectedUnitList.Any())
+        {
+            UnitSquad newSquad = CreateDynamicSquad(m_selectedUnitList.ToArray());
+            newSquad.m_leaderComponent.SetTargetPosition(squadTarget);
+        }
     }
 
     #endregion

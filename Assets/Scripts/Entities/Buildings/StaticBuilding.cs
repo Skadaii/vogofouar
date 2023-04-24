@@ -82,7 +82,7 @@ public class StaticBuilding : Building
             }
         }
 
-        if ((Team == ETeam.Neutral && CapturingTeam == Team)  || (CapturingTeam == Team && m_teamCaptureScore[(int)CapturingTeam] == 100f))
+        if ((Team == ETeam.Neutral && CapturingTeam == Team) || (CapturingTeam == Team && m_teamCaptureScore[(int)CapturingTeam] == 100f))
         {
             m_hud.Progression = 0f;
         }

@@ -15,7 +15,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: fd5f8055c59fbe84da676d33830f35e9, type: 3}
   typeId: 5
   caption: Heavy Tank B
-  cost: 5
+  cost: 10
   maxHP: 200
   influenceRadius: 4
   influenceStrength: 1

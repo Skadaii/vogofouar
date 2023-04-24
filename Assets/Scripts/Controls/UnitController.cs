@@ -174,13 +174,17 @@ public class UnitController : MonoBehaviour
     #region Squad methods
     public void SetSquadFormation(List<Unit> units, FormationRule formation)
     {
-        UnitSquad unitSquad = CreateDynamicSquad(units.ToArray());
-
-        unitSquad.Formation = formation;
+        if (units.Any())
+        {
+            UnitSquad unitSquad = CreateDynamicSquad(units.ToArray());
+            unitSquad.Formation = formation;
+        }
     }
 
-    protected UnitSquad CreateDynamicSquad(params Unit[] squadUnits)
+    public UnitSquad CreateDynamicSquad(params Unit[] squadUnits)
     {
+        if (!squadUnits.Any()) return null;
+
         Vector3 averagePosition = squadUnits.Where(unit => unit != null).Select(unit => unit.transform.position).Aggregate((a, b) => a + b) / squadUnits.Length;
 
         UnitSquad newSquad = new UnitSquad();
@@ -298,7 +302,7 @@ public class UnitController : MonoBehaviour
         Building createdBuilding = Instantiate(buildingPrefab, buildPos, Quaternion.identity, teamRoot).GetComponent<Building>();
         createdBuilding.Init(Team);
 
-        if (createdBuilding != null)
+        if (createdBuilding != null && squad != null)
         {
             if(createdBuilding as Factory != null) AddFactory(createdBuilding as Factory);
 

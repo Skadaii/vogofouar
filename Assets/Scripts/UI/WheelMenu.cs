@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -144,9 +145,17 @@ public class WheelMenu : MonoBehaviour
 
     public void ExecuteCommand()
     {
-        foreach (Entity entity in m_entities)
+        if(m_entities.Count > 0)
         {
-            m_commands[m_selectedIndex].ExecuteCommand(entity, m_clickedObject);
+            Unit[] units = m_entities.Where(e => e is Unit).Cast<Unit>().ToArray();
+
+            if(units.Any())
+                units[0].TeamController.CreateDynamicSquad(units);
+
+            foreach (Entity entity in m_entities)
+            {
+                m_commands[m_selectedIndex].ExecuteCommand(entity, m_clickedObject);
+            }
         }
     }
     public void ReverseCommand()
