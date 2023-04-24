@@ -61,6 +61,8 @@ MonoBehaviour:
   m_wheelMenu: {fileID: 0}
   m_factoryPreviewTransparency: 0.3
   m_selectionLineWidth: 3.5
+  m_mainCamera: {fileID: 0}
+  m_previewShader: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &8446335230809480305
 MonoBehaviour:
   m_ObjectHideFlags: 0

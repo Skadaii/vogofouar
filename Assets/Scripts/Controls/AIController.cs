@@ -381,7 +381,7 @@ public sealed class AIController : UnitController
         List<UnitSquad> availableSquad = AvailableSquad;
 
         //TODO: Find better algorithm to choose desired unit count
-        int desiredUnitCount = Random.Range(1, m_baseCaptureSquadUnitCount);
+        int desiredUnitCount = m_baseCaptureSquadUnitCount;
 
         if (availableSquad.Any())
         {
@@ -497,7 +497,7 @@ public sealed class AIController : UnitController
         //Check unit available
         List<UnitSquad> availableSquad = AvailableSquad;
 
-        int desiredUnitCount = Random.Range(target.Units.Count/2, target.Units.Count);
+        int desiredUnitCount = target.Units.Count;
 
         if (availableSquad.Any())
         {
@@ -608,7 +608,7 @@ public sealed class AIController : UnitController
 
         SquadTask attackSquadTask = new SquadTask() { m_target = target, m_taskType = ETaskType.AttackFactory };
 
-        int desiredSquadCount = Random.Range(1, m_baseAttackSquadUnitCount);
+        int desiredSquadCount = m_baseAttackSquadUnitCount;
 
         //Check unit available
         List<UnitSquad> availableSquad = AvailableSquad;

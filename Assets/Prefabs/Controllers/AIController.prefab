@@ -54,7 +54,8 @@ MonoBehaviour:
   m_goap: {fileID: 6385484153686728151}
   m_enemyController: {fileID: 0}
   m_baseCaptureSquadUnitCount: 3
-  m_baseAttackSquadUnitCount: 3
+  m_baseAttackSquadUnitCount: 5
+  m_influenceMap: {fileID: 0}
 --- !u!114 &6385484153686728151
 MonoBehaviour:
   m_ObjectHideFlags: 0

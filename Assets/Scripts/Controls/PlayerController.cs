@@ -54,7 +54,7 @@ public sealed class PlayerController : UnitController
     private int m_wantedFactoryId = 0;
     private GameObject m_wantedBuildingPreview = null;
     private GameObject m_wantedbuilding = null;
-    private Shader m_previewShader = null;
+    [SerializeField] private Shader m_previewShader = null;
 
 
     //  Properties
@@ -109,8 +109,6 @@ public sealed class PlayerController : UnitController
         base.Start();
 
         SetCameraFocusOnMainFactory(false);
-
-        m_previewShader = Shader.Find("Legacy Shaders/Transparent/Diffuse");
     }
 
     protected override void Update()

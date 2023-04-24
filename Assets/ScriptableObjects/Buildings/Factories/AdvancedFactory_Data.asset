@@ -16,7 +16,7 @@ MonoBehaviour:
   typeId: 1
   caption: Heavy Factory
   cost: 15
-  maxHP: 10000
+  maxHP: 1000
   influenceRadius: 5
   influenceStrength: 0.5
   deathFXPrefab: {fileID: 1494083766182838, guid: 151b49b11ab5924429acc76ead6435fa,
