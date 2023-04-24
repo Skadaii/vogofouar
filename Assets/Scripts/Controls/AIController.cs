@@ -18,6 +18,7 @@ public sealed class AIController : UnitController
 
     [SerializeField] private int m_baseCaptureSquadUnitCount = 3;
     [SerializeField] private int m_baseAttackSquadUnitCount = 3;
+    [SerializeField] private int m_baseAttackFactorySquadCount = 3;
 
     [SerializeField] private InfluenceMap m_influenceMap;
 
@@ -65,8 +66,28 @@ public sealed class AIController : UnitController
         List<Entity> targets = new List<Entity>();
 
         foreach (SquadTask squadTask in m_squadTaskInProgress)
+        {
             if (squadTask.m_taskType == taskType)
+            {
+                if (taskType == ETaskType.Attack)
+                {
+                    bool unitIsDead = false;
+
+                    foreach (Unit unit in squadTask.m_units)
+                    {
+                        if (unit == null)
+                        {
+                            unitIsDead = true;
+                        }
+                    }
+
+                    if (unitIsDead)
+                        continue;
+                }
+
                 targets.Add(squadTask.m_target);
+            }
+        }
 
         foreach (SquadTask squadTask in m_squadTasksScheduled)
             if (squadTask.m_taskType == taskType)
@@ -178,10 +199,11 @@ public sealed class AIController : UnitController
     [ConsiderationMethod]
     public float Goal_PlanifyCaptureTarget(WorldState worldState)
     {
-        if (GetTaskCount(ETaskType.Capture) + CapturedTargets <= m_enemyController.CapturedTargets)
+        int captureTaskCount = GetTaskCount(ETaskType.Capture);
+        if (captureTaskCount + CapturedTargets <= m_enemyController.CapturedTargets)
             return 1f;
 
-        if (StaticBuilding.staticBuildings.Count > CapturedTargets)
+        if (StaticBuilding.staticBuildings.Count > CapturedTargets + captureTaskCount)
             return 0.5f;
 
         return 0f;
@@ -202,8 +224,18 @@ public sealed class AIController : UnitController
         m_enemyController.SquadList.Count - GetTaskCount(ETaskType.Attack) > 0 ? 1f : 0f;
 
     [ConsiderationMethod]
-    public float Goal_PlanifyAttackFactoryTarget(WorldState worldState) =>
-        m_enemyController.FactoryList.Count - GetTaskCount(ETaskType.AttackFactory) > 0 ? 1f : 0f;
+    public float Goal_PlanifyAttackFactoryTarget(WorldState worldState)
+    {
+        if (m_enemyController.UnitList.Count <= UnitList.Count)
+        {
+            if (GetTaskCount(ETaskType.AttackFactory) < m_baseAttackFactorySquadCount)
+            {
+                return 1f;
+            }
+        }
+
+        return 0f;
+    }
 
     [ConsiderationMethod]
     public float Goal_AttackFactory(WorldState worldState)
@@ -473,6 +505,7 @@ public sealed class AIController : UnitController
 
         foreach (Entity entity in attackTaskTargets)
         {
+            bool entityIsDead = false;
             foreach (UnitSquad unitSquad in targets)
             {
                 if (unitSquad.m_leaderComponent == entity)
@@ -590,13 +623,7 @@ public sealed class AIController : UnitController
     public Action.EActionState Action_PlanifyAttackFactoryTarget(WorldState worldState)
     {
         //Select capture target
-        List<Factory> targets = m_enemyController.FactoryList;
-
-        //Already planed attack target
-        List<Entity> attackTaskTargets = GetTaskTargets(ETaskType.AttackFactory);
-
-        foreach (Entity entity in attackTaskTargets)
-            targets.Remove(entity as Factory);
+        List<Factory> targets = m_enemyController.FactoryList.ToList();
 
         if (!targets.Any() || FactoryList.Count == 0)
             return Action.EActionState.Failed;
